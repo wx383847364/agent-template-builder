@@ -1,2 +1,1 @@
-"""Command-line maintenance tools for Agent Template Builder."""
-
+"""Agent Template Builder 命令行维护工具。"""

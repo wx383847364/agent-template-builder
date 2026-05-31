@@ -1,2 +1,1 @@
-"""OCR interfaces and implementations."""
-
+"""OCR 接口和实现。"""

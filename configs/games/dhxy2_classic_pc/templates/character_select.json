@@ -1,7 +1,7 @@
 {
   "template_id": "dhxy2_classic_character_select_v1",
   "screen_type": "character_select",
-  "description": "Character selection grid before entering the game.",
+  "description": "进入游戏前的角色选择网格。",
   "priority": 20,
   "anchors": [
     {
@@ -42,4 +42,3 @@
   ],
   "available_intents": ["read_selected_character", "enter_game", "create_character"]
 }
-

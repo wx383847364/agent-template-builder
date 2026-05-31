@@ -1,7 +1,7 @@
 {
   "template_id": "dhxy2_classic_npc_dialog_v1",
   "screen_type": "npc_dialog",
-  "description": "NPC dialog or guided conversation overlay.",
+  "description": "NPC 对话或引导式对话浮层。",
   "priority": 30,
   "anchors": [
     {
@@ -42,4 +42,3 @@
   ],
   "available_intents": ["read_dialog", "continue_dialog", "choose_dialog_option"]
 }
-

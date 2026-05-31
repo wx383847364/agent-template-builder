@@ -1,63 +1,55 @@
-# Agent Template Builder Architecture
+# Agent Template Builder 架构
 
-Agent Template Builder is a template-first data export tool. It avoids full-screen OCR by using
-local visual matching to determine the screen, then OCRs only dynamic text
-regions before emitting Agent-ready JSON.
+Agent Template Builder 是一个模板优先的数据导出工具。它通过本地视觉匹配判断屏幕类型，避免整屏 OCR；随后只对动态文本区域执行 OCR，并输出可供 Agent 使用的 JSON。
 
-## Pipeline
+## 流水线
 
 ```text
 screenshot
-  -> image metadata and aspect-ratio check
-  -> game template pack loading
-  -> template matching with anchors and fixed UI regions
-  -> OCR only for dynamic regions
+  -> 图像元数据和宽高比检查
+  -> 加载游戏模板包
+  -> 使用锚点和固定 UI 区域进行模板匹配
+  -> 仅对动态区域执行 OCR
   -> AgentData JSON
 ```
 
-## Matching Strategy
+## 匹配策略
 
-The matcher is intentionally layered from cheapest to most expensive:
+匹配器按成本从低到高分层执行：
 
-1. Aspect-ratio and optional exact client-window checks.
-2. Fixed layout anchors such as panel rectangles, button areas, and icons.
-3. Region perceptual hash checks for stable UI blocks.
-4. Small image-template matching, added later when real samples exist.
-5. OCR fallback only after the screen candidate is known.
+1. 宽高比检查，以及可选的精确客户端窗口尺寸检查。
+2. 面板矩形、按钮区域、图标等固定布局锚点。
+3. 针对稳定 UI 块的区域感知哈希检查。
+4. 小图模板匹配，等真实样本到位后再补充。
+5. 只有在屏幕候选已知之后，才使用 OCR 作为兜底。
 
-## OCR Policy
+## OCR 策略
 
-OCR is not used to decide the whole screen type in version 1. It is only used
-for template elements with `ocr_required: true`, such as:
+版本 1 不使用 OCR 判断整体屏幕类型。OCR 只用于带有 `ocr_required: true` 的模板元素，例如：
 
-- current task text;
-- NPC dialog body;
-- blocking modal body;
-- reward or prompt text.
+- 当前任务文本；
+- NPC 对话正文；
+- 阻塞弹窗正文；
+- 奖励或提示文本。
 
-Fixed labels and buttons should be recognized by template, region, or icon when
-possible.
+固定标签和按钮应尽可能通过模板、区域或图标识别。
 
-## Template Pack
+## 模板包
 
-`configs/games/dhxy2_classic_pc` is the first template pack. It contains:
+`configs/games/dhxy2_classic_pc` 是第一个模板包，包含：
 
-- `game.json`: client identity, supported window sizes, and pipeline defaults;
-- `templates/*.json`: screen templates and element regions;
-- `vocab/*.txt`: correction dictionaries for OCR post-processing.
+- `game.json`：客户端标识、支持的窗口尺寸和流水线默认值；
+- `templates/*.json`：屏幕模板和元素区域；
+- `vocab/*.txt`：用于 OCR 后处理的纠错词典。
 
-## Coordinate Policy
+## 坐标策略
 
-Template regions use normalized screen ratios, not fixed pixels:
+模板区域使用归一化屏幕比例，而不是固定像素：
 
 ```json
 "bbox": [0.72, 0.12, 0.99, 0.44]
 ```
 
-The runtime converts that region to pixels based on the incoming screenshot
-size. The same bbox can work on `1280x720`, `1920x1080`, and other matching
-aspect ratios.
+运行时会根据传入截图尺寸将区域换算成像素。同一个 bbox 可以用于 `1280x720`、`1920x1080` 以及其他宽高比匹配的分辨率。
 
-The matcher prefers aspect-ratio profiles such as `16:9`, `4:3`, and `16:10`
-instead of requiring one exact resolution. Exact window sizes are still allowed
-as high-confidence profiles for local capture setups.
+匹配器优先使用 `16:9`、`4:3`、`16:10` 等宽高比配置，而不是强制要求单一精确分辨率。精确窗口尺寸仍可作为本地采集环境下的高置信度配置。

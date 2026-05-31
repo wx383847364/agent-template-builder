@@ -1,33 +1,29 @@
-# DHXY2 Public Reference Images
+# DHXY2 公开参考图
 
-These images are public references for shaping the first template taxonomy. Use
-`references/dhxy2_public/latest/` first. The `legacy/` folder is retained only
-for comparison and should not drive template calibration.
+这些图片是用于梳理首批模板分类的公开参考资料。优先使用 `references/dhxy2_public/latest/`。`legacy/` 目录仅保留用于对比，不应作为模板校准依据。
 
-Public images are not final calibration samples. Final hashes, OCR regions, and
-precise bboxes should come from fixed-window screenshots captured locally.
+公开图片不是最终校准样本。最终哈希、OCR 区域和精确 bbox 应来自本地固定窗口截图。
 
-## Local Contact Sheet
+## 本地缩略总览图
 
-![Latest DHXY2 public reference contact sheet](../references/dhxy2_public/latest/contact_sheet.jpg)
+![最新 DHXY2 公开参考图缩略总览](../references/dhxy2_public/latest/contact_sheet.jpg)
 
-## Covered Categories
+## 已覆盖类别
 
-- 2026 PC UI references: small-window gameplay, team platform, quickbar/chat customization, workshop assistant, summon panel.
-- 2025 high-resolution album references: scene/gameplay composition and rough battle-like viewport reference.
+- 2026 PC UI 参考：小窗口游戏画面、组队平台、快捷栏/聊天自定义、作坊助手、召唤兽面板。
+- 2025 高分辨率图集参考：场景/玩法构图，以及粗略的类战斗视口参考。
 
-## Still Missing
+## 仍然缺失
 
-- Current public login, server selection, and character selection screenshots.
-- PC battle interface.
-- Pure inventory/backpack panel.
-- Map/navigation panel.
-- Quest dialog and NPC conversation from a real fixed-window client.
+- 当前公开登录、服务器选择、角色选择截图。
+- PC 战斗界面。
+- 纯物品栏/背包面板。
+- 地图/导航面板。
+- 来自真实固定窗口客户端的任务对话和 NPC 对话。
 
-The missing categories should come from local capture before template hashes are
-added.
+在加入模板哈希之前，上述缺失类别应通过本地采集补齐。
 
-## Sources
+## 来源
 
 - 17173, `《大话西游2经典版》PC端细节优化，畅享便捷游戏时光`: https://news.17173.com/content/01152026/233337353.shtml
-- 17173 image album, `大话西游2经典版截图(8)`, 2025-04-25: https://newgame.17173.com/album-view-137536.html
+- 17173 图片图集，`大话西游2经典版截图(8)`，2025-04-25: https://newgame.17173.com/album-view-137536.html

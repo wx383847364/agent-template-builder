@@ -7,7 +7,7 @@ from PIL import Image
 
 
 def average_hash(image: Image.Image, hash_size: int = 8) -> str:
-    """Return a compact average hash for quick local region comparisons."""
+    """返回紧凑的平均哈希，用于快速比较本地区域。"""
     gray = image.convert("L").resize((hash_size, hash_size))
     pixels = list(gray.getdata())
     avg = sum(pixels) / len(pixels)
@@ -38,4 +38,3 @@ def _bits_to_hex(bits: Iterable[str]) -> str:
 
 def _hex_to_bits(value: str) -> str:
     return f"{int(value, 16):0{len(value) * 4}b}"
-

@@ -1,26 +1,25 @@
 # Agent Template Builder
 
-Agent Template Builder creates reusable screen templates and exports structured data for a local Agent or LLM.
+Agent Template Builder 用于创建可复用的屏幕模板，并为本地 Agent 或 LLM 导出结构化数据。
 
-The first template pack targets `dhxy2_classic_pc`, the PC classic client of
-`大话西游2`. Version 1 focuses on task-readable screens:
+首个模板包面向 `dhxy2_classic_pc`，也就是《大话西游2》经典版 PC 客户端。版本 1 聚焦于让任务流程可读的屏幕：
 
-- identify the current screen template without OCR when possible;
-- detect fixed UI elements such as task panels, dialogs, maps, and modals;
-- OCR only dynamic regions such as task text, dialog body, and popup content;
-- emit JSON with confidence and evidence for every important field.
+- 尽可能在不依赖 OCR 的情况下识别当前屏幕模板；
+- 检测任务面板、对话框、地图、弹窗等固定 UI 元素；
+- 只对任务文本、对话正文、弹窗内容等动态区域执行 OCR；
+- 为每个关键字段输出带置信度和证据的 JSON。
 
-## Layout
+## 目录结构
 
 ```text
-configs/games/dhxy2_classic_pc/   Game-specific templates and vocabulary
-samples/dhxy2_classic_pc/         Screenshot samples and expected JSON outputs
-src/agent_template_builder/       Template builder and export pipeline
-docs/                             Architecture notes
-tests/                            Unit tests for schema and config loading
+configs/games/dhxy2_classic_pc/   游戏专用模板和词表
+samples/dhxy2_classic_pc/         截图样本和预期 JSON 输出
+src/agent_template_builder/       模板构建与导出流水线
+docs/                             架构说明、参考资料和长期项目记忆
+tests/                            Schema 和配置加载的单元测试
 ```
 
-## Quick Start
+## 快速开始
 
 ```bash
 cd /Users/bruce/work/agent-template-builder
@@ -30,20 +29,28 @@ pip install -e ".[dev]"
 python -m agent_template_builder.pipeline.analyze samples/dhxy2_classic_pc/screenshots/example.png
 ```
 
-The sample command expects a real screenshot. Until screenshots are added, use
-the tests to verify the project skeleton:
+示例命令需要一张真实截图。在补充截图之前，可以先用测试验证项目骨架：
 
 ```bash
 python -m pytest
 ```
 
-## First Milestone
+长期项目记忆入口见 [docs/项目总览.md](docs/项目总览.md)。
 
-1. Capture 3-10 screenshots for each first template: main world, NPC dialog,
-   blocking modal, map/navigation, and reward/prompt popup.
-2. Fill each template anchor with real region hashes or image anchors.
-3. Add expected JSON files under `samples/dhxy2_classic_pc/expected`.
-4. Keep OCR limited to regions marked with `ocr_required: true`.
+## 目前已实现
 
-Template bboxes are screen ratios, not fixed pixels, so one template can work
-across multiple resolutions that share a supported aspect ratio.
+- 已定义 `AgentData`、屏幕、元素、证据、运行状态等导出 schema。
+- 已提供《大话西游2》经典版 PC 的首个模板包，覆盖登录、服务器选择、角色选择、主世界、NPC 对话、系统面板、战斗占位和阻塞弹窗。
+- 已支持按屏幕宽高比和固定窗口尺寸做首轮匹配；在真实锚点尚未补齐时，会以主世界模板作为兜底。
+- 已实现归一化 bbox 到像素坐标的转换，以及基于区域平均哈希的锚点匹配能力。
+- 已接入 OCR 引擎接口和空实现，占位等待后续接入 PaddleOCR、Tesseract 或其他本地 OCR。
+- 已提供模板包审计命令和单元测试，覆盖配置加载、模板排序、bbox 换算和基础截图分析流程。
+
+## 第一个里程碑
+
+1. 为首批模板各采集 3-10 张截图：主世界、NPC 对话、阻塞弹窗、地图/导航、奖励/提示弹窗。
+2. 为每个模板锚点填入真实区域哈希或图像锚点。
+3. 在 `samples/dhxy2_classic_pc/expected` 下添加预期 JSON 文件。
+4. 将 OCR 限制在标记为 `ocr_required: true` 的区域内。
+
+模板 bbox 使用屏幕比例而不是固定像素，因此同一个模板可以适配多种共享受支持宽高比的分辨率。

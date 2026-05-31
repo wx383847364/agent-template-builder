@@ -1,2 +1,1 @@
-"""Screenshot-to-AgentData pipelines."""
-
+"""截图到 AgentData 的处理流水线。"""

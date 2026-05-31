@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+PYTHON="${REPO_ROOT}/.venv/bin/python"
+
+if [ ! -x "${PYTHON}" ]; then
+  PYTHON="python3"
+fi
+
+PYTHONPATH="${REPO_ROOT}/src${PYTHONPATH:+:${PYTHONPATH}}" \
+  "${PYTHON}" -m agent_template_builder.tools.validate_commit_message \
+  "$1" \
+  --repo-root "${REPO_ROOT}"

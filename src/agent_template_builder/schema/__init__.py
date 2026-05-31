@@ -1,2 +1,1 @@
-"""Shared schema objects."""
-
+"""共享的 schema 对象。"""

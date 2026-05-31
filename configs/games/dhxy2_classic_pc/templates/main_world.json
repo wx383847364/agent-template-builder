@@ -1,7 +1,7 @@
 {
   "template_id": "dhxy2_classic_main_world_v1",
   "screen_type": "main_world",
-  "description": "Main world view with task tracker and standard PC HUD.",
+  "description": "带任务追踪器和标准 PC HUD 的主世界视图。",
   "priority": 10,
   "anchors": [
     {
@@ -48,4 +48,3 @@
   ],
   "available_intents": ["read_task", "open_map", "continue_navigation"]
 }
-

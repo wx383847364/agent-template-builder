@@ -1,7 +1,7 @@
 {
   "template_id": "dhxy2_classic_blocking_modal_v1",
   "screen_type": "blocking_modal",
-  "description": "Blocking confirm/cancel modal or reward prompt.",
+  "description": "阻塞式确认/取消弹窗或奖励提示。",
   "priority": 50,
   "blocking_modal": true,
   "anchors": [
@@ -37,4 +37,3 @@
   ],
   "available_intents": ["read_modal", "confirm_modal", "cancel_modal"]
 }
-

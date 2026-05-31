@@ -36,12 +36,11 @@ class MatchResult:
 
 
 class TemplateMatcher:
-    """Fast first-pass matcher.
+    """快速首轮匹配器。
 
-    Templates with measured anchor hashes win. While no real screenshot anchors
-    exist yet, the matcher falls back to the main-world template instead of a
-    high-priority modal. Coordinates are normalized ratios, so templates can
-    work across multiple resolutions with compatible aspect ratios.
+    已有实测锚点哈希的模板优先胜出。在真实截图锚点尚未补齐时，
+    匹配器会回退到主世界模板，而不是高优先级弹窗模板。坐标使用
+    归一化比例，因此模板可以适配宽高比兼容的多种分辨率。
     """
 
     def __init__(
@@ -51,7 +50,7 @@ class TemplateMatcher:
         aspect_profiles: list[AspectRatioProfile],
     ) -> None:
         if not templates:
-            raise ValueError("at least one template is required")
+            raise ValueError("至少需要一个模板")
         self._templates = templates
         self._supported_sizes = supported_sizes
         self._aspect_profiles = aspect_profiles

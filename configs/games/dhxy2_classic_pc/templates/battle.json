@@ -1,7 +1,7 @@
 {
   "template_id": "dhxy2_classic_battle_v1",
   "screen_type": "battle",
-  "description": "Turn-based battle screen placeholder; needs local fixed-window samples.",
+  "description": "回合制战斗屏幕占位模板；需要本地固定窗口样本。",
   "priority": 35,
   "anchors": [
     {
@@ -35,4 +35,3 @@
   ],
   "available_intents": ["read_battle_status", "inspect_battle_commands"]
 }
-

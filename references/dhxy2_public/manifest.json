@@ -1,5 +1,5 @@
 {
-  "policy": "Use latest/ as the default public reference set. legacy/ is retained only for historical comparison and should not drive template calibration.",
+  "policy": "默认使用 latest/ 作为公开参考集。legacy/ 仅保留用于历史对比，不应作为模板校准依据。",
   "latest_contact_sheet": "latest/contact_sheet.jpg",
   "latest": [
     {
@@ -7,7 +7,7 @@
       "category": "main_world",
       "date": "2026-01-15",
       "priority": "primary",
-      "notes": "PC small-window gameplay view; useful for HUD proportions and viewport behavior.",
+      "notes": "PC 小窗口游戏画面；可用于参考 HUD 比例和视口行为。",
       "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
       "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/XlEgNubtpbeuzEr.gif"
     },
@@ -16,7 +16,7 @@
       "category": "team_platform",
       "date": "2026-01-15",
       "priority": "primary",
-      "notes": "Updated team platform panel reference.",
+      "notes": "新版组队平台面板参考。",
       "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
       "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/bgUuBkbtpbeuzzo.jpg"
     },
@@ -25,7 +25,7 @@
       "category": "quickbar_chat",
       "date": "2026-01-15",
       "priority": "primary",
-      "notes": "Updated quickbar and chat customization reference.",
+      "notes": "新版快捷栏和聊天自定义参考。",
       "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
       "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/CkWDUobtpbeuzAn.jpg"
     },
@@ -34,7 +34,7 @@
       "category": "workshop",
       "date": "2026-01-15",
       "priority": "primary",
-      "notes": "Updated workshop assistant panel, inventory-like grid reference.",
+      "notes": "新版作坊助手面板、类物品栏网格参考。",
       "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
       "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/rsmuHabtpbeuzzt.jpg"
     },
@@ -43,7 +43,7 @@
       "category": "workshop",
       "date": "2026-01-15",
       "priority": "primary",
-      "notes": "Updated workshop material selection flow.",
+      "notes": "新版作坊材料选择流程。",
       "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
       "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/XgrbgIbtpbeuzDy.gif"
     },
@@ -52,7 +52,7 @@
       "category": "summon_panel",
       "date": "2026-01-15",
       "priority": "primary",
-      "notes": "Updated summon/pet panel reference.",
+      "notes": "新版召唤兽/宠物面板参考。",
       "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
       "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/viFaQbbtpbeuAaw.gif"
     },
@@ -61,7 +61,7 @@
       "category": "gameplay_scene",
       "date": "2025-04-25",
       "priority": "secondary",
-      "notes": "2025 17173 album image. Useful for scene/style reference, not full UI calibration.",
+      "notes": "2025 年 17173 图集图片。适合场景/风格参考，不适合完整 UI 校准。",
       "source_page": "https://newgame.17173.com/album-view-137536.html"
     },
     {
@@ -69,7 +69,7 @@
       "category": "gameplay_scene",
       "date": "2025-04-25",
       "priority": "secondary",
-      "notes": "2025 17173 album image. Useful for scene/style reference, not full UI calibration.",
+      "notes": "2025 年 17173 图集图片。适合场景/风格参考，不适合完整 UI 校准。",
       "source_page": "https://newgame.17173.com/album-view-137536.html"
     },
     {
@@ -77,7 +77,7 @@
       "category": "gameplay_scene",
       "date": "2025-04-25",
       "priority": "secondary",
-      "notes": "2025 17173 album image. Useful for scene/style reference, not full UI calibration.",
+      "notes": "2025 年 17173 图集图片。适合场景/风格参考，不适合完整 UI 校准。",
       "source_page": "https://newgame.17173.com/album-view-137536.html"
     },
     {
@@ -85,7 +85,7 @@
       "category": "gameplay_scene",
       "date": "2025-04-25",
       "priority": "secondary",
-      "notes": "2025 17173 album image. Useful for scene/style reference, not full UI calibration.",
+      "notes": "2025 年 17173 图集图片。适合场景/风格参考，不适合完整 UI 校准。",
       "source_page": "https://newgame.17173.com/album-view-137536.html"
     },
     {
@@ -93,7 +93,7 @@
       "category": "battle_scene",
       "date": "2025-04-25",
       "priority": "secondary",
-      "notes": "2025 album image with battle-like layout; useful for rough battle viewport reference.",
+      "notes": "2025 年图集中带有类战斗布局的图片；可用于粗略参考战斗视口。",
       "source_page": "https://newgame.17173.com/album-view-137536.html"
     },
     {
@@ -101,7 +101,7 @@
       "category": "scene_art",
       "date": "2025-04-25",
       "priority": "secondary",
-      "notes": "2025 high-resolution scene image.",
+      "notes": "2025 年高分辨率场景图片。",
       "source_page": "https://newgame.17173.com/album-view-137536.html"
     },
     {
@@ -109,7 +109,7 @@
       "category": "scene_art",
       "date": "2025-04-25",
       "priority": "secondary",
-      "notes": "2025 high-resolution scene image.",
+      "notes": "2025 年高分辨率场景图片。",
       "source_page": "https://newgame.17173.com/album-view-137536.html"
     },
     {
@@ -117,9 +117,8 @@
       "category": "scene_art",
       "date": "2025-04-25",
       "priority": "secondary",
-      "notes": "2025 high-resolution scene image.",
+      "notes": "2025 年高分辨率场景图片。",
       "source_page": "https://newgame.17173.com/album-view-137536.html"
     }
   ]
 }
-

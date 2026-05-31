@@ -1,7 +1,7 @@
 {
   "template_id": "dhxy2_classic_system_panel_v1",
   "screen_type": "system_panel",
-  "description": "Generic game system panel such as team, workshop, summon, inventory-like grids.",
+  "description": "通用游戏系统面板，例如组队、作坊、召唤兽、类物品栏网格。",
   "priority": 25,
   "anchors": [
     {
@@ -35,4 +35,3 @@
   ],
   "available_intents": ["read_panel_title", "inspect_panel", "close_panel"]
 }
-

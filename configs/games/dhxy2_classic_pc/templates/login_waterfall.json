@@ -1,7 +1,7 @@
 {
   "template_id": "dhxy2_classic_login_waterfall_v1",
   "screen_type": "login_waterfall",
-  "description": "Waterfall login screen before server selection.",
+  "description": "服务器选择前的瀑布登录界面。",
   "priority": 5,
   "anchors": [
     {
@@ -35,4 +35,3 @@
   ],
   "available_intents": ["read_login_notice", "open_server_select", "switch_login_style"]
 }
-

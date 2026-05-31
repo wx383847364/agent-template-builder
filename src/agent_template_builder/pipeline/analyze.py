@@ -124,7 +124,7 @@ def analyze_screenshot(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Analyze a game screenshot into AgentData JSON.")
+    parser = argparse.ArgumentParser(description="将游戏截图分析为 AgentData JSON。")
     parser.add_argument("screenshot", type=Path)
     parser.add_argument("--game-dir", type=Path, default=DEFAULT_GAME_DIR)
     args = parser.parse_args()

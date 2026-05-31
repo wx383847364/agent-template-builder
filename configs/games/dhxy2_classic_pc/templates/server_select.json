@@ -1,7 +1,7 @@
 {
   "template_id": "dhxy2_classic_server_select_v1",
   "screen_type": "server_select",
-  "description": "Server selection panel in the login flow.",
+  "description": "登录流程中的服务器选择面板。",
   "priority": 15,
   "anchors": [
     {
@@ -35,4 +35,3 @@
   ],
   "available_intents": ["read_server_list", "confirm_server", "go_back"]
 }
-

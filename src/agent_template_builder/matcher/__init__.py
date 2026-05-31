@@ -1,2 +1,1 @@
-"""Template and image matching helpers."""
-
+"""模板和图像匹配辅助模块。"""
