@@ -1,0 +1,140 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Optional
+
+from agent_template_builder.matcher.hash import hamming_distance, image_size, region_hash
+from agent_template_builder.schema.templates import denormalize_bbox
+from agent_template_builder.schema.templates import TemplateSpec
+
+
+@dataclass(frozen=True)
+class AnchorMatch:
+    id: str
+    score: float
+    actual_hash: Optional[str] = None
+    expected_hash: Optional[str] = None
+    hamming_distance: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class AspectRatioProfile:
+    label: str
+    ratio: float
+    tolerance: float = 0.04
+
+
+@dataclass(frozen=True)
+class MatchResult:
+    template: TemplateSpec
+    confidence: float
+    width: int
+    height: int
+    anchor_matches: list[AnchorMatch]
+    aspect_ratio_label: Optional[str] = None
+
+
+class TemplateMatcher:
+    """Fast first-pass matcher.
+
+    Templates with measured anchor hashes win. While no real screenshot anchors
+    exist yet, the matcher falls back to the main-world template instead of a
+    high-priority modal. Coordinates are normalized ratios, so templates can
+    work across multiple resolutions with compatible aspect ratios.
+    """
+
+    def __init__(
+        self,
+        templates: list[TemplateSpec],
+        supported_sizes: set[tuple[int, int]],
+        aspect_profiles: list[AspectRatioProfile],
+    ) -> None:
+        if not templates:
+            raise ValueError("at least one template is required")
+        self._templates = templates
+        self._supported_sizes = supported_sizes
+        self._aspect_profiles = aspect_profiles
+
+    def match(self, screenshot_path: Path) -> MatchResult:
+        width, height = image_size(screenshot_path)
+        aspect_label, size_score = self._score_viewport(width, height)
+
+        scored = [
+            (self._score_template(screenshot_path, template, width, height, size_score), template)
+            for template in self._templates
+        ]
+        best, template = max(scored, key=lambda item: (item[0][0], item[1].priority))
+        confidence, anchor_matches = best
+
+        if not any(template.measurable_anchor_count for template in self._templates):
+            template = self._default_template()
+            confidence = 0.70 * size_score
+            anchor_matches = []
+
+        return MatchResult(
+            template=template,
+            confidence=round(confidence, 3),
+            width=width,
+            height=height,
+            anchor_matches=anchor_matches,
+            aspect_ratio_label=aspect_label,
+        )
+
+    def _score_viewport(self, width: int, height: int) -> tuple[Optional[str], float]:
+        if (width, height) in self._supported_sizes:
+            return ("fixed_window", 1.0)
+
+        if not self._aspect_profiles:
+            return (None, 1.0 if not self._supported_sizes else 0.55)
+
+        actual_ratio = width / height
+        best = min(self._aspect_profiles, key=lambda profile: abs(actual_ratio - profile.ratio))
+        delta = abs(actual_ratio - best.ratio)
+        if delta <= best.tolerance:
+            score = max(0.75, 1.0 - (delta / best.tolerance) * 0.25)
+            return (best.label, score)
+        return (None, 0.45)
+
+    def _score_template(
+        self,
+        screenshot_path: Path,
+        template: TemplateSpec,
+        width: int,
+        height: int,
+        size_score: float,
+    ) -> tuple[float, list[AnchorMatch]]:
+        measurable = [anchor for anchor in template.anchors if anchor.expected_hash]
+        if not measurable:
+            return (0.0, [])
+
+        weighted_score = 0.0
+        total_weight = 0.0
+        matches: list[AnchorMatch] = []
+
+        for anchor in measurable:
+            bbox = denormalize_bbox(anchor.bbox, width, height)
+            actual_hash = region_hash(screenshot_path, bbox)
+            distance = hamming_distance(actual_hash, anchor.expected_hash or "")
+            score = max(0.0, 1.0 - (distance / max(anchor.max_hamming_distance, 1)))
+            weighted_score += score * anchor.weight
+            total_weight += anchor.weight
+            matches.append(
+                AnchorMatch(
+                    id=anchor.id,
+                    score=round(score, 3),
+                    actual_hash=actual_hash,
+                    expected_hash=anchor.expected_hash,
+                    hamming_distance=distance,
+                )
+            )
+
+        anchor_score = weighted_score / total_weight if total_weight else 0.0
+        priority_score = min(template.priority, 100) / 1000
+        return (anchor_score * 0.9 * size_score + priority_score, matches)
+
+    def _default_template(self) -> TemplateSpec:
+        for template in self._templates:
+            if template.screen_type == "main_world":
+                return template
+        return self._templates[-1]

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-template-builder"
+version = "0.1.0"
+description = "Template builder and export pipeline for Agent-ready data."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "Pillow>=10.0",
+]
+
+[project.scripts]
+agent-template-builder-analyze = "agent_template_builder.pipeline.analyze:main"
+agent-template-builder-audit-templates = "agent_template_builder.tools.audit_templates:main"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

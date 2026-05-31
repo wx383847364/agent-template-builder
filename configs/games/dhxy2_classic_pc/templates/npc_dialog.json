@@ -1,0 +1,45 @@
+{
+  "template_id": "dhxy2_classic_npc_dialog_v1",
+  "screen_type": "npc_dialog",
+  "description": "NPC dialog or guided conversation overlay.",
+  "priority": 30,
+  "anchors": [
+    {
+      "id": "dialog_panel_area",
+      "type": "layout_region",
+      "bbox": [0.16, 0.54, 0.84, 0.95],
+      "weight": 0.55
+    },
+    {
+      "id": "dialog_options_area",
+      "type": "layout_region",
+      "bbox": [0.58, 0.62, 0.82, 0.90],
+      "weight": 0.25
+    }
+  ],
+  "elements": [
+    {
+      "id": "dialog_body",
+      "type": "text_region",
+      "bbox": [0.20, 0.58, 0.78, 0.78],
+      "ocr_required": true,
+      "semantic_role": "dialog_text"
+    },
+    {
+      "id": "dialog_options",
+      "type": "text_region",
+      "bbox": [0.58, 0.62, 0.82, 0.90],
+      "ocr_required": true,
+      "semantic_role": "dialog_options"
+    },
+    {
+      "id": "dialog_continue",
+      "type": "button",
+      "bbox": [0.68, 0.82, 0.82, 0.92],
+      "ocr_required": false,
+      "semantic_role": "continue_dialog"
+    }
+  ],
+  "available_intents": ["read_dialog", "continue_dialog", "choose_dialog_option"]
+}
+

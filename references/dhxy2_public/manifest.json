@@ -1,0 +1,125 @@
+{
+  "policy": "Use latest/ as the default public reference set. legacy/ is retained only for historical comparison and should not drive template calibration.",
+  "latest_contact_sheet": "latest/contact_sheet.jpg",
+  "latest": [
+    {
+      "file": "latest/2026_pc_small_window.gif",
+      "category": "main_world",
+      "date": "2026-01-15",
+      "priority": "primary",
+      "notes": "PC small-window gameplay view; useful for HUD proportions and viewport behavior.",
+      "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
+      "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/XlEgNubtpbeuzEr.gif"
+    },
+    {
+      "file": "latest/2026_team_platform.jpg",
+      "category": "team_platform",
+      "date": "2026-01-15",
+      "priority": "primary",
+      "notes": "Updated team platform panel reference.",
+      "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
+      "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/bgUuBkbtpbeuzzo.jpg"
+    },
+    {
+      "file": "latest/2026_quickbar_chat.jpg",
+      "category": "quickbar_chat",
+      "date": "2026-01-15",
+      "priority": "primary",
+      "notes": "Updated quickbar and chat customization reference.",
+      "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
+      "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/CkWDUobtpbeuzAn.jpg"
+    },
+    {
+      "file": "latest/2026_workshop_assistant_1.jpg",
+      "category": "workshop",
+      "date": "2026-01-15",
+      "priority": "primary",
+      "notes": "Updated workshop assistant panel, inventory-like grid reference.",
+      "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
+      "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/rsmuHabtpbeuzzt.jpg"
+    },
+    {
+      "file": "latest/2026_workshop_assistant_2.gif",
+      "category": "workshop",
+      "date": "2026-01-15",
+      "priority": "primary",
+      "notes": "Updated workshop material selection flow.",
+      "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
+      "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/XgrbgIbtpbeuzDy.gif"
+    },
+    {
+      "file": "latest/2026_summon_panel.gif",
+      "category": "summon_panel",
+      "date": "2026-01-15",
+      "priority": "primary",
+      "notes": "Updated summon/pet panel reference.",
+      "source_page": "https://news.17173.com/content/01152026/233337353.shtml",
+      "source_image": "https://i.17173cdn.com/2fhnvk/YWxqaGBf/cms3/viFaQbbtpbeuAaw.gif"
+    },
+    {
+      "file": "latest/2025_album_01.jpg",
+      "category": "gameplay_scene",
+      "date": "2025-04-25",
+      "priority": "secondary",
+      "notes": "2025 17173 album image. Useful for scene/style reference, not full UI calibration.",
+      "source_page": "https://newgame.17173.com/album-view-137536.html"
+    },
+    {
+      "file": "latest/2025_album_02.jpg",
+      "category": "gameplay_scene",
+      "date": "2025-04-25",
+      "priority": "secondary",
+      "notes": "2025 17173 album image. Useful for scene/style reference, not full UI calibration.",
+      "source_page": "https://newgame.17173.com/album-view-137536.html"
+    },
+    {
+      "file": "latest/2025_album_03.jpg",
+      "category": "gameplay_scene",
+      "date": "2025-04-25",
+      "priority": "secondary",
+      "notes": "2025 17173 album image. Useful for scene/style reference, not full UI calibration.",
+      "source_page": "https://newgame.17173.com/album-view-137536.html"
+    },
+    {
+      "file": "latest/2025_album_04.jpg",
+      "category": "gameplay_scene",
+      "date": "2025-04-25",
+      "priority": "secondary",
+      "notes": "2025 17173 album image. Useful for scene/style reference, not full UI calibration.",
+      "source_page": "https://newgame.17173.com/album-view-137536.html"
+    },
+    {
+      "file": "latest/2025_album_05.jpg",
+      "category": "battle_scene",
+      "date": "2025-04-25",
+      "priority": "secondary",
+      "notes": "2025 album image with battle-like layout; useful for rough battle viewport reference.",
+      "source_page": "https://newgame.17173.com/album-view-137536.html"
+    },
+    {
+      "file": "latest/2025_album_06.jpg",
+      "category": "scene_art",
+      "date": "2025-04-25",
+      "priority": "secondary",
+      "notes": "2025 high-resolution scene image.",
+      "source_page": "https://newgame.17173.com/album-view-137536.html"
+    },
+    {
+      "file": "latest/2025_album_07.jpg",
+      "category": "scene_art",
+      "date": "2025-04-25",
+      "priority": "secondary",
+      "notes": "2025 high-resolution scene image.",
+      "source_page": "https://newgame.17173.com/album-view-137536.html"
+    },
+    {
+      "file": "latest/2025_album_08.jpg",
+      "category": "scene_art",
+      "date": "2025-04-25",
+      "priority": "secondary",
+      "notes": "2025 high-resolution scene image.",
+      "source_page": "https://newgame.17173.com/album-view-137536.html"
+    }
+  ]
+}
+

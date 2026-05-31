@@ -1,0 +1,47 @@
+{
+  "game_id": "dhxy2",
+  "client": "classic_pc",
+  "display_name": "大话西游2经典版 PC",
+  "coordinate_space": {
+    "type": "normalized",
+    "base_width": 1280,
+    "base_height": 720,
+    "bbox_unit": "screen_ratio"
+  },
+  "supported_aspect_ratios": [
+    {
+      "label": "wide_16_9",
+      "width": 16,
+      "height": 9,
+      "tolerance": 0.04
+    },
+    {
+      "label": "classic_4_3",
+      "width": 4,
+      "height": 3,
+      "tolerance": 0.04
+    },
+    {
+      "label": "wide_16_10",
+      "width": 16,
+      "height": 10,
+      "tolerance": 0.04
+    }
+  ],
+  "supported_windows": [
+    {
+      "width": 1280,
+      "height": 720,
+      "label": "fixed_window_1280x720"
+    }
+  ],
+  "ocr_policy": {
+    "language": "zh_cn",
+    "only_when_required": true,
+    "cache_by_region_hash": true
+  },
+  "template_defaults": {
+    "min_confidence": 0.65,
+    "blocking_modal_priority": true
+  }
+}

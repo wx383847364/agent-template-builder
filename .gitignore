@@ -1,0 +1,22 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Keep binary image/reference media local unless explicitly needed.
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# Local samples may contain private gameplay screenshots.
+samples/**/screenshots/*
+!samples/**/screenshots/.gitkeep

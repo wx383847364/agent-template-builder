@@ -1,0 +1,45 @@
+{
+  "template_id": "dhxy2_classic_character_select_v1",
+  "screen_type": "character_select",
+  "description": "Character selection grid before entering the game.",
+  "priority": 20,
+  "anchors": [
+    {
+      "id": "character_grid_panel",
+      "type": "layout_region",
+      "bbox": [0.25, 0.12, 0.75, 0.84],
+      "weight": 0.55
+    },
+    {
+      "id": "enter_game_button_area",
+      "type": "layout_region",
+      "bbox": [0.58, 0.76, 0.74, 0.86],
+      "weight": 0.25
+    }
+  ],
+  "elements": [
+    {
+      "id": "character_grid",
+      "type": "grid",
+      "bbox": [0.29, 0.18, 0.58, 0.67],
+      "ocr_required": false,
+      "semantic_role": "character_slots"
+    },
+    {
+      "id": "selected_character_summary",
+      "type": "text_region",
+      "bbox": [0.35, 0.68, 0.66, 0.78],
+      "ocr_required": true,
+      "semantic_role": "selected_character"
+    },
+    {
+      "id": "enter_game",
+      "type": "button",
+      "bbox": [0.58, 0.76, 0.74, 0.86],
+      "ocr_required": false,
+      "semantic_role": "enter_game"
+    }
+  ],
+  "available_intents": ["read_selected_character", "enter_game", "create_character"]
+}
+

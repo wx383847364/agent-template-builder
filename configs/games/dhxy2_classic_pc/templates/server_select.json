@@ -1,0 +1,38 @@
+{
+  "template_id": "dhxy2_classic_server_select_v1",
+  "screen_type": "server_select",
+  "description": "Server selection panel in the login flow.",
+  "priority": 15,
+  "anchors": [
+    {
+      "id": "center_server_panel",
+      "type": "layout_region",
+      "bbox": [0.27, 0.16, 0.74, 0.84],
+      "weight": 0.60
+    },
+    {
+      "id": "server_confirm_area",
+      "type": "layout_region",
+      "bbox": [0.58, 0.74, 0.74, 0.84],
+      "weight": 0.20
+    }
+  ],
+  "elements": [
+    {
+      "id": "server_list",
+      "type": "text_region",
+      "bbox": [0.32, 0.30, 0.68, 0.69],
+      "ocr_required": true,
+      "semantic_role": "server_list"
+    },
+    {
+      "id": "server_confirm",
+      "type": "button",
+      "bbox": [0.58, 0.74, 0.74, 0.84],
+      "ocr_required": false,
+      "semantic_role": "confirm_server"
+    }
+  ],
+  "available_intents": ["read_server_list", "confirm_server", "go_back"]
+}
+

@@ -1,0 +1,38 @@
+{
+  "template_id": "dhxy2_classic_battle_v1",
+  "screen_type": "battle",
+  "description": "Turn-based battle screen placeholder; needs local fixed-window samples.",
+  "priority": 35,
+  "anchors": [
+    {
+      "id": "battle_command_area",
+      "type": "layout_region",
+      "bbox": [0.68, 0.62, 0.99, 0.98],
+      "weight": 0.40
+    },
+    {
+      "id": "battle_log_or_chat_area",
+      "type": "layout_region",
+      "bbox": [0.0, 0.72, 0.40, 1.0],
+      "weight": 0.20
+    }
+  ],
+  "elements": [
+    {
+      "id": "battle_command_area",
+      "type": "button_group",
+      "bbox": [0.68, 0.62, 0.99, 0.98],
+      "ocr_required": false,
+      "semantic_role": "battle_commands"
+    },
+    {
+      "id": "battle_status_text",
+      "type": "text_region",
+      "bbox": [0.02, 0.72, 0.42, 0.96],
+      "ocr_required": true,
+      "semantic_role": "battle_status"
+    }
+  ],
+  "available_intents": ["read_battle_status", "inspect_battle_commands"]
+}
+

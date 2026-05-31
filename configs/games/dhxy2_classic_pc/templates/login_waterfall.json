@@ -1,0 +1,38 @@
+{
+  "template_id": "dhxy2_classic_login_waterfall_v1",
+  "screen_type": "login_waterfall",
+  "description": "Waterfall login screen before server selection.",
+  "priority": 5,
+  "anchors": [
+    {
+      "id": "logo_area",
+      "type": "layout_region",
+      "bbox": [0.03, 0.03, 0.28, 0.20],
+      "weight": 0.25
+    },
+    {
+      "id": "right_login_buttons",
+      "type": "layout_region",
+      "bbox": [0.76, 0.28, 0.97, 0.78],
+      "weight": 0.45
+    }
+  ],
+  "elements": [
+    {
+      "id": "login_action_stack",
+      "type": "button_group",
+      "bbox": [0.76, 0.28, 0.97, 0.78],
+      "ocr_required": false,
+      "semantic_role": "login_actions"
+    },
+    {
+      "id": "login_notice_text",
+      "type": "text_region",
+      "bbox": [0.02, 0.90, 0.70, 0.99],
+      "ocr_required": true,
+      "semantic_role": "system_notice"
+    }
+  ],
+  "available_intents": ["read_login_notice", "open_server_select", "switch_login_style"]
+}
+

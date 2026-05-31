@@ -1,0 +1,40 @@
+{
+  "template_id": "dhxy2_classic_blocking_modal_v1",
+  "screen_type": "blocking_modal",
+  "description": "Blocking confirm/cancel modal or reward prompt.",
+  "priority": 50,
+  "blocking_modal": true,
+  "anchors": [
+    {
+      "id": "center_modal_area",
+      "type": "layout_region",
+      "bbox": [0.30, 0.25, 0.70, 0.74],
+      "weight": 0.70
+    }
+  ],
+  "elements": [
+    {
+      "id": "modal_body",
+      "type": "text_region",
+      "bbox": [0.34, 0.34, 0.66, 0.58],
+      "ocr_required": true,
+      "semantic_role": "modal_text"
+    },
+    {
+      "id": "modal_confirm",
+      "type": "button",
+      "bbox": [0.39, 0.61, 0.49, 0.69],
+      "ocr_required": false,
+      "semantic_role": "confirm"
+    },
+    {
+      "id": "modal_cancel",
+      "type": "button",
+      "bbox": [0.51, 0.61, 0.61, 0.69],
+      "ocr_required": false,
+      "semantic_role": "cancel"
+    }
+  ],
+  "available_intents": ["read_modal", "confirm_modal", "cancel_modal"]
+}
+
