@@ -73,3 +73,66 @@ def test_matches_expected_cases_from_single_manifest(tmp_path: Path) -> None:
     assert "expected_json" not in main_world.missing
     assert "expected_json" not in npc_dialog.missing
     assert "expected_json" in battle.missing
+
+
+def test_counts_existing_screenshot_paths_from_expected_manifest(tmp_path: Path) -> None:
+    samples_dir = tmp_path / "samples"
+    expected_dir = samples_dir / "expected"
+    screenshots_dir = samples_dir / "screenshots"
+    expected_dir.mkdir(parents=True)
+    screenshots_dir.mkdir(parents=True)
+    screenshot = screenshots_dir / "timestamp_only.png"
+    screenshot.write_bytes(b"not an image")
+
+    (expected_dir / "final_expected.json").write_text(
+        f"""
+        {{
+          "cases": [
+            {{
+              "case_id": "main_world__runtime",
+              "template_id": "dhxy2_classic_main_world_v1",
+              "screen_type": "main_world",
+              "screenshot": "{screenshot}"
+            }}
+          ]
+        }}
+        """,
+        encoding="utf-8",
+    )
+
+    report = build_coverage_report(GAME_DIR, samples_dir)
+    main_world = next(item for item in report.templates if item.screen_type == "main_world")
+
+    assert main_world.sample_count == 1
+    assert "screenshot_sample" not in main_world.missing
+
+
+def test_does_not_double_count_named_screenshot_referenced_by_manifest(tmp_path: Path) -> None:
+    samples_dir = tmp_path / "samples"
+    expected_dir = samples_dir / "expected"
+    screenshots_dir = samples_dir / "screenshots"
+    expected_dir.mkdir(parents=True)
+    screenshots_dir.mkdir(parents=True)
+    screenshot = screenshots_dir / "main_world__baseline.png"
+    screenshot.write_bytes(b"not an image")
+
+    (expected_dir / "final_expected.json").write_text(
+        f"""
+        {{
+          "cases": [
+            {{
+              "case_id": "main_world__baseline",
+              "template_id": "dhxy2_classic_main_world_v1",
+              "screen_type": "main_world",
+              "screenshot": "{screenshot}"
+            }}
+          ]
+        }}
+        """,
+        encoding="utf-8",
+    )
+
+    report = build_coverage_report(GAME_DIR, samples_dir)
+    main_world = next(item for item in report.templates if item.screen_type == "main_world")
+
+    assert main_world.sample_count == 1

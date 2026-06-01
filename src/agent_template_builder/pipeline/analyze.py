@@ -108,6 +108,8 @@ def analyze_screenshot(
             "ocr_policy": game_config.get("ocr_policy", {}),
             "match": {
                 "aspect_ratio_label": match.aspect_ratio_label,
+                "fallback_reason": match.fallback_reason,
+                "measurable_template_count": match.measurable_template_count,
                 "anchor_matches": [
                     {
                         "id": item.id,

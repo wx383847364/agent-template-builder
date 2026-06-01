@@ -1,6 +1,6 @@
 # DHXY2 公开参考图
 
-这些图片是用于梳理首批模板分类的公开参考资料。优先使用 `references/dhxy2_public/latest/`。`legacy/` 目录仅保留用于对比，不应作为模板校准依据。
+这些图片是用于梳理首批模板分类的参考资料。优先使用 `references/dhxy2_public/latest/`。`legacy/` 目录中已有一批真实或历史截图，可作为第一批校准候选入口，但纳入 expected、anchor/hash 或 OCR 基线前仍需人工确认。
 
 公开图片不是最终校准样本。最终哈希、OCR 区域和精确 bbox 应来自本地固定窗口截图。
 

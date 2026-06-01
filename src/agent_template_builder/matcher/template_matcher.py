@@ -33,6 +33,8 @@ class MatchResult:
     height: int
     anchor_matches: list[AnchorMatch]
     aspect_ratio_label: Optional[str] = None
+    fallback_reason: Optional[str] = None
+    measurable_template_count: int = 0
 
 
 class TemplateMatcher:
@@ -58,6 +60,7 @@ class TemplateMatcher:
     def match(self, screenshot_path: Path) -> MatchResult:
         width, height = image_size(screenshot_path)
         aspect_label, size_score = self._score_viewport(width, height)
+        measurable_template_count = sum(1 for template in self._templates if template.measurable_anchor_count)
 
         scored = [
             (self._score_template(screenshot_path, template, width, height, size_score), template)
@@ -65,11 +68,13 @@ class TemplateMatcher:
         ]
         best, template = max(scored, key=lambda item: (item[0][0], item[1].priority))
         confidence, anchor_matches = best
+        fallback_reason = None
 
-        if not any(template.measurable_anchor_count for template in self._templates):
+        if measurable_template_count == 0:
             template = self._default_template()
             confidence = 0.70 * size_score
             anchor_matches = []
+            fallback_reason = "no_measurable_anchor_hash"
 
         return MatchResult(
             template=template,
@@ -78,6 +83,8 @@ class TemplateMatcher:
             height=height,
             anchor_matches=anchor_matches,
             aspect_ratio_label=aspect_label,
+            fallback_reason=fallback_reason,
+            measurable_template_count=measurable_template_count,
         )
 
     def _score_viewport(self, width: int, height: int) -> tuple[Optional[str], float]:

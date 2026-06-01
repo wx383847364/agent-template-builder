@@ -37,6 +37,15 @@ python -m pytest
 
 Codex 新会话与长期项目记忆入口见 [docs/项目总览.md](docs/项目总览.md)。
 
+实时截图目录可以用下面命令分析。截图文件名只用于追踪和排序，不参与模板识别：
+
+```bash
+.venv/bin/agent-template-builder-analyze-screenshots references/dhxy2_public/legacy --latest --agent-data
+.venv/bin/agent-template-builder-analyze-screenshots references/dhxy2_public/legacy --jsonl
+```
+
+实时截图接入口径见 [docs/实时截图接入.md](docs/实时截图接入.md)。
+
 ## 目前已实现
 
 - 已定义 `AgentData`、屏幕、元素、证据、运行状态等导出 schema。

@@ -54,13 +54,15 @@ def build_coverage_report(game_dir: Path, samples_dir: Path | None = None) -> Co
     if samples_dir is None:
         project_root = find_project_root(game_dir)
         samples_dir = project_root / "samples" / game_dir.name
+    else:
+        project_root = find_project_root(game_dir)
     samples_dir = samples_dir.resolve()
 
     screenshots_dir = samples_dir / "screenshots"
     expected_dir = samples_dir / "expected"
     templates = load_templates(game_dir)
     coverage = [
-        _template_coverage(template, screenshots_dir, expected_dir)
+        _template_coverage(template, screenshots_dir, expected_dir, project_root)
         for template in templates
     ]
     complete_count = sum(1 for item in coverage if not item.missing)
@@ -78,8 +80,12 @@ def _template_coverage(
     template: TemplateSpec,
     screenshots_dir: Path,
     expected_dir: Path,
+    project_root: Path,
 ) -> TemplateCoverage:
-    sample_count = _matching_file_count(screenshots_dir, template, IMAGE_SUFFIXES)
+    sample_count = len(
+        _matching_file_paths(screenshots_dir, template, IMAGE_SUFFIXES)
+        | _matching_expected_screenshot_paths(expected_dir, template, project_root)
+    )
     expected_count = _matching_file_count(expected_dir, template, {".json"})
     ocr_region_count = sum(1 for element in template.elements if element.ocr_required)
 
@@ -108,6 +114,9 @@ def _template_coverage(
 
 
 def _matching_file_count(directory: Path, template: TemplateSpec, suffixes: set[str]) -> int:
+    if suffixes != {".json"}:
+        return len(_matching_file_paths(directory, template, suffixes))
+
     if not directory.exists():
         return 0
 
@@ -119,9 +128,22 @@ def _matching_file_count(directory: Path, template: TemplateSpec, suffixes: set[
         if path.stem in stems or any(path.stem.startswith(f"{stem}__") for stem in stems):
             count += 1
             continue
-        if path.suffix.lower() == ".json":
-            count += _matching_expected_case_count(path, template)
+        count += _matching_expected_case_count(path, template)
     return count
+
+
+def _matching_file_paths(directory: Path, template: TemplateSpec, suffixes: set[str]) -> set[Path]:
+    if not directory.exists():
+        return set()
+
+    stems = {template.template_id, template.screen_type}
+    paths: set[Path] = set()
+    for path in directory.iterdir():
+        if not path.is_file() or path.suffix.lower() not in suffixes:
+            continue
+        if path.stem in stems or any(path.stem.startswith(f"{stem}__") for stem in stems):
+            paths.add(path.resolve())
+    return paths
 
 
 def _matching_expected_case_count(path: Path, template: TemplateSpec) -> int:
@@ -142,6 +164,56 @@ def _matching_expected_case_count(path: Path, template: TemplateSpec) -> int:
         if item.get("template_id") == template.template_id or item.get("screen_type") == template.screen_type:
             count += 1
     return count
+
+
+def _matching_expected_screenshot_paths(
+    expected_dir: Path,
+    template: TemplateSpec,
+    project_root: Path,
+) -> set[Path]:
+    if not expected_dir.exists():
+        return set()
+
+    matched_paths: set[Path] = set()
+    for path in expected_dir.iterdir():
+        if not path.is_file() or path.suffix.lower() != ".json":
+            continue
+        for screenshot in _matching_expected_screenshots(path, template, project_root):
+            matched_paths.add(screenshot)
+    return matched_paths
+
+
+def _matching_expected_screenshots(
+    expected_path: Path,
+    template: TemplateSpec,
+    project_root: Path,
+) -> list[Path]:
+    try:
+        with expected_path.open("r", encoding="utf-8") as handle:
+            data = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return []
+
+    cases = data.get("cases")
+    if not isinstance(cases, list):
+        return []
+
+    screenshots: list[Path] = []
+    for item in cases:
+        if not isinstance(item, dict):
+            continue
+        if item.get("template_id") != template.template_id and item.get("screen_type") != template.screen_type:
+            continue
+        screenshot = item.get("screenshot")
+        if not isinstance(screenshot, str) or not screenshot:
+            continue
+        screenshot_path = Path(screenshot)
+        candidates = [screenshot_path] if screenshot_path.is_absolute() else [project_root / screenshot_path]
+        for candidate in candidates:
+            if candidate.is_file() and candidate.suffix.lower() in IMAGE_SUFFIXES:
+                screenshots.append(candidate.resolve())
+                break
+    return screenshots
 
 
 def format_text_report(report: CoverageReport) -> str:

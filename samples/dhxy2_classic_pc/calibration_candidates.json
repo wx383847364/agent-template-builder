@@ -1,0 +1,75 @@
+{
+  "schema": "dhxy2_classic_pc.calibration_candidates.v1",
+  "source": "references/dhxy2_public/legacy",
+  "status": "candidate_mapping_only",
+  "notes": [
+    "这些图片来自 legacy 参考截图池，只作为模板校准候选入口。",
+    "文件名可帮助人工追踪候选类别，但运行时模板识别不得依赖文件名。",
+    "未人工确认 OCR 文本前，不从这些候选图生成 field_values。"
+  ],
+  "candidates": [
+    {
+      "source_path": "references/dhxy2_public/legacy/游戏1.png",
+      "candidate_screen_type": "main_world",
+      "candidate_template_id": "dhxy2_classic_main_world_v1",
+      "resolution": {"width": 1218, "height": 956},
+      "next_step": "复制为 samples/dhxy2_classic_pc/screenshots/main_world__legacy_game1.png 后校准 anchor/hash"
+    },
+    {
+      "source_path": "references/dhxy2_public/legacy/战斗1.png",
+      "candidate_screen_type": "battle",
+      "candidate_template_id": "dhxy2_classic_battle_v1",
+      "resolution": {"width": 1218, "height": 956},
+      "next_step": "复制为 samples/dhxy2_classic_pc/screenshots/battle__legacy_battle1.png 后校准 anchor/hash"
+    },
+    {
+      "source_path": "references/dhxy2_public/legacy/战斗2.png",
+      "candidate_screen_type": "battle",
+      "candidate_template_id": "dhxy2_classic_battle_v1",
+      "resolution": {"width": 1218, "height": 956},
+      "next_step": "作为 battle 变体样本候选，人工确认后再纳入 expected"
+    },
+    {
+      "source_path": "references/dhxy2_public/legacy/战斗3.png",
+      "candidate_screen_type": "battle",
+      "candidate_template_id": "dhxy2_classic_battle_v1",
+      "resolution": {"width": 1218, "height": 956},
+      "next_step": "作为 battle 变体样本候选，人工确认后再纳入 expected"
+    },
+    {
+      "source_path": "references/dhxy2_public/legacy/地图.png",
+      "candidate_screen_type": "system_panel",
+      "candidate_template_id": "dhxy2_classic_system_panel_v1",
+      "resolution": {"width": 1218, "height": 956},
+      "next_step": "需要后续决定是否新增 map/navigation 专用模板"
+    },
+    {
+      "source_path": "references/dhxy2_public/legacy/人物属性1.png",
+      "candidate_screen_type": "system_panel",
+      "candidate_template_id": "dhxy2_classic_system_panel_v1",
+      "resolution": {"width": 1218, "height": 956},
+      "next_step": "作为系统面板类候选，校准前先确认 panel 标题和稳定 anchor"
+    },
+    {
+      "source_path": "references/dhxy2_public/legacy/物品栏_道具1.png",
+      "candidate_screen_type": "system_panel",
+      "candidate_template_id": "dhxy2_classic_system_panel_v1",
+      "resolution": {"width": 1218, "height": 956},
+      "next_step": "作为系统面板类候选，校准前先确认 panel 标题和稳定 anchor"
+    },
+    {
+      "source_path": "references/dhxy2_public/legacy/登录1.png",
+      "candidate_screen_type": "login_waterfall",
+      "candidate_template_id": "dhxy2_classic_login_waterfall_v1",
+      "resolution": {"width": 1923, "height": 1128},
+      "next_step": "登录图分辨率与游戏内截图不同，先确认正式运行窗口尺寸再校准"
+    },
+    {
+      "source_path": "references/dhxy2_public/legacy/登录2.png",
+      "candidate_screen_type": "login_waterfall",
+      "candidate_template_id": "dhxy2_classic_login_waterfall_v1",
+      "resolution": {"width": 1554, "height": 1174},
+      "next_step": "登录流程候选，人工确认后再拆分登录/服务器选择/角色选择模板"
+    }
+  ]
+}
