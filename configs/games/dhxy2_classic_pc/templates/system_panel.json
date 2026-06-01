@@ -5,10 +5,11 @@
   "priority": 25,
   "anchors": [
     {
-      "id": "center_or_left_panel",
+      "id": "character_attributes_panel_area",
       "type": "layout_region",
-      "bbox": [0.12, 0.12, 0.72, 0.88],
-      "weight": 0.45
+      "bbox": [0.58, 0.18, 0.975, 0.88],
+      "weight": 0.45,
+      "expected_hash": "fcd0b0ec8484ffff"
     },
     {
       "id": "right_world_visible_area",

@@ -75,6 +75,10 @@ class TemplateMatcher:
             confidence = 0.70 * size_score
             anchor_matches = []
             fallback_reason = "no_measurable_anchor_hash"
+        elif anchor_matches and not any(match.score > 0 for match in anchor_matches):
+            template = self._default_template()
+            confidence = 0.35 * size_score
+            fallback_reason = "no_anchor_hash_match"
 
         return MatchResult(
             template=template,

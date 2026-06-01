@@ -13,8 +13,9 @@
     {
       "id": "right_login_buttons",
       "type": "layout_region",
-      "bbox": [0.76, 0.28, 0.97, 0.78],
-      "weight": 0.45
+      "bbox": [0.805, 0.70, 0.925, 0.86],
+      "weight": 0.45,
+      "expected_hash": "38fcfcfc7c381000"
     }
   ],
   "elements": [

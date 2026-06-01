@@ -7,8 +7,9 @@
     {
       "id": "battle_command_area",
       "type": "layout_region",
-      "bbox": [0.68, 0.62, 0.99, 0.98],
-      "weight": 0.40
+      "bbox": [0.875, 0.38, 0.985, 0.70],
+      "weight": 0.40,
+      "expected_hash": "f2f0f2f2f0f0f0f0"
     },
     {
       "id": "battle_log_or_chat_area",

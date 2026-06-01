@@ -51,6 +51,21 @@
       "no": 10,
       "key": "modal_cancel_label",
       "meaning": "阻塞弹窗取消按钮文本"
+    },
+    {
+      "no": 11,
+      "key": "system_notice",
+      "meaning": "登录界面系统公告文本"
+    },
+    {
+      "no": 12,
+      "key": "battle_status",
+      "meaning": "战斗状态文本"
+    },
+    {
+      "no": 13,
+      "key": "panel_title",
+      "meaning": "系统面板标题文本"
     }
   ],
   "cases": [
@@ -123,6 +138,102 @@
         },
         "required_elements": ["modal_body", "modal_confirm", "modal_cancel"],
         "ocr_field_numbers": [8],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "main_world__legacy_game1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/main_world__legacy_game1.png",
+      "template_id": "dhxy2_classic_main_world_v1",
+      "screen_type": "main_world",
+      "sample_status": "legacy_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "main_world",
+          "template_id": "dhxy2_classic_main_world_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_task", "open_map", "continue_navigation"]
+        },
+        "required_elements": ["task_tracker", "chat_panel", "map_entry"],
+        "ocr_field_numbers": [4],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "battle__legacy_battle1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/battle__legacy_battle1.png",
+      "template_id": "dhxy2_classic_battle_v1",
+      "screen_type": "battle",
+      "sample_status": "legacy_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "battle",
+          "template_id": "dhxy2_classic_battle_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_battle_status", "inspect_battle_commands"]
+        },
+        "required_elements": ["battle_command_area", "battle_status_text"],
+        "ocr_field_numbers": [12],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "login_waterfall__legacy_login1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/login_waterfall__legacy_login1.png",
+      "template_id": "dhxy2_classic_login_waterfall_v1",
+      "screen_type": "login_waterfall",
+      "sample_status": "legacy_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "login_waterfall",
+          "template_id": "dhxy2_classic_login_waterfall_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_login_notice", "open_server_select", "switch_login_style"]
+        },
+        "required_elements": ["login_action_stack", "login_notice_text"],
+        "ocr_field_numbers": [11],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "system_panel__legacy_character_attributes1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/system_panel__legacy_character_attributes1.png",
+      "template_id": "dhxy2_classic_system_panel_v1",
+      "screen_type": "system_panel",
+      "sample_status": "legacy_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "system_panel",
+          "template_id": "dhxy2_classic_system_panel_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_panel_title", "inspect_panel", "close_panel"]
+        },
+        "required_elements": ["panel_title", "panel_content"],
+        "ocr_field_numbers": [13],
         "field_values": []
       }
     }

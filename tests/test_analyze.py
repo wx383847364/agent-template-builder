@@ -22,9 +22,11 @@ def test_analyze_accepts_same_ratio_different_resolution(tmp_path: Path) -> None
     data = result.to_dict()
 
     assert data["screen"]["type"] == "main_world"
-    assert data["screen"]["confidence"] == 0.7
+    assert data["screen"]["confidence"] == 0.35
     assert data["screen"]["resolution"] == {"width": 1920, "height": 1080}
     assert data["raw"]["match"]["aspect_ratio_label"] == "wide_16_9"
+    assert data["raw"]["match"]["fallback_reason"] == "no_anchor_hash_match"
+    assert data["raw"]["match"]["measurable_template_count"] == 4
     assert data["elements"][0]["bbox"] == (1382, 130, 1901, 475)
 
 
@@ -34,10 +36,10 @@ def test_analyze_penalizes_unknown_aspect_ratio(tmp_path: Path) -> None:
 
     result = analyze_screenshot(screenshot, GAME_DIR)
 
-    assert result.screen.confidence == 0.315
+    assert result.screen.confidence == 0.158
     assert result.raw["match"]["aspect_ratio_label"] is None
-    assert result.raw["match"]["fallback_reason"] == "no_measurable_anchor_hash"
-    assert result.raw["match"]["measurable_template_count"] == 0
+    assert result.raw["match"]["fallback_reason"] == "no_anchor_hash_match"
+    assert result.raw["match"]["measurable_template_count"] == 4
 
 
 def test_lists_screenshots_without_using_names_for_classification(tmp_path: Path) -> None:
@@ -56,7 +58,7 @@ def test_lists_screenshots_without_using_names_for_classification(tmp_path: Path
     assert summary.screenshot == str(latest.resolve())
     assert summary.screen_type == "main_world"
     assert summary.template_id == "dhxy2_classic_main_world_v1"
-    assert summary.match["fallback_reason"] == "no_measurable_anchor_hash"
+    assert summary.match["fallback_reason"] == "no_anchor_hash_match"
 
 
 def test_summarizes_directory_for_batch_agent_handoff(tmp_path: Path) -> None:

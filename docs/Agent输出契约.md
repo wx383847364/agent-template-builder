@@ -37,5 +37,5 @@
 ## 当前缺口
 
 - OCR 引擎仍为空实现。
-- `samples/dhxy2_classic_pc/expected/final_expected.json` 已建立首批 expected 填写入口，但当前三类优先模板仍缺真实截图和 OCR 文本值。
-- 部分模板只有布局锚点，缺少可度量 hash。
+- `samples/dhxy2_classic_pc/expected/final_expected.json` 已建立 expected 填写入口，首批 legacy 样本仍未人工确认 OCR 文本值。
+- 部分模板只有布局锚点，缺少可度量 hash；主世界、战斗、登录瀑布和人物属性类系统面板已有首批可度量 anchor/hash。

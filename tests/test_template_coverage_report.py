@@ -11,7 +11,17 @@ def test_reports_current_template_gaps() -> None:
     data = report.to_dict()
 
     assert data["template_count"] >= 1
-    assert data["complete_count"] == 0
+    assert data["complete_count"] == 4
+    calibrated = {
+        "dhxy2_classic_main_world_v1",
+        "dhxy2_classic_battle_v1",
+        "dhxy2_classic_login_waterfall_v1",
+        "dhxy2_classic_system_panel_v1",
+    }
+    for item in data["templates"]:
+        if item["template_id"] in calibrated:
+            assert "screenshot_sample" not in item["missing"]
+            assert "measurable_anchor" not in item["missing"]
     assert any(
         "screenshot_sample" in item["missing"] and "expected_json" in item["missing"]
         for item in data["templates"]
