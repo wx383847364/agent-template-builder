@@ -35,7 +35,7 @@ python -m agent_template_builder.pipeline.analyze samples/dhxy2_classic_pc/scree
 python -m pytest
 ```
 
-长期项目记忆入口见 [docs/项目总览.md](docs/项目总览.md)。
+Codex 新会话与长期项目记忆入口见 [docs/项目总览.md](docs/项目总览.md)。
 
 ## 目前已实现
 
@@ -50,7 +50,7 @@ python -m pytest
 
 1. 为首批模板各采集 3-10 张截图：主世界、NPC 对话、阻塞弹窗、地图/导航、奖励/提示弹窗。
 2. 为每个模板锚点填入真实区域哈希或图像锚点。
-3. 在 `samples/dhxy2_classic_pc/expected` 下添加预期 JSON 文件。
+3. 在 `samples/dhxy2_classic_pc/expected/final_expected.json` 中补齐对应截图的预期字段值。
 4. 将 OCR 限制在标记为 `ocr_required: true` 的区域内。
 
 模板 bbox 使用屏幕比例而不是固定像素，因此同一个模板可以适配多种共享受支持宽高比的分辨率。

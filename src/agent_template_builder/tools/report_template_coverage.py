@@ -118,6 +118,29 @@ def _matching_file_count(directory: Path, template: TemplateSpec, suffixes: set[
             continue
         if path.stem in stems or any(path.stem.startswith(f"{stem}__") for stem in stems):
             count += 1
+            continue
+        if path.suffix.lower() == ".json":
+            count += _matching_expected_case_count(path, template)
+    return count
+
+
+def _matching_expected_case_count(path: Path, template: TemplateSpec) -> int:
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            data = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return 0
+
+    cases = data.get("cases")
+    if not isinstance(cases, list):
+        return 0
+
+    count = 0
+    for item in cases:
+        if not isinstance(item, dict):
+            continue
+        if item.get("template_id") == template.template_id or item.get("screen_type") == template.screen_type:
+            count += 1
     return count
 
 

@@ -37,5 +37,5 @@
 ## 当前缺口
 
 - OCR 引擎仍为空实现。
-- expected JSON 尚未建立真实样本基线。
+- `samples/dhxy2_classic_pc/expected/final_expected.json` 已建立首批 expected 填写入口，但当前三类优先模板仍缺真实截图和 OCR 文本值。
 - 部分模板只有布局锚点，缺少可度量 hash。

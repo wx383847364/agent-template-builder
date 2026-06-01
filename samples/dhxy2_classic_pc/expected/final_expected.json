@@ -1,0 +1,130 @@
+{
+  "schema": "dhxy2_classic_pc.final_expected.v1",
+  "agent_data_contract": "docs/Agent输出契约.md",
+  "field_dictionary": [
+    {
+      "no": 1,
+      "key": "account_name",
+      "meaning": "账号名称"
+    },
+    {
+      "no": 2,
+      "key": "password",
+      "meaning": "密码"
+    },
+    {
+      "no": 3,
+      "key": "server_name",
+      "meaning": "服务器名称"
+    },
+    {
+      "no": 4,
+      "key": "current_task",
+      "meaning": "主世界任务追踪文本"
+    },
+    {
+      "no": 5,
+      "key": "npc_name",
+      "meaning": "NPC 名称"
+    },
+    {
+      "no": 6,
+      "key": "dialog_text",
+      "meaning": "NPC 对话正文"
+    },
+    {
+      "no": 7,
+      "key": "dialog_options",
+      "meaning": "NPC 对话选项"
+    },
+    {
+      "no": 8,
+      "key": "modal_text",
+      "meaning": "阻塞弹窗正文"
+    },
+    {
+      "no": 9,
+      "key": "modal_confirm_label",
+      "meaning": "阻塞弹窗确认按钮文本"
+    },
+    {
+      "no": 10,
+      "key": "modal_cancel_label",
+      "meaning": "阻塞弹窗取消按钮文本"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "main_world__baseline",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/main_world__baseline.png",
+      "template_id": "dhxy2_classic_main_world_v1",
+      "screen_type": "main_world",
+      "sample_status": "placeholder_no_screenshot",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "main_world",
+          "template_id": "dhxy2_classic_main_world_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_task", "open_map", "continue_navigation"]
+        },
+        "required_elements": ["task_tracker", "chat_panel", "map_entry"],
+        "ocr_field_numbers": [4],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "npc_dialog__baseline",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/npc_dialog__baseline.png",
+      "template_id": "dhxy2_classic_npc_dialog_v1",
+      "screen_type": "npc_dialog",
+      "sample_status": "placeholder_no_screenshot",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "npc_dialog",
+          "template_id": "dhxy2_classic_npc_dialog_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_dialog", "continue_dialog", "choose_dialog_option"]
+        },
+        "required_elements": ["dialog_body", "dialog_options", "dialog_continue"],
+        "ocr_field_numbers": [6, 7],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "blocking_modal__baseline",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/blocking_modal__baseline.png",
+      "template_id": "dhxy2_classic_blocking_modal_v1",
+      "screen_type": "blocking_modal",
+      "sample_status": "placeholder_no_screenshot",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "blocking_modal",
+          "template_id": "dhxy2_classic_blocking_modal_v1"
+        },
+        "state": {
+          "blocking_modal": true,
+          "available_intents": ["read_modal", "confirm_modal", "cancel_modal"]
+        },
+        "required_elements": ["modal_body", "modal_confirm", "modal_cancel"],
+        "ocr_field_numbers": [8],
+        "field_values": []
+      }
+    }
+  ]
+}
