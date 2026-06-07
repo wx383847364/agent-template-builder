@@ -63,3 +63,21 @@ Codex 新会话与长期项目记忆入口见 [docs/项目总览.md](docs/项目
 4. 将 OCR 限制在标记为 `ocr_required: true` 的区域内。
 
 模板 bbox 使用屏幕比例而不是固定像素，因此同一个模板可以适配多种共享受支持宽高比的分辨率。
+
+## 本地游戏路径配置
+
+本机游戏安装目录和截图目录写在 `configs/local.json`，该文件已加入 `.gitignore`，不随仓库提交。可提交的配置示例是 `configs/local.example.json`。
+
+默认截图目录检索顺序：
+
+1. 环境变量 `AGENT_TEMPLATE_BUILDER_SCREENSHOT_DIR`
+2. `configs/local.json` 中的 `games.dhxy2_classic_pc.screenshot_dir`
+3. 已知默认路径 `G:/大话/大话西游2_经典版/screen`
+4. 项目样本目录 `samples/dhxy2_classic_pc/screenshots`
+
+配置完成后，实时截图分析命令可以省略目录参数：
+
+```powershell
+.\.venv\Scripts\python.exe -m agent_template_builder.pipeline.analyze_screenshots --latest
+.\.venv\Scripts\python.exe -m agent_template_builder.pipeline.analyze_screenshots --latest --agent-data
+```

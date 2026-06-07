@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 from agent_template_builder.matcher.hash import hamming_distance, image_size, region_hash
-from agent_template_builder.schema.templates import denormalize_bbox
+from agent_template_builder.matcher.roi import GameView, denormalize_bbox_in_view, detect_game_view
 from agent_template_builder.schema.templates import TemplateSpec
 
 
@@ -31,6 +31,7 @@ class MatchResult:
     confidence: float
     width: int
     height: int
+    game_view: GameView
     anchor_matches: list[AnchorMatch]
     aspect_ratio_label: Optional[str] = None
     fallback_reason: Optional[str] = None
@@ -59,11 +60,12 @@ class TemplateMatcher:
 
     def match(self, screenshot_path: Path) -> MatchResult:
         width, height = image_size(screenshot_path)
-        aspect_label, size_score = self._score_viewport(width, height)
+        game_view = detect_game_view(screenshot_path)
+        aspect_label, size_score = self._score_viewport(game_view.width, game_view.height)
         measurable_template_count = sum(1 for template in self._templates if template.measurable_anchor_count)
 
         scored = [
-            (self._score_template(screenshot_path, template, width, height, size_score), template)
+            (self._score_template(screenshot_path, template, game_view, size_score), template)
             for template in self._templates
         ]
         best, template = max(scored, key=lambda item: (item[0][0], item[1].priority))
@@ -85,6 +87,7 @@ class TemplateMatcher:
             confidence=round(confidence, 3),
             width=width,
             height=height,
+            game_view=game_view,
             anchor_matches=anchor_matches,
             aspect_ratio_label=aspect_label,
             fallback_reason=fallback_reason,
@@ -110,8 +113,7 @@ class TemplateMatcher:
         self,
         screenshot_path: Path,
         template: TemplateSpec,
-        width: int,
-        height: int,
+        game_view: GameView,
         size_score: float,
     ) -> tuple[float, list[AnchorMatch]]:
         measurable = [anchor for anchor in template.anchors if anchor.expected_hash]
@@ -123,7 +125,7 @@ class TemplateMatcher:
         matches: list[AnchorMatch] = []
 
         for anchor in measurable:
-            bbox = denormalize_bbox(anchor.bbox, width, height)
+            bbox = denormalize_bbox_in_view(anchor.bbox, game_view)
             actual_hash = region_hash(screenshot_path, bbox)
             distance = hamming_distance(actual_hash, anchor.expected_hash or "")
             score = max(0.0, 1.0 - (distance / max(anchor.max_hamming_distance, 1)))

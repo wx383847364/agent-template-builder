@@ -11,19 +11,21 @@ def test_reports_current_template_gaps() -> None:
     data = report.to_dict()
 
     assert data["template_count"] >= 1
-    assert data["complete_count"] == 4
+    assert data["complete_count"] == 6
     calibrated = {
         "dhxy2_classic_main_world_v1",
         "dhxy2_classic_battle_v1",
         "dhxy2_classic_login_waterfall_v1",
         "dhxy2_classic_system_panel_v1",
+        "dhxy2_classic_character_select_v1",
+        "dhxy2_classic_server_select_v1",
     }
     for item in data["templates"]:
         if item["template_id"] in calibrated:
             assert "screenshot_sample" not in item["missing"]
             assert "measurable_anchor" not in item["missing"]
     assert any(
-        "screenshot_sample" in item["missing"] and "expected_json" in item["missing"]
+        "screenshot_sample" in item["missing"] and "measurable_anchor" in item["missing"]
         for item in data["templates"]
     )
 
@@ -102,7 +104,7 @@ def test_counts_existing_screenshot_paths_from_expected_manifest(tmp_path: Path)
               "case_id": "main_world__runtime",
               "template_id": "dhxy2_classic_main_world_v1",
               "screen_type": "main_world",
-              "screenshot": "{screenshot}"
+              "screenshot": "{screenshot.as_posix()}"
             }}
           ]
         }}
@@ -134,7 +136,7 @@ def test_does_not_double_count_named_screenshot_referenced_by_manifest(tmp_path:
               "case_id": "main_world__baseline",
               "template_id": "dhxy2_classic_main_world_v1",
               "screen_type": "main_world",
-              "screenshot": "{screenshot}"
+              "screenshot": "{screenshot.as_posix()}"
             }}
           ]
         }}

@@ -5,7 +5,7 @@ from pathlib import Path
 import argparse
 import json
 
-from agent_template_builder.paths import default_game_dir
+from agent_template_builder.paths import DEFAULT_GAME_ID, default_game_dir, default_screenshot_dir
 from agent_template_builder.pipeline.analyze import analyze_screenshot
 
 
@@ -25,9 +25,9 @@ class ScreenshotSummary:
 def list_screenshots(directory: Path) -> list[Path]:
     directory = directory.resolve()
     if not directory.exists():
-        raise FileNotFoundError(f"截图目录不存在: {directory}")
+        raise FileNotFoundError(f"screenshot directory does not exist: {directory}")
     if not directory.is_dir():
-        raise NotADirectoryError(f"不是截图目录: {directory}")
+        raise NotADirectoryError(f"not a screenshot directory: {directory}")
 
     screenshots = [
         path
@@ -40,7 +40,7 @@ def list_screenshots(directory: Path) -> list[Path]:
 def latest_screenshot(directory: Path) -> Path:
     screenshots = list_screenshots(directory)
     if not screenshots:
-        raise FileNotFoundError(f"截图目录没有可分析图片: {directory.resolve()}")
+        raise FileNotFoundError(f"no analyzable images in screenshot directory: {directory.resolve()}")
     return screenshots[-1]
 
 
@@ -66,16 +66,23 @@ def summarize_directory(directory: Path, game_dir: Path = default_game_dir()) ->
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="分析实时截图目录并输出 AgentData 或摘要。")
-    parser.add_argument("directory", type=Path, help="截图目录，文件名仅用于追踪，不参与模板识别。")
+    parser = argparse.ArgumentParser(description="Analyze a live screenshot directory.")
+    parser.add_argument(
+        "directory",
+        type=Path,
+        nargs="?",
+        help="Screenshot directory. Defaults to local config, known game paths, then samples.",
+    )
     parser.add_argument("--game-dir", type=Path, default=default_game_dir())
-    parser.add_argument("--latest", action="store_true", help="只分析目录中修改时间最新的截图。")
-    parser.add_argument("--agent-data", action="store_true", help="与 --latest 一起使用，输出完整 AgentData JSON。")
-    parser.add_argument("--jsonl", action="store_true", help="批量分析时按 JSON Lines 输出。")
+    parser.add_argument("--latest", action="store_true", help="Only analyze the newest screenshot.")
+    parser.add_argument("--agent-data", action="store_true", help="With --latest, print full AgentData JSON.")
+    parser.add_argument("--jsonl", action="store_true", help="Print batch summaries as JSON Lines.")
     args = parser.parse_args()
 
+    directory = args.directory or default_screenshot_dir(DEFAULT_GAME_ID)
+
     if args.latest:
-        screenshot = latest_screenshot(args.directory)
+        screenshot = latest_screenshot(directory)
         if args.agent_data:
             result = analyze_screenshot(screenshot, args.game_dir)
             print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
@@ -84,7 +91,7 @@ def main() -> None:
         print(json.dumps(asdict(summary), ensure_ascii=False, indent=2))
         return
 
-    summaries = summarize_directory(args.directory, args.game_dir)
+    summaries = summarize_directory(directory, args.game_dir)
     if args.jsonl:
         for summary in summaries:
             print(json.dumps(asdict(summary), ensure_ascii=False))

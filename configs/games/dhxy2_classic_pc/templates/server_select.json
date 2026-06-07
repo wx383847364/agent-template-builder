@@ -7,28 +7,30 @@
     {
       "id": "center_server_panel",
       "type": "layout_region",
-      "bbox": [0.27, 0.16, 0.74, 0.84],
-      "weight": 0.60
+      "bbox": [0.031, 0.116, 0.760, 0.853],
+      "weight": 0.60,
+      "expected_hash": "fffffcf8ff000000"
     },
     {
       "id": "server_confirm_area",
       "type": "layout_region",
-      "bbox": [0.58, 0.74, 0.74, 0.84],
-      "weight": 0.20
+      "bbox": [0.424, 0.814, 0.507, 0.855],
+      "weight": 0.35,
+      "expected_hash": "ff000024b4eeffff"
     }
   ],
   "elements": [
     {
       "id": "server_list",
       "type": "text_region",
-      "bbox": [0.32, 0.30, 0.68, 0.69],
+      "bbox": [0.035, 0.339, 0.758, 0.735],
       "ocr_required": true,
       "semantic_role": "server_list"
     },
     {
       "id": "server_confirm",
       "type": "button",
-      "bbox": [0.58, 0.74, 0.74, 0.84],
+      "bbox": [0.424, 0.814, 0.507, 0.855],
       "ocr_required": false,
       "semantic_role": "confirm_server"
     }

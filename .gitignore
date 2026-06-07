@@ -9,6 +9,7 @@ venv/
 dist/
 build/
 *.egg-info/
+configs/local.json
 
 # Keep binary image/reference media local unless explicitly needed.
 *.png

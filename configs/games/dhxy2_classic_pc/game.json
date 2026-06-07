@@ -26,6 +26,12 @@
       "width": 16,
       "height": 10,
       "tolerance": 0.04
+    },
+    {
+      "label": "classic_windowed_client",
+      "width": 800,
+      "height": 574,
+      "tolerance": 0.04
     }
   ],
   "supported_windows": [

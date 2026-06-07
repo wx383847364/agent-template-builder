@@ -236,6 +236,54 @@
         "ocr_field_numbers": [13],
         "field_values": []
       }
+    },
+    {
+      "case_id": "server_select__local_window1",
+      "screenshot": "G:/大话/大话西游2_经典版/screen/选择服务器，也可以直接选择角色进入游戏.png",
+      "template_id": "dhxy2_classic_server_select_v1",
+      "screen_type": "server_select",
+      "sample_status": "local_window_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "server_select",
+          "template_id": "dhxy2_classic_server_select_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_server_list", "confirm_server", "go_back"]
+        },
+        "required_elements": ["server_list", "server_confirm"],
+        "ocr_field_numbers": [3],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "character_select__local_window1",
+      "screenshot": "G:/大话/大话西游2_经典版/screen/角色选择.png",
+      "template_id": "dhxy2_classic_character_select_v1",
+      "screen_type": "character_select",
+      "sample_status": "local_window_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "character_select",
+          "template_id": "dhxy2_classic_character_select_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_selected_character", "enter_game", "create_character"]
+        },
+        "required_elements": ["character_grid", "selected_character_summary", "enter_game"],
+        "ocr_field_numbers": [],
+        "field_values": []
+      }
     }
   ]
 }

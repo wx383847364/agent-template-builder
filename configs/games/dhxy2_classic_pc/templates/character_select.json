@@ -7,35 +7,37 @@
     {
       "id": "character_grid_panel",
       "type": "layout_region",
-      "bbox": [0.25, 0.12, 0.75, 0.84],
-      "weight": 0.55
+      "bbox": [0.784, 0.244, 0.999, 0.513],
+      "weight": 0.45,
+      "expected_hash": "184050c0e8f8f8d8"
     },
     {
       "id": "enter_game_button_area",
       "type": "layout_region",
-      "bbox": [0.58, 0.76, 0.74, 0.86],
-      "weight": 0.25
+      "bbox": [0.448, 0.793, 0.582, 0.835],
+      "weight": 0.40,
+      "expected_hash": "e100006cfcffefd7"
     }
   ],
   "elements": [
     {
       "id": "character_grid",
       "type": "grid",
-      "bbox": [0.29, 0.18, 0.58, 0.67],
+      "bbox": [0.784, 0.244, 0.999, 0.513],
       "ocr_required": false,
       "semantic_role": "character_slots"
     },
     {
       "id": "selected_character_summary",
       "type": "text_region",
-      "bbox": [0.35, 0.68, 0.66, 0.78],
+      "bbox": [0.784, 0.245, 0.999, 0.335],
       "ocr_required": true,
       "semantic_role": "selected_character"
     },
     {
       "id": "enter_game",
       "type": "button",
-      "bbox": [0.58, 0.76, 0.74, 0.86],
+      "bbox": [0.448, 0.793, 0.582, 0.835],
       "ocr_required": false,
       "semantic_role": "enter_game"
     }

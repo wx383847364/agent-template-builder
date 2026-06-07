@@ -26,7 +26,7 @@ def test_analyze_accepts_same_ratio_different_resolution(tmp_path: Path) -> None
     assert data["screen"]["resolution"] == {"width": 1920, "height": 1080}
     assert data["raw"]["match"]["aspect_ratio_label"] == "wide_16_9"
     assert data["raw"]["match"]["fallback_reason"] == "no_anchor_hash_match"
-    assert data["raw"]["match"]["measurable_template_count"] == 4
+    assert data["raw"]["match"]["measurable_template_count"] == 6
     assert data["elements"][0]["bbox"] == (1382, 130, 1901, 475)
 
 
@@ -39,7 +39,7 @@ def test_analyze_penalizes_unknown_aspect_ratio(tmp_path: Path) -> None:
     assert result.screen.confidence == 0.158
     assert result.raw["match"]["aspect_ratio_label"] is None
     assert result.raw["match"]["fallback_reason"] == "no_anchor_hash_match"
-    assert result.raw["match"]["measurable_template_count"] == 4
+    assert result.raw["match"]["measurable_template_count"] == 6
 
 
 def test_lists_screenshots_without_using_names_for_classification(tmp_path: Path) -> None:

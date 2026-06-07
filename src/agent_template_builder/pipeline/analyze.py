@@ -6,10 +6,11 @@ import argparse
 import json
 
 from agent_template_builder.matcher.template_matcher import AspectRatioProfile, TemplateMatcher
+from agent_template_builder.matcher.roi import denormalize_bbox_in_view
 from agent_template_builder.ocr.base import NullOCREngine, OCREngine
 from agent_template_builder.paths import default_game_dir
 from agent_template_builder.schema.agent_data import AgentData, Element, Evidence, Resolution, RuntimeState, Screen, TaskState
-from agent_template_builder.schema.templates import denormalize_bbox, load_game_config, load_templates
+from agent_template_builder.schema.templates import load_game_config, load_templates
 
 
 DEFAULT_GAME_DIR = default_game_dir()
@@ -47,7 +48,7 @@ def analyze_screenshot(
     task_state: Optional[TaskState] = None
 
     for spec in match.template.elements:
-        bbox = denormalize_bbox(spec.bbox, match.width, match.height)
+        bbox = denormalize_bbox_in_view(spec.bbox, match.game_view)
         text = None
         confidence = match.confidence
         evidence = Evidence(
@@ -106,6 +107,12 @@ def analyze_screenshot(
         raw={
             "coordinate_space": game_config.get("coordinate_space", {}),
             "ocr_policy": game_config.get("ocr_policy", {}),
+            "game_view": {
+                "bbox": match.game_view.bbox,
+                "width": match.game_view.width,
+                "height": match.game_view.height,
+                "source": match.game_view.source,
+            },
             "match": {
                 "aspect_ratio_label": match.aspect_ratio_label,
                 "fallback_reason": match.fallback_reason,
