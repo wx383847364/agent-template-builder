@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 from PIL import Image
 
@@ -12,6 +13,7 @@ from agent_template_builder.pipeline.analyze_screenshots import (
 
 
 GAME_DIR = Path(__file__).resolve().parents[1] / "configs" / "games" / "dhxy2_classic_pc"
+SAMPLES_DIR = Path(__file__).resolve().parents[1] / "samples" / "dhxy2_classic_pc"
 
 
 def test_analyze_accepts_same_ratio_different_resolution(tmp_path: Path) -> None:
@@ -73,3 +75,33 @@ def test_summarizes_directory_for_batch_agent_handoff(tmp_path: Path) -> None:
     assert [item.screen_type for item in summaries] == ["main_world", "main_world"]
     assert summaries[0].match["aspect_ratio_label"] == "fixed_window"
     assert summaries[1].match["aspect_ratio_label"] is None
+
+
+def test_existing_repository_samples_match_expected_templates(tmp_path: Path) -> None:
+    expected_path = SAMPLES_DIR / "expected" / "final_expected.json"
+    with expected_path.open("r", encoding="utf-8") as handle:
+        manifest = json.load(handle)
+
+    cases = [
+        item
+        for item in manifest["cases"]
+        if item.get("sample_status") == "legacy_screenshot_anchor_calibrated"
+        and (Path(__file__).resolve().parents[1] / item["screenshot"]).is_file()
+    ]
+
+    assert {item["screen_type"] for item in cases} == {
+        "battle",
+        "login_waterfall",
+        "main_world",
+        "system_panel",
+    }
+
+    for index, case in enumerate(cases):
+        source = Path(__file__).resolve().parents[1] / case["screenshot"]
+        timestamp_only = tmp_path / f"runtime_capture_{index:02}.png"
+        timestamp_only.write_bytes(source.read_bytes())
+
+        result = analyze_screenshot(timestamp_only, GAME_DIR)
+
+        assert result.screen.type == case["screen_type"]
+        assert result.screen.template_id == case["template_id"]

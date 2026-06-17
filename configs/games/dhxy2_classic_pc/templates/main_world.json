@@ -15,7 +15,7 @@
       "type": "layout_region",
       "bbox": [0.0, 0.31, 0.24, 0.58],
       "weight": 0.35,
-      "expected_hash": "fef8e0e0f8f0dcd4"
+      "expected_hash": "f8e0f8f870fcd6d7"
     },
     {
       "id": "top_right_hud_area",

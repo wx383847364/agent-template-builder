@@ -9,7 +9,7 @@
       "type": "layout_region",
       "bbox": [0.875, 0.38, 0.985, 0.70],
       "weight": 0.40,
-      "expected_hash": "f2f0f2f2f0f0f0f0"
+      "expected_hash": "f87b7a7878787800"
     },
     {
       "id": "battle_log_or_chat_area",
