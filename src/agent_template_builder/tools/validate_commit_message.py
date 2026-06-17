@@ -154,6 +154,8 @@ def _history_subjects(repo_root: Path) -> list[str]:
         ["git", "-C", str(repo_root), "log", "--format=%s"],
         check=False,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
     )
@@ -169,7 +171,7 @@ def main() -> None:
     parser.add_argument("--no-sequence", action="store_true", help="Skip module sequence validation.")
     args = parser.parse_args()
 
-    message = args.commit_msg_file.read_text(encoding="utf-8")
+    message = args.commit_msg_file.read_text(encoding="utf-8-sig")
     errors = validate_commit_message(
         message,
         history_subjects=_history_subjects(args.repo_root),

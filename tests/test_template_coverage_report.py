@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from agent_template_builder.tools.report_template_coverage import build_coverage_report
@@ -11,19 +12,23 @@ def test_reports_current_template_gaps() -> None:
     data = report.to_dict()
 
     assert data["template_count"] >= 1
-    assert data["complete_count"] == 6
-    calibrated = {
+    assert data["complete_count"] == 4
+    sampled_and_calibrated = {
         "dhxy2_classic_main_world_v1",
         "dhxy2_classic_battle_v1",
         "dhxy2_classic_login_waterfall_v1",
         "dhxy2_classic_system_panel_v1",
+    }
+    anchor_calibrated = sampled_and_calibrated | {
         "dhxy2_classic_character_select_v1",
         "dhxy2_classic_server_select_v1",
     }
     for item in data["templates"]:
-        if item["template_id"] in calibrated:
+        if item["template_id"] in sampled_and_calibrated:
             assert "screenshot_sample" not in item["missing"]
+        if item["template_id"] in anchor_calibrated:
             assert "measurable_anchor" not in item["missing"]
+            assert "expected_json" not in item["missing"]
     assert any(
         "screenshot_sample" in item["missing"] and "measurable_anchor" in item["missing"]
         for item in data["templates"]
@@ -97,18 +102,18 @@ def test_counts_existing_screenshot_paths_from_expected_manifest(tmp_path: Path)
     screenshot.write_bytes(b"not an image")
 
     (expected_dir / "final_expected.json").write_text(
-        f"""
-        {{
-          "cases": [
-            {{
-              "case_id": "main_world__runtime",
-              "template_id": "dhxy2_classic_main_world_v1",
-              "screen_type": "main_world",
-              "screenshot": "{screenshot.as_posix()}"
-            }}
-          ]
-        }}
-        """,
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "case_id": "main_world__runtime",
+                        "template_id": "dhxy2_classic_main_world_v1",
+                        "screen_type": "main_world",
+                        "screenshot": str(screenshot),
+                    }
+                ]
+            }
+        ),
         encoding="utf-8",
     )
 
@@ -129,18 +134,18 @@ def test_does_not_double_count_named_screenshot_referenced_by_manifest(tmp_path:
     screenshot.write_bytes(b"not an image")
 
     (expected_dir / "final_expected.json").write_text(
-        f"""
-        {{
-          "cases": [
-            {{
-              "case_id": "main_world__baseline",
-              "template_id": "dhxy2_classic_main_world_v1",
-              "screen_type": "main_world",
-              "screenshot": "{screenshot.as_posix()}"
-            }}
-          ]
-        }}
-        """,
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "case_id": "main_world__baseline",
+                        "template_id": "dhxy2_classic_main_world_v1",
+                        "screen_type": "main_world",
+                        "screenshot": str(screenshot),
+                    }
+                ]
+            }
+        ),
         encoding="utf-8",
     )
 
