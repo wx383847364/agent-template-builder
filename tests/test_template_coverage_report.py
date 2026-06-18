@@ -12,7 +12,7 @@ def test_reports_current_template_gaps() -> None:
     data = report.to_dict()
 
     assert data["template_count"] >= 1
-    assert data["complete_count"] == 7
+    assert data["complete_count"] == 9
     sampled_and_calibrated = {
         "dhxy2_classic_main_world_v1",
         "dhxy2_classic_battle_v1",
@@ -20,6 +20,8 @@ def test_reports_current_template_gaps() -> None:
         "dhxy2_classic_character_select_v1",
         "dhxy2_classic_server_select_v1",
         "dhxy2_classic_npc_dialog_v1",
+        "dhxy2_classic_login_guard_v1",
+        "dhxy2_classic_reward_popup_v1",
         "dhxy2_classic_system_panel_v1",
     }
     anchor_calibrated = sampled_and_calibrated | {

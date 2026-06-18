@@ -284,6 +284,54 @@
         "ocr_field_numbers": [],
         "field_values": []
       }
+    },
+    {
+      "case_id": "login_guard__manual_keypad1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/login_guard__manual_keypad1.png",
+      "template_id": "dhxy2_classic_login_guard_v1",
+      "screen_type": "login_guard",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "login_guard",
+          "template_id": "dhxy2_classic_login_guard_v1"
+        },
+        "state": {
+          "blocking_modal": true,
+          "available_intents": ["read_login_guard_prompt", "enter_login_guard_code", "go_back"]
+        },
+        "required_elements": ["guard_prompt", "guard_code_input", "guard_keypad", "guard_back", "guard_enter"],
+        "ocr_field_numbers": [],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "reward_popup__manual_summon_reward1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/reward_popup__manual_summon_reward1.png",
+      "template_id": "dhxy2_classic_reward_popup_v1",
+      "screen_type": "reward_popup",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "reward_popup",
+          "template_id": "dhxy2_classic_reward_popup_v1"
+        },
+        "state": {
+          "blocking_modal": true,
+          "available_intents": ["read_reward", "continue_dialog"]
+        },
+        "required_elements": ["reward_notice", "reward_items", "reward_dialog_panel"],
+        "ocr_field_numbers": [],
+        "field_values": []
+      }
     }
   ]
 }

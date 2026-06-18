@@ -9,14 +9,14 @@
       "type": "layout_region",
       "bbox": [0.031, 0.116, 0.760, 0.853],
       "weight": 0.60,
-      "expected_hash": "fffffcf8ff000000"
+      "expected_hash": "fffffcf8df000000"
     },
     {
       "id": "server_confirm_area",
       "type": "layout_region",
       "bbox": [0.424, 0.814, 0.507, 0.855],
       "weight": 0.35,
-      "expected_hash": "ff000024b4eeffff"
+      "expected_hash": "f0000024b4feffff"
     }
   ],
   "elements": [

@@ -9,14 +9,14 @@
       "type": "layout_region",
       "bbox": [0.784, 0.244, 0.999, 0.513],
       "weight": 0.45,
-      "expected_hash": "184050c0e8f8f8d8"
+      "expected_hash": "0c4040c0e8f8f8f8"
     },
     {
       "id": "enter_game_button_area",
       "type": "layout_region",
       "bbox": [0.448, 0.793, 0.582, 0.835],
       "weight": 0.40,
-      "expected_hash": "e100006cfcffefd7"
+      "expected_hash": "e100006cfcffefff"
     }
   ],
   "elements": [

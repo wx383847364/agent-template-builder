@@ -1,0 +1,47 @@
+{
+  "template_id": "dhxy2_classic_reward_popup_v1",
+  "screen_type": "reward_popup",
+  "description": "任务对话中的奖励获得提示浮层。",
+  "priority": 40,
+  "blocking_modal": true,
+  "anchors": [
+    {
+      "id": "reward_notice_area",
+      "type": "layout_region",
+      "bbox": [0.345, 0.43, 0.655, 0.57],
+      "weight": 0.55,
+      "expected_hash": "f7fefec1fdc0e000"
+    },
+    {
+      "id": "reward_dialog_panel_area",
+      "type": "layout_region",
+      "bbox": [0.24, 0.40, 0.76, 0.60],
+      "weight": 0.30,
+      "expected_hash": "fffffcf0c0e08080"
+    }
+  ],
+  "elements": [
+    {
+      "id": "reward_notice",
+      "type": "text_region",
+      "bbox": [0.35, 0.43, 0.65, 0.49],
+      "ocr_required": true,
+      "semantic_role": "reward_text"
+    },
+    {
+      "id": "reward_items",
+      "type": "text_region",
+      "bbox": [0.35, 0.50, 0.65, 0.57],
+      "ocr_required": true,
+      "semantic_role": "reward_items"
+    },
+    {
+      "id": "reward_dialog_panel",
+      "type": "panel",
+      "bbox": [0.24, 0.40, 0.76, 0.60],
+      "ocr_required": false,
+      "semantic_role": "reward_dialog"
+    }
+  ],
+  "available_intents": ["read_reward", "continue_dialog"]
+}

@@ -1,0 +1,61 @@
+{
+  "template_id": "dhxy2_classic_login_guard_v1",
+  "screen_type": "login_guard",
+  "description": "角色选择后的将军令安全验证遮罩。",
+  "priority": 45,
+  "blocking_modal": true,
+  "anchors": [
+    {
+      "id": "guard_input_panel",
+      "type": "layout_region",
+      "bbox": [0.35, 0.34, 0.67, 0.63],
+      "weight": 0.55,
+      "expected_hash": "fc7810c0c0ff00c4"
+    },
+    {
+      "id": "guard_keypad_area",
+      "type": "layout_region",
+      "bbox": [0.35, 0.46, 0.67, 0.62],
+      "weight": 0.35,
+      "expected_hash": "c04000ffff0000e6"
+    }
+  ],
+  "elements": [
+    {
+      "id": "guard_prompt",
+      "type": "text_region",
+      "bbox": [0.36, 0.34, 0.65, 0.46],
+      "ocr_required": true,
+      "semantic_role": "login_guard_prompt"
+    },
+    {
+      "id": "guard_code_input",
+      "type": "input",
+      "bbox": [0.44, 0.46, 0.65, 0.50],
+      "ocr_required": false,
+      "semantic_role": "login_guard_code"
+    },
+    {
+      "id": "guard_keypad",
+      "type": "button_group",
+      "bbox": [0.35, 0.51, 0.67, 0.56],
+      "ocr_required": false,
+      "semantic_role": "login_guard_keypad"
+    },
+    {
+      "id": "guard_back",
+      "type": "button",
+      "bbox": [0.35, 0.58, 0.49, 0.62],
+      "ocr_required": false,
+      "semantic_role": "go_back"
+    },
+    {
+      "id": "guard_enter",
+      "type": "button",
+      "bbox": [0.52, 0.58, 0.66, 0.62],
+      "ocr_required": false,
+      "semantic_role": "submit_login_guard"
+    }
+  ],
+  "available_intents": ["read_login_guard_prompt", "enter_login_guard_code", "go_back"]
+}
