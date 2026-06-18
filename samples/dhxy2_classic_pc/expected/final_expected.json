@@ -95,10 +95,10 @@
     },
     {
       "case_id": "npc_dialog__baseline",
-      "screenshot": "samples/dhxy2_classic_pc/screenshots/npc_dialog__baseline.png",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/npc_dialog__manual_dialog1.png",
       "template_id": "dhxy2_classic_npc_dialog_v1",
       "screen_type": "npc_dialog",
-      "sample_status": "placeholder_no_screenshot",
+      "sample_status": "manual_screenshot_anchor_calibrated",
       "expected": {
         "game": {
           "id": "dhxy2",
@@ -239,10 +239,10 @@
     },
     {
       "case_id": "server_select__local_window1",
-      "screenshot": "G:/大话/大话西游2_经典版/screen/选择服务器，也可以直接选择角色进入游戏.png",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/server_select__manual_complete1.png",
       "template_id": "dhxy2_classic_server_select_v1",
       "screen_type": "server_select",
-      "sample_status": "local_window_screenshot_anchor_calibrated",
+      "sample_status": "manual_screenshot_anchor_calibrated",
       "expected": {
         "game": {
           "id": "dhxy2",
@@ -263,10 +263,10 @@
     },
     {
       "case_id": "character_select__local_window1",
-      "screenshot": "G:/大话/大话西游2_经典版/screen/角色选择.png",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/character_select__manual_complete1.png",
       "template_id": "dhxy2_classic_character_select_v1",
       "screen_type": "character_select",
-      "sample_status": "local_window_screenshot_anchor_calibrated",
+      "sample_status": "manual_screenshot_anchor_calibrated",
       "expected": {
         "game": {
           "id": "dhxy2",

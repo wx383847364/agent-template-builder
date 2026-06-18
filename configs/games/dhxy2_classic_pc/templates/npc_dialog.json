@@ -8,13 +8,15 @@
       "id": "dialog_panel_area",
       "type": "layout_region",
       "bbox": [0.16, 0.54, 0.84, 0.95],
-      "weight": 0.55
+      "weight": 0.55,
+      "expected_hash": "81c3fefefef8f8f0"
     },
     {
       "id": "dialog_options_area",
       "type": "layout_region",
       "bbox": [0.58, 0.62, 0.82, 0.90],
-      "weight": 0.25
+      "weight": 0.25,
+      "expected_hash": "fefcf8fcfc800002"
     }
   ],
   "elements": [

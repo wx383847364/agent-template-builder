@@ -25,3 +25,7 @@ samples/**/screenshots/*
 # dhxy2_classic_pc curated samples are part of the template regression suite.
 !samples/dhxy2_classic_pc/screenshots/
 !samples/dhxy2_classic_pc/screenshots/*
+
+# Additional user-provided dhxy2_classic_pc screenshots kept for future templates.
+!samples/dhxy2_classic_pc/candidates/
+!samples/dhxy2_classic_pc/candidates/*
