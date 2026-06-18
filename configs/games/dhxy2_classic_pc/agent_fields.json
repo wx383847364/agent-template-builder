@@ -1,0 +1,105 @@
+{
+  "schema": "dhxy2_classic_pc.agent_rows.v1",
+  "fields": [
+    {
+      "index": 3,
+      "key": "server_name",
+      "type": "text",
+      "description": "登录选服界面的服务器名称或服务器列表文本。"
+    },
+    {
+      "index": 4,
+      "key": "current_task",
+      "type": "text",
+      "description": "主世界界面的当前任务追踪文本。"
+    },
+    {
+      "index": 6,
+      "key": "dialog_text",
+      "type": "text",
+      "description": "NPC 对话正文文本。"
+    },
+    {
+      "index": 7,
+      "key": "dialog_options",
+      "type": "text",
+      "description": "NPC 对话选项文本。"
+    },
+    {
+      "index": 12,
+      "key": "battle_status",
+      "type": "text",
+      "description": "战斗状态或战斗日志文本。"
+    },
+    {
+      "index": 13,
+      "key": "panel_title",
+      "type": "text",
+      "description": "系统面板标题文本。"
+    },
+    {
+      "index": 5000,
+      "key": "reward_text",
+      "type": "text",
+      "description": "奖励弹窗的标题或提示文本。"
+    },
+    {
+      "index": 5001,
+      "key": "reward_items",
+      "type": "text",
+      "description": "奖励弹窗中的物品文本。"
+    }
+  ],
+  "mappings": {
+    "3": "server_list",
+    "4": "current_task",
+    "6": "dialog_text",
+    "7": "dialog_options",
+    "12": "battle_status",
+    "13": "panel_title",
+    "5000": "reward_text",
+    "5001": "reward_items"
+  },
+  "reserved_ranges": [
+    {
+      "range": "1-999",
+      "description": "Compatibility fields for existing expected assets plus login, account, and base text fields. Existing meanings must remain stable."
+    },
+    {
+      "range": "1000-1999",
+      "description": "Core character status fields such as hp, mp, level, exp, money, coordinates, and character state."
+    },
+    {
+      "range": "2000-2999",
+      "description": "Battle state and skill slots such as battle_round, selected_target, skill_slot_1_name, and skill_slot_1_cooldown."
+    },
+    {
+      "range": "3000-3999",
+      "description": "Quest, NPC, and dialog extension fields."
+    },
+    {
+      "range": "4000-4999",
+      "description": "Modal, system notice, and blocking state fields."
+    },
+    {
+      "range": "5000-5999",
+      "description": "Reward, inventory, item, and economy fields."
+    },
+    {
+      "range": "6000-6999",
+      "description": "Map, navigation, scene, and coordinate extension fields."
+    },
+    {
+      "range": "7000-7999",
+      "description": "System panel, form, and input fields."
+    },
+    {
+      "range": "8000-8999",
+      "description": "Agent action hints and executable intent summaries."
+    },
+    {
+      "range": "9000-9999",
+      "description": "Debug, compatibility, and experimental fields. Stable consumers should not depend on this range."
+    }
+  ]
+}
