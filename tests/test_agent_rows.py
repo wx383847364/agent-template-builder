@@ -8,7 +8,7 @@ from agent_template_builder.schema.agent_rows import load_agent_rows_config
 
 ROOT = Path(__file__).resolve().parents[1]
 GAME_DIR = ROOT / "configs" / "games" / "dhxy2_classic_pc"
-FIELDS_CONFIG = GAME_DIR / "agent_fields.json"
+FIELDS_CONFIG = ROOT / "agent_fields.json"
 SAMPLES_DIR = ROOT / "samples" / "dhxy2_classic_pc"
 
 

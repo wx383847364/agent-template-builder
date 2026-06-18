@@ -50,4 +50,4 @@
 screenshot -> analyze_screenshot() -> AgentData -> AgentRowsExporter -> JSON rows
 ```
 
-字段编号和 semantic role 映射来自运行时配置 `configs/games/dhxy2_classic_pc/agent_fields.json`。导出器必须输出配置中的全部字段，并按 index 升序排列；当 OCR 或识别结果没有文本时，`value` 保持空字符串。导出器只读取 `AgentData.elements[].text`，不从 `raw.match`、`bbox` 或 `confidence` 推断业务字段值。
+字段编号和 semantic role 映射来自根目录运行时配置 `agent_fields.json`。导出器必须输出配置中的全部字段，并按 index 升序排列；当 OCR 或识别结果没有文本时，`value` 保持空字符串。导出器只读取 `AgentData.elements[].text`，不从 `raw.match`、`bbox` 或 `confidence` 推断业务字段值。

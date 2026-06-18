@@ -5,12 +5,12 @@ import argparse
 import json
 
 from agent_template_builder.exporters.agent_rows import AgentRowsExporter
-from agent_template_builder.paths import default_game_dir
+from agent_template_builder.paths import default_game_dir, find_project_root
 from agent_template_builder.pipeline.analyze import analyze_screenshot
 from agent_template_builder.schema.agent_rows import AgentRowsOutput
 
 
-DEFAULT_FIELDS_CONFIG = default_game_dir() / "agent_fields.json"
+DEFAULT_FIELDS_CONFIG = find_project_root(Path(__file__)) / "agent_fields.json"
 
 
 def export_agent_rows(

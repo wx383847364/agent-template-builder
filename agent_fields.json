@@ -63,43 +63,43 @@
   "reserved_ranges": [
     {
       "range": "1-999",
-      "description": "Compatibility fields for existing expected assets plus login, account, and base text fields. Existing meanings must remain stable."
+      "description": "兼容 expected 资产中的既有字段，以及登录、账号、基础文本字段。已有编号含义不得随意变更。"
     },
     {
       "range": "1000-1999",
-      "description": "Core character status fields such as hp, mp, level, exp, money, coordinates, and character state."
+      "description": "角色核心状态字段，例如 hp、mp、level、exp、money、坐标和角色状态。"
     },
     {
       "range": "2000-2999",
-      "description": "Battle state and skill slots such as battle_round, selected_target, skill_slot_1_name, and skill_slot_1_cooldown."
+      "description": "战斗状态与技能槽字段，例如 battle_round、selected_target、skill_slot_1_name、skill_slot_1_cooldown。"
     },
     {
       "range": "3000-3999",
-      "description": "Quest, NPC, and dialog extension fields."
+      "description": "任务、NPC、对话扩展字段。"
     },
     {
       "range": "4000-4999",
-      "description": "Modal, system notice, and blocking state fields."
+      "description": "弹窗、系统提示、阻塞状态字段。"
     },
     {
       "range": "5000-5999",
-      "description": "Reward, inventory, item, and economy fields."
+      "description": "奖励、背包、物品、经济相关字段。"
     },
     {
       "range": "6000-6999",
-      "description": "Map, navigation, scene, and coordinate extension fields."
+      "description": "地图、导航、场景、坐标扩展字段。"
     },
     {
       "range": "7000-7999",
-      "description": "System panel, form, and input fields."
+      "description": "系统面板、表单、输入框字段。"
     },
     {
       "range": "8000-8999",
-      "description": "Agent action hints and executable intent summaries."
+      "description": "agent 行动提示、可执行意图摘要字段。"
     },
     {
       "range": "9000-9999",
-      "description": "Debug, compatibility, and experimental fields. Stable consumers should not depend on this range."
+      "description": "调试、兼容、实验字段。稳定消费方不应依赖这个区间。"
     }
   ]
 }
