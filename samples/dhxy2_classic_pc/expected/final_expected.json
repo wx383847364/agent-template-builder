@@ -119,10 +119,10 @@
     },
     {
       "case_id": "blocking_modal__baseline",
-      "screenshot": "samples/dhxy2_classic_pc/screenshots/blocking_modal__baseline.png",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/blocking_modal__manual_discard_item1.png",
       "template_id": "dhxy2_classic_blocking_modal_v1",
       "screen_type": "blocking_modal",
-      "sample_status": "placeholder_no_screenshot",
+      "sample_status": "manual_screenshot_anchor_calibrated",
       "expected": {
         "game": {
           "id": "dhxy2",
