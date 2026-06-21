@@ -71,6 +71,7 @@ class TemplateMatcher:
         best, template = max(scored, key=lambda item: (item[0][0], item[1].priority))
         confidence, anchor_matches = best
         fallback_reason = None
+        fallback_confidence = 0.35 * size_score
 
         if measurable_template_count == 0:
             template = self._default_template()
@@ -79,8 +80,12 @@ class TemplateMatcher:
             fallback_reason = "no_measurable_anchor_hash"
         elif anchor_matches and not any(match.score > 0 for match in anchor_matches):
             template = self._default_template()
-            confidence = 0.35 * size_score
+            confidence = fallback_confidence
             fallback_reason = "no_anchor_hash_match"
+        elif template.screen_type != "main_world" and confidence < fallback_confidence:
+            template = self._default_template()
+            confidence = fallback_confidence
+            fallback_reason = "low_anchor_score_match"
 
         return MatchResult(
             template=template,
@@ -116,7 +121,7 @@ class TemplateMatcher:
         game_view: GameView,
         size_score: float,
     ) -> tuple[float, list[AnchorMatch]]:
-        measurable = [anchor for anchor in template.anchors if anchor.expected_hash]
+        measurable = [anchor for anchor in template.anchors if anchor.measurable_hashes]
         if not measurable:
             return (0.0, [])
 
@@ -127,7 +132,13 @@ class TemplateMatcher:
         for anchor in measurable:
             bbox = denormalize_bbox_in_view(anchor.bbox, game_view)
             actual_hash = region_hash(screenshot_path, bbox)
-            distance = hamming_distance(actual_hash, anchor.expected_hash or "")
+            expected_hash, distance = min(
+                (
+                    (expected_hash, hamming_distance(actual_hash, expected_hash))
+                    for expected_hash in anchor.measurable_hashes
+                ),
+                key=lambda item: item[1],
+            )
             score = max(0.0, 1.0 - (distance / max(anchor.max_hamming_distance, 1)))
             weighted_score += score * anchor.weight
             total_weight += anchor.weight
@@ -136,7 +147,7 @@ class TemplateMatcher:
                     id=anchor.id,
                     score=round(score, 3),
                     actual_hash=actual_hash,
-                    expected_hash=anchor.expected_hash,
+                    expected_hash=expected_hash,
                     hamming_distance=distance,
                 )
             )

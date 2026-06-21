@@ -18,6 +18,7 @@ agent-template-builder-analyze-screenshots = "agent_template_builder.pipeline.an
 agent-template-builder-export-agent-rows = "agent_template_builder.pipeline.export_agent_rows:main"
 agent-template-builder-audit-templates = "agent_template_builder.tools.audit_templates:main"
 agent-template-builder-template-coverage = "agent_template_builder.tools.report_template_coverage:main"
+agent-template-builder-recognition-quality = "agent_template_builder.tools.report_recognition_quality:main"
 
 [project.optional-dependencies]
 dev = [

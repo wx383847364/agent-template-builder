@@ -10,14 +10,16 @@
       "type": "layout_region",
       "bbox": [0.345, 0.43, 0.655, 0.57],
       "weight": 0.55,
-      "expected_hash": "f7fefec1fdc0e000"
+      "expected_hash": "f7fefec1fdc0e000",
+      "expected_hashes": ["fffe008000000000"]
     },
     {
       "id": "reward_dialog_panel_area",
       "type": "layout_region",
       "bbox": [0.24, 0.40, 0.76, 0.60],
       "weight": 0.30,
-      "expected_hash": "fffffcf0c0e08080"
+      "expected_hash": "fffffcf0c0e08080",
+      "expected_hashes": ["fefefce0c0c0c080"]
     }
   ],
   "elements": [

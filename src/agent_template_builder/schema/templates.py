@@ -16,7 +16,16 @@ class AnchorSpec:
     bbox: NormalizedBBox
     weight: float = 1.0
     expected_hash: Optional[str] = None
+    expected_hashes: tuple[str, ...] = ()
     max_hamming_distance: int = 8
+
+    @property
+    def measurable_hashes(self) -> tuple[str, ...]:
+        hashes = []
+        if self.expected_hash:
+            hashes.append(self.expected_hash)
+        hashes.extend(item for item in self.expected_hashes if item)
+        return tuple(dict.fromkeys(hashes))
 
 
 @dataclass(frozen=True)
@@ -41,7 +50,7 @@ class TemplateSpec:
 
     @property
     def measurable_anchor_count(self) -> int:
-        return sum(1 for anchor in self.anchors if anchor.expected_hash)
+        return sum(1 for anchor in self.anchors if anchor.measurable_hashes)
 
 
 def load_game_config(game_dir: Path) -> dict[str, Any]:
@@ -76,6 +85,7 @@ def _load_template(path: Path) -> TemplateSpec:
             bbox=tuple(item["bbox"]),
             weight=float(item.get("weight", 1.0)),
             expected_hash=item.get("expected_hash"),
+            expected_hashes=_load_expected_hashes(item),
             max_hamming_distance=int(item.get("max_hamming_distance", 8)),
         )
         for item in data.get("anchors", [])
@@ -100,3 +110,14 @@ def _load_template(path: Path) -> TemplateSpec:
         blocking_modal=bool(data.get("blocking_modal", False)),
         description=data.get("description", ""),
     )
+
+
+def _load_expected_hashes(anchor: dict[str, Any]) -> tuple[str, ...]:
+    expected_hashes = anchor.get("expected_hashes", [])
+    if expected_hashes is None:
+        return ()
+    if not isinstance(expected_hashes, list):
+        raise ValueError(f"anchor {anchor.get('id', '<unknown>')}: expected_hashes must be a list")
+    if not all(isinstance(item, str) for item in expected_hashes):
+        raise ValueError(f"anchor {anchor.get('id', '<unknown>')}: expected_hashes items must be strings")
+    return tuple(expected_hashes)
