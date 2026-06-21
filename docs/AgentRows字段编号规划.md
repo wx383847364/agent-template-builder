@@ -78,7 +78,7 @@ Agent Rows 面向外部 agent 的兼容 JSON 是扁平 index/value 对象：
 | --- | --- | --- | --- | --- |
 | `1` | `account_name` | - | `expected legacy` | expected 样本字典中的账号名称。 |
 | `2` | `password` | - | `expected legacy` | expected 样本字典中的密码。 |
-| `3` | `server_name` | `server_list` | `published runtime` | 服务器名称或服务器列表文本。 |
+| `3` | `server_name` | `selected_server` | `published runtime` | 兼容字段，语义跟随 `400 selected_server`。 |
 | `4` | `current_task` | `current_task` | `published runtime` | 主世界当前任务追踪文本。 |
 | `5` | `npc_name` | - | `expected legacy` | expected 样本字典中的 NPC 名称。 |
 | `6` | `dialog_text` | `dialog_text` | `published runtime` | NPC 对话正文。 |
@@ -93,9 +93,9 @@ Agent Rows 面向外部 agent 的兼容 JSON 是扁平 index/value 对象：
 | `101` | `client_type` | - | `planned` | 客户端类型；进入运行时前不得假定会输出。 |
 | `200` | `screenshot_name` | - | `planned` | 截图文件名；进入运行时前不得假定会输出。 |
 | `201` | `screenshot_time` | - | `planned` | 截图时间；进入运行时前不得假定会输出。 |
-| `202` | `screen_type` | - | `planned` | 屏幕类型；进入运行时前不得假定会输出。 |
-| `203` | `template_id` | - | `planned` | 模板 ID；进入运行时前不得假定会输出。 |
-| `204` | `screen_confidence` | - | `planned` | 模板匹配置信度；进入运行时前不得假定会输出。 |
+| `202` | `screen_type` | `screen_type` | `published runtime` | 当前识别到的前景界面类型；v1 只表示前景模板，不表示完整 UI 栈。 |
+| `203` | `template_id` | `template_id` | `published runtime` | 当前命中的前景模板 ID。 |
+| `204` | `screen_confidence` | `screen_confidence` | `published runtime` | 当前模板识别置信度，固定三位小数字符串。 |
 | `205` | `resolution_width` | - | `planned` | 截图宽度；进入运行时前不得假定会输出。 |
 | `206` | `resolution_height` | - | `planned` | 截图高度；进入运行时前不得假定会输出。 |
 | `207` | `fallback_reason` | - | `planned` | 模板 fallback 原因；进入运行时前不得假定会输出。 |
@@ -104,10 +104,24 @@ Agent Rows 面向外部 agent 的兼容 JSON 是扁平 index/value 对象：
 | `302` | `login_guard_prompt` | - | `planned` | 登录安全验证提示；进入运行时前不得假定会输出。 |
 | `400` | `selected_server` | `selected_server` | `published runtime` | 当前选中的服务器，值格式为 `服务器名@x,y`。 |
 | `401` | `account_servers` | `account_servers` | `published runtime` | 当前账号已建立角色的服务器列表，值格式为 `服务器名@x,y;服务器名@x,y`。 |
+| `4000` | `blocking_modal` | `blocking_modal` | `published runtime` | 阻塞状态；`1` 表示阻塞，`0` 表示已知无阻塞且必须保留输出。 |
 | `500` | `selected_character_name` | - | `planned` | 当前选中角色名称；进入运行时前不得假定会输出。 |
 | `501` | `selected_character_level` | - | `planned` | 当前选中角色等级；进入运行时前不得假定会输出。 |
 | `5000` | `reward_text` | `reward_text` | `published runtime` | 奖励弹窗标题或提示文本。 |
 | `5001` | `reward_items` | `reward_items` | `published runtime` | 奖励弹窗中的物品文本。 |
+| `8000` | `available_intents` | `available_intents` | `published runtime` | 当前前景模板声明的可执行意图，按模板顺序用英文分号分隔；为空时外部稀疏 JSON 省略。 |
+
+## 前景界面上下文字段 v1
+
+`202/203/204/4000/8000` 是当前已发布的 metadata rows，用于让外部 agent 在不解析完整 `AgentData` 的情况下快速判断前景界面：
+
+- `202 screen_type` 是下游快速判断界面的主字段。
+- `203 template_id` 用于追踪具体模板命中。
+- `204 screen_confidence` 固定输出三位小数字符串。
+- `4000 blocking_modal` 始终输出 `1` 或 `0`；`0` 是已知无阻塞，不按空值省略。
+- `8000 available_intents` 保留模板声明顺序，intent 名称限定为 `[a-z0-9_]+` 风格，并用英文分号连接。
+
+v1 只表示当前识别到的前景模板，不表示完整 UI 栈或“同时打开了哪些界面”。暂不发布 `8001 agent_context`；稳定消费方应直接读取这些原子字段。
 
 ## 发布和废弃规则
 

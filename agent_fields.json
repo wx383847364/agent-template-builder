@@ -5,115 +5,150 @@
       "index": 3,
       "key": "server_name",
       "type": "text",
-      "description": "兼容字段。登录选服界面的当前选中服务器；新消费方优先使用 400。"
-    },
-    {
-      "index": 400,
-      "key": "selected_server",
-      "type": "text",
-      "description": "登录选服界面的当前选中服务器，值格式为 服务器名@x,y。"
-    },
-    {
-      "index": 401,
-      "key": "account_servers",
-      "type": "text",
-      "description": "当前账号已建立角色的服务器列表，值格式为 服务器名@x,y;服务器名@x,y。"
+      "description": "Compatibility field for the selected server on the login server selection screen. New consumers should prefer 400."
     },
     {
       "index": 4,
       "key": "current_task",
       "type": "text",
-      "description": "主世界界面的当前任务追踪文本。"
+      "description": "Current task tracking text on the main world screen."
     },
     {
       "index": 6,
       "key": "dialog_text",
       "type": "text",
-      "description": "NPC 对话正文文本。"
+      "description": "NPC dialog body text."
     },
     {
       "index": 7,
       "key": "dialog_options",
       "type": "text",
-      "description": "NPC 对话选项文本。"
+      "description": "NPC dialog option text."
     },
     {
       "index": 12,
       "key": "battle_status",
       "type": "text",
-      "description": "战斗状态或战斗日志文本。"
+      "description": "Battle status or battle log text."
     },
     {
       "index": 13,
       "key": "panel_title",
       "type": "text",
-      "description": "系统面板标题文本。"
+      "description": "System panel title text."
+    },
+    {
+      "index": 202,
+      "key": "screen_type",
+      "type": "text",
+      "description": "Current recognized foreground screen type. v1 only represents the foreground template, not the full UI stack."
+    },
+    {
+      "index": 203,
+      "key": "template_id",
+      "type": "text",
+      "description": "Matched foreground template id."
+    },
+    {
+      "index": 204,
+      "key": "screen_confidence",
+      "type": "number",
+      "description": "Foreground template match confidence formatted as a three-decimal string."
+    },
+    {
+      "index": 400,
+      "key": "selected_server",
+      "type": "text",
+      "description": "Selected server on the login server selection screen. Value format: server_name@x,y."
+    },
+    {
+      "index": 401,
+      "key": "account_servers",
+      "type": "text",
+      "description": "Servers with an existing character for the current account. Value format: server_name@x,y;server_name@x,y."
+    },
+    {
+      "index": 4000,
+      "key": "blocking_modal",
+      "type": "boolean",
+      "description": "Whether the foreground screen blocks normal operation. 1 means blocked; 0 means known not blocked."
     },
     {
       "index": 5000,
       "key": "reward_text",
       "type": "text",
-      "description": "奖励弹窗的标题或提示文本。"
+      "description": "Reward popup title or prompt text."
     },
     {
       "index": 5001,
       "key": "reward_items",
       "type": "text",
-      "description": "奖励弹窗中的物品文本。"
+      "description": "Reward item text from a reward popup."
+    },
+    {
+      "index": 8000,
+      "key": "available_intents",
+      "type": "text",
+      "description": "Executable intents declared by the current foreground template, joined with semicolons in template order."
     }
   ],
   "mappings": {
     "3": "selected_server",
-    "400": "selected_server",
-    "401": "account_servers",
     "4": "current_task",
     "6": "dialog_text",
     "7": "dialog_options",
     "12": "battle_status",
     "13": "panel_title",
+    "202": "screen_type",
+    "203": "template_id",
+    "204": "screen_confidence",
+    "400": "selected_server",
+    "401": "account_servers",
+    "4000": "blocking_modal",
     "5000": "reward_text",
-    "5001": "reward_items"
+    "5001": "reward_items",
+    "8000": "available_intents"
   },
   "reserved_ranges": [
     {
       "range": "1-999",
-      "description": "兼容 expected 资产中的既有字段，以及登录、账号、基础文本字段。已有编号含义不得随意变更。"
+      "description": "Compatibility fields from expected assets plus login, account, and base text fields. Published meanings must not be changed casually."
     },
     {
       "range": "1000-1999",
-      "description": "角色核心状态字段，例如 hp、mp、level、exp、money、坐标和角色状态。"
+      "description": "Character core state fields, such as hp, mp, level, exp, money, coordinates, and character status."
     },
     {
       "range": "2000-2999",
-      "description": "战斗状态与技能槽字段，例如 battle_round、selected_target、skill_slot_1_name、skill_slot_1_cooldown。"
+      "description": "Battle state and skill slot fields, such as battle_round, selected_target, skill_slot_1_name, and skill_slot_1_cooldown."
     },
     {
       "range": "3000-3999",
-      "description": "任务、NPC、对话扩展字段。"
+      "description": "Task, NPC, and dialog extension fields."
     },
     {
       "range": "4000-4999",
-      "description": "弹窗、系统提示、阻塞状态字段。"
+      "description": "Modal, system prompt, and blocking state fields."
     },
     {
       "range": "5000-5999",
-      "description": "奖励、背包、物品、经济相关字段。"
+      "description": "Reward, inventory, item, and economy fields."
     },
     {
       "range": "6000-6999",
-      "description": "地图、导航、场景、坐标扩展字段。"
+      "description": "Map, navigation, scene, and coordinate extension fields."
     },
     {
       "range": "7000-7999",
-      "description": "系统面板、表单、输入框字段。"
+      "description": "System panel, form, and input field extensions."
     },
     {
       "range": "8000-8999",
-      "description": "agent 行动提示、可执行意图摘要字段。"
+      "description": "Agent action hint and executable intent summary fields."
     },
     {
       "range": "9000-9999",
-      "description": "调试、兼容、实验字段。稳定消费方不应依赖这个区间。"
+      "description": "Debug, compatibility, and experimental fields. Stable consumers should not depend on this range."
     }
   ]
 }

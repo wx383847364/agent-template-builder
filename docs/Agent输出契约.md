@@ -55,6 +55,21 @@ screenshot -> analyze_screenshot() -> AgentData -> AgentRowsExporter -> JSON row
 为了保持外部消费简单，服务器选择字段可以把点击坐标编码进字符串值。当前约定为 `名称@x,y`，多个目标用英文分号分隔，例如 `水晶宫@655,715;爱你万年@272,260`。坐标使用截图坐标系中的整数点击中心点。
 
 Agent Rows 的长期编号区间、字段状态和发布规则见 [AgentRows字段编号规划.md](AgentRows字段编号规划.md)。`agent_fields.json` 仍是当前运行时事实源；规划字段只有进入该配置后才属于稳定运行时输出。
+
+## Agent Rows Metadata 字段
+
+Agent Rows v1 发布一组前景界面上下文字段，用于让下游 agent 快速判断当前截图是什么界面、是否阻塞、可做什么：
+
+- `202 screen_type`：来自 `AgentData.screen.type`，表示当前识别到的前景界面类型。
+- `203 template_id`：来自 `AgentData.screen.template_id`，表示当前命中的模板 ID。
+- `204 screen_confidence`：来自 `AgentData.screen.confidence`，导出为固定三位小数字符串，例如 `0.880`。
+- `4000 blocking_modal`：来自 `AgentData.state.blocking_modal`，导出为 `1` 或 `0`；`0` 表示已知无阻塞，不属于空值，外部稀疏 JSON 必须保留。
+- `8000 available_intents`：来自 `AgentData.state.available_intents`，按模板声明顺序用英文分号连接，例如 `read_task;open_map;continue_navigation`；空列表导出为空字符串，外部稀疏 JSON 省略。
+
+这些 metadata rows 是导出层例外：它们不从 `AgentData.elements[].text` 读取。普通业务字段仍只从元素文本读取，不能从 `raw`、`bbox` 或 `confidence` 推断业务 OCR 值。
+
+v1 只表达当前识别到的前景模板，不表达完整 UI 栈，也不发布 `8001 agent_context` 摘要字段。后续如果需要“同时打开了哪些界面”，应通过 secondary detectors 或多模板并行检测另行设计，避免形成第二套不稳定契约。
+
 ## Template Static Evidence
 
 - 模板识别后，`templates/*.json` 中的 `static_outputs` 会注入 `AgentData.elements[]`。

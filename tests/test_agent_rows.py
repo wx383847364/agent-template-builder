@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from agent_template_builder.exporters.agent_rows import AgentRowsExporter
 from agent_template_builder.pipeline.export_agent_rows import export_agent_rows, to_index_value_data
 from agent_template_builder.schema.agent_data import AgentData, Element, Resolution, RuntimeState, Screen
@@ -10,6 +12,34 @@ ROOT = Path(__file__).resolve().parents[1]
 GAME_DIR = ROOT / "configs" / "games" / "dhxy2_classic_pc"
 FIELDS_CONFIG = ROOT / "agent_fields.json"
 SAMPLES_DIR = ROOT / "samples" / "dhxy2_classic_pc"
+
+WATER_CRYSTAL_PALACE = "\u6c34\u6676\u5bab"
+LOVE_YOU_FOREVER = "\u7231\u4f60\u4e07\u5e74"
+
+
+def _data(
+    *,
+    screen_type: str = "main_world",
+    template_id: str = "dhxy2_classic_main_world_v1",
+    confidence: float = 0.9,
+    elements: list[Element] | None = None,
+    blocking_modal: bool = False,
+    available_intents: list[str] | None = None,
+) -> AgentData:
+    return AgentData(
+        game={"id": "dhxy2", "client": "classic_pc"},
+        screen=Screen(
+            type=screen_type,
+            template_id=template_id,
+            confidence=confidence,
+            resolution=Resolution(width=1280, height=720),
+        ),
+        elements=elements or [],
+        state=RuntimeState(
+            blocking_modal=blocking_modal,
+            available_intents=available_intents or [],
+        ),
+    )
 
 
 def test_agent_fields_config_loads_with_unique_indexes_and_keys() -> None:
@@ -23,24 +53,22 @@ def test_agent_fields_config_loads_with_unique_indexes_and_keys() -> None:
     assert len(keys) == len(set(keys))
 
 
-def test_agent_rows_are_sorted_and_missing_values_are_empty() -> None:
+def test_agent_rows_are_sorted_and_missing_business_values_are_empty() -> None:
     config = load_agent_rows_config(FIELDS_CONFIG)
-    data = AgentData(
-        game={"id": "dhxy2", "client": "classic_pc"},
-        screen=Screen(
-            type="main_world",
-            template_id="dhxy2_classic_main_world_v1",
-            confidence=0.9,
-            resolution=Resolution(width=1280, height=720),
-        ),
-        elements=[],
-        state=RuntimeState(blocking_modal=False),
-    )
-
-    output = AgentRowsExporter(config).export(data)
+    output = AgentRowsExporter(config).export(_data())
+    rows = {row.index: row.value for row in output.rows}
 
     assert [row.index for row in output.rows] == sorted(row.index for row in output.rows)
-    assert all(row.value == "" for row in output.rows)
+    assert rows[202] == "main_world"
+    assert rows[203] == "dhxy2_classic_main_world_v1"
+    assert rows[204] == "0.900"
+    assert rows[4000] == "0"
+    assert rows[8000] == ""
+    assert all(
+        row.value == ""
+        for row in output.rows
+        if row.index not in {202, 203, 204, 4000}
+    )
 
 
 def test_required_semantic_role_mappings_exist() -> None:
@@ -48,6 +76,11 @@ def test_required_semantic_role_mappings_exist() -> None:
     roles = set(config.mappings.values())
 
     assert {
+        "screen_type",
+        "template_id",
+        "screen_confidence",
+        "blocking_modal",
+        "available_intents",
         "selected_server",
         "account_servers",
         "current_task",
@@ -60,16 +93,57 @@ def test_required_semantic_role_mappings_exist() -> None:
     }.issubset(roles)
 
 
+def test_exporter_maps_foreground_metadata_to_configured_indexes() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = _data(available_intents=["read_task", "open_map"])
+
+    rows = to_index_value_data(AgentRowsExporter(config).export(data))
+
+    assert rows["202"] == "main_world"
+    assert rows["203"] == "dhxy2_classic_main_world_v1"
+    assert rows["204"] == "0.900"
+    assert rows["4000"] == "0"
+    assert rows["8000"] == "read_task;open_map"
+
+
+def test_exporter_marks_blocking_modal_metadata() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = _data(
+        screen_type="blocking_modal",
+        template_id="dhxy2_classic_blocking_modal_v1",
+        blocking_modal=True,
+    )
+
+    rows = to_index_value_data(AgentRowsExporter(config).export(data))
+
+    assert rows["4000"] == "1"
+
+
+def test_empty_available_intents_are_omitted_but_false_blocking_modal_is_kept() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    output = AgentRowsExporter(config).export(_data(available_intents=[]))
+    internal_rows = {row.index: row.value for row in output.rows}
+    sparse_rows = to_index_value_data(output)
+
+    assert internal_rows[8000] == ""
+    assert "8000" not in sparse_rows
+    assert sparse_rows["4000"] == "0"
+
+
+def test_available_intents_must_use_stable_token_style() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = _data(available_intents=["read_task", "OpenMap"])
+
+    with pytest.raises(ValueError, match=r"\[a-z0-9_\]\+"):
+        AgentRowsExporter(config).export(data)
+
+
 def test_exporter_maps_element_text_to_configured_indexes() -> None:
     config = load_agent_rows_config(FIELDS_CONFIG)
-    data = AgentData(
-        game={"id": "dhxy2", "client": "classic_pc"},
-        screen=Screen(
-            type="npc_dialog",
-            template_id="dhxy2_classic_npc_dialog_v1",
-            confidence=0.88,
-            resolution=Resolution(width=1280, height=720),
-        ),
+    data = _data(
+        screen_type="npc_dialog",
+        template_id="dhxy2_classic_npc_dialog_v1",
+        confidence=0.88,
         elements=[
             Element(
                 id="dialog_body",
@@ -96,7 +170,6 @@ def test_exporter_maps_element_text_to_configured_indexes() -> None:
                 text="reward gained",
             ),
         ],
-        state=RuntimeState(blocking_modal=False),
     )
 
     rows = {row.index: row.value for row in AgentRowsExporter(config).export(data).rows}
@@ -115,28 +188,31 @@ def test_real_sample_exports_agent_rows() -> None:
 
     assert output.schema == "dhxy2_classic_pc.agent_rows.v1"
     assert output.screen_type == "reward_popup"
-    assert {3, 4, 6, 7, 12, 13, 5000, 5001}.issubset(row_indexes)
+    assert {3, 4, 6, 7, 12, 13, 202, 203, 204, 4000, 5000, 5001, 8000}.issubset(row_indexes)
 
 
-def test_cli_data_shape_is_index_to_value_only() -> None:
+def test_cli_data_shape_is_sparse_index_to_value_only() -> None:
     screenshot = SAMPLES_DIR / "screenshots" / "reward_popup__manual_summon_reward1.png"
 
     output = export_agent_rows(screenshot, GAME_DIR, FIELDS_CONFIG)
     data = to_index_value_data(output)
 
-    assert data == {}
+    assert data["202"] == "reward_popup"
+    assert data["203"] == "dhxy2_classic_reward_popup_v1"
+    assert data["204"].count(".") == 1
+    assert len(data["204"].split(".")[1]) == 3
+    assert data["4000"] == "1"
+    assert data["8000"] == "read_reward;continue_dialog"
+    assert all(isinstance(key, str) and isinstance(value, str) for key, value in data.items())
 
 
 def test_cli_data_omits_empty_values() -> None:
     config = load_agent_rows_config(FIELDS_CONFIG)
-    data = AgentData(
-        game={"id": "dhxy2", "client": "classic_pc"},
-        screen=Screen(
-            type="server_select",
-            template_id="dhxy2_classic_server_select_v1",
-            confidence=0.88,
-            resolution=Resolution(width=1280, height=720),
-        ),
+    selected = f"{WATER_CRYSTAL_PALACE}@165,260"
+    data = _data(
+        screen_type="server_select",
+        template_id="dhxy2_classic_server_select_v1",
+        confidence=0.88,
         elements=[
             Element(
                 id="selected_server",
@@ -144,27 +220,31 @@ def test_cli_data_omits_empty_values() -> None:
                 bbox=(1, 2, 3, 4),
                 confidence=0.8,
                 semantic_role="selected_server",
-                text="水晶宫@165,260",
+                text=selected,
             ),
         ],
-        state=RuntimeState(blocking_modal=False),
     )
 
     output = AgentRowsExporter(config).export(data)
 
-    assert to_index_value_data(output) == {"3": "水晶宫@165,260", "400": "水晶宫@165,260"}
+    assert to_index_value_data(output) == {
+        "202": "server_select",
+        "203": "dhxy2_classic_server_select_v1",
+        "204": "0.880",
+        "3": selected,
+        "400": selected,
+        "4000": "0",
+    }
 
 
 def test_server_select_rows_keep_click_coordinates_in_values() -> None:
     config = load_agent_rows_config(FIELDS_CONFIG)
-    data = AgentData(
-        game={"id": "dhxy2", "client": "classic_pc"},
-        screen=Screen(
-            type="server_select",
-            template_id="dhxy2_classic_server_select_v1",
-            confidence=0.88,
-            resolution=Resolution(width=1280, height=720),
-        ),
+    selected = f"{WATER_CRYSTAL_PALACE}@655,715"
+    account_servers = f"{WATER_CRYSTAL_PALACE}@165,260;{LOVE_YOU_FOREVER}@272,260"
+    data = _data(
+        screen_type="server_select",
+        template_id="dhxy2_classic_server_select_v1",
+        confidence=0.88,
         elements=[
             Element(
                 id="selected_server",
@@ -172,7 +252,7 @@ def test_server_select_rows_keep_click_coordinates_in_values() -> None:
                 bbox=(610, 700, 700, 730),
                 confidence=0.8,
                 semantic_role="selected_server",
-                text="水晶宫@655,715",
+                text=selected,
             ),
             Element(
                 id="account_servers",
@@ -180,31 +260,30 @@ def test_server_select_rows_keep_click_coordinates_in_values() -> None:
                 bbox=(120, 245, 430, 275),
                 confidence=0.8,
                 semantic_role="account_servers",
-                text="水晶宫@165,260;爱你万年@272,260",
+                text=account_servers,
             ),
         ],
-        state=RuntimeState(blocking_modal=False),
     )
 
     rows = to_index_value_data(AgentRowsExporter(config).export(data))
 
     assert rows == {
-        "3": "水晶宫@655,715",
-        "400": "水晶宫@655,715",
-        "401": "水晶宫@165,260;爱你万年@272,260",
+        "202": "server_select",
+        "203": "dhxy2_classic_server_select_v1",
+        "204": "0.880",
+        "3": selected,
+        "400": selected,
+        "401": account_servers,
+        "4000": "0",
     }
 
 
 def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
     config = load_agent_rows_config(FIELDS_CONFIG)
-    data = AgentData(
-        game={"id": "dhxy2", "client": "classic_pc"},
-        screen=Screen(
-            type="server_select",
-            template_id="dhxy2_classic_server_select_v1",
-            confidence=0.88,
-            resolution=Resolution(width=1280, height=720),
-        ),
+    data = _data(
+        screen_type="server_select",
+        template_id="dhxy2_classic_server_select_v1",
+        confidence=0.88,
         elements=[
             Element(
                 id="selected_server",
@@ -212,7 +291,7 @@ def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
                 bbox=(610, 700, 700, 730),
                 confidence=0.8,
                 semantic_role="selected_server",
-                text="水晶宫",
+                text=WATER_CRYSTAL_PALACE,
             ),
             Element(
                 id="account_servers",
@@ -220,7 +299,7 @@ def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
                 bbox=(120, 245, 430, 275),
                 confidence=0.8,
                 semantic_role="account_servers",
-                text="水晶宫\n爱你万年",
+                text=f"{WATER_CRYSTAL_PALACE}\n{LOVE_YOU_FOREVER}",
             ),
             Element(
                 id="selected_server_slot",
@@ -247,13 +326,16 @@ def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
                 text="",
             ),
         ],
-        state=RuntimeState(blocking_modal=False),
     )
 
     rows = to_index_value_data(AgentRowsExporter(config).export(data))
 
     assert rows == {
-        "3": "水晶宫@655,715",
-        "400": "水晶宫@655,715",
-        "401": "水晶宫@165,260;爱你万年@272,260",
+        "202": "server_select",
+        "203": "dhxy2_classic_server_select_v1",
+        "204": "0.880",
+        "3": f"{WATER_CRYSTAL_PALACE}@655,715",
+        "400": f"{WATER_CRYSTAL_PALACE}@655,715",
+        "401": f"{WATER_CRYSTAL_PALACE}@165,260;{LOVE_YOU_FOREVER}@272,260",
+        "4000": "0",
     }

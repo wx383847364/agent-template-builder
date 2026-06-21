@@ -23,6 +23,8 @@ class AgentRowsExporter:
 
     def export(self, data: AgentData) -> AgentRowsOutput:
         values_by_role: dict[str, list[str]] = defaultdict(list)
+        self._add_metadata_values(data, values_by_role)
+
         for element in data.elements:
             if not element.semantic_role or not element.text:
                 continue
@@ -53,6 +55,20 @@ class AgentRowsExporter:
             rows=rows,
         )
 
+    def _add_metadata_values(
+        self,
+        data: AgentData,
+        values_by_role: dict[str, list[str]],
+    ) -> None:
+        values_by_role["screen_type"].append(data.screen.type)
+        values_by_role["template_id"].append(data.screen.template_id)
+        values_by_role["screen_confidence"].append(f"{data.screen.confidence:.3f}")
+        values_by_role["blocking_modal"].append("1" if data.state.blocking_modal else "0")
+
+        available_intents = _format_available_intents(data.state.available_intents)
+        if available_intents:
+            values_by_role["available_intents"].append(available_intents)
+
     def _bind_server_select_values(
         self,
         elements: list[Element],
@@ -71,6 +87,13 @@ class AgentRowsExporter:
 
 def _elements_by_role(elements: list[Element], semantic_role: str) -> list[Element]:
     return [element for element in elements if element.semantic_role == semantic_role]
+
+
+def _format_available_intents(intents: list[str]) -> str:
+    for intent in intents:
+        if not re.fullmatch(r"[a-z0-9_]+", intent):
+            raise ValueError(f"available_intent must match [a-z0-9_]+: {intent}")
+    return ";".join(intents)
 
 
 def _bind_single_server(value: str, slots: list[Element], fallback_regions: list[Element]) -> str:
