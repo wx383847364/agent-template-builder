@@ -126,3 +126,77 @@ def test_analyze_injects_template_static_outputs() -> None:
     assert result.screen.type == "server_select"
     assert {element.id for element in static_elements} >= {"account_server_slot_1", "selected_server_slot"}
     assert any(element.semantic_role == "confirm_server" and element.text == "进入游戏" for element in static_elements)
+
+def test_analyze_uses_bbox_by_profile_for_static_outputs(tmp_path: Path) -> None:
+    game_dir = tmp_path / "game"
+    templates_dir = game_dir / "templates"
+    templates_dir.mkdir(parents=True)
+    (game_dir / "game.json").write_text(
+        json.dumps(
+            {
+                "game_id": "test_game",
+                "client": "test_client",
+                "coordinate_space": {"bbox_unit": "screen_ratio"},
+                "supported_windows": [
+                    {"width": 1280, "height": 720, "label": "fixed_window_1280x720"}
+                ],
+                "supported_aspect_ratios": [],
+                "ocr_policy": {"only_when_required": True},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (templates_dir / "main_world.json").write_text(
+        json.dumps(
+            {
+                "template_id": "test_main_world_v1",
+                "screen_type": "main_world",
+                "priority": 1,
+                "anchors": [],
+                "elements": [
+                    {
+                        "id": "test_element",
+                        "type": "text_region",
+                        "bbox": [0, 0, 1, 1],
+                        "ocr_required": False,
+                        "bbox_by_profile": {
+                            "fixed_window_1280x720": [0.5, 0.5, 0.75, 0.75]
+                        },
+                    }
+                ],
+                "static_outputs": [
+                    {
+                        "id": "test_slot",
+                        "type": "button_slot",
+                        "semantic_role": "test_slot",
+                        "value": "",
+                        "bbox": [0, 0, 1, 1],
+                        "bbox_by_profile": {
+                            "fixed_window_1280x720": [0.25, 0.25, 0.5, 0.5]
+                        },
+                    },
+                    {
+                        "id": "fallback_slot",
+                        "type": "button_slot",
+                        "semantic_role": "fallback_slot",
+                        "value": "",
+                        "bbox": [0.1, 0.1, 0.2, 0.2],
+                        "bbox_by_profile": {
+                            "other_profile": [0.25, 0.25, 0.5, 0.5]
+                        },
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    screenshot = tmp_path / "capture.png"
+    Image.new("RGB", (1280, 720), color=(10, 20, 30)).save(screenshot)
+
+    result = analyze_screenshot(screenshot, game_dir)
+
+    assert result.raw["match"]["aspect_ratio_label"] == "fixed_window"
+    assert result.raw["match"]["viewport_profile_label"] == "fixed_window_1280x720"
+    assert result.elements[0].bbox == (640, 360, 960, 540)
+    assert result.elements[1].bbox == (320, 180, 640, 360)
+    assert result.elements[2].bbox == (128, 72, 256, 144)

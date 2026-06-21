@@ -24,7 +24,7 @@ def analyze_screenshot(
     game_config = load_game_config(game_dir)
     templates = load_templates(game_dir)
     supported_sizes = {
-        (int(item["width"]), int(item["height"]))
+        (int(item["width"]), int(item["height"])): item["label"]
         for item in game_config.get("supported_windows", [])
     }
     aspect_profiles = [
@@ -48,7 +48,7 @@ def analyze_screenshot(
     task_state: Optional[TaskState] = None
 
     for spec in match.template.elements:
-        bbox = denormalize_bbox_in_view(spec.bbox, match.game_view)
+        bbox = denormalize_bbox_in_view(spec.bbox_for_profile(match.viewport_profile_label), match.game_view)
         text = None
         confidence = match.confidence
         evidence = Evidence(
@@ -88,7 +88,8 @@ def analyze_screenshot(
             )
 
     for spec in match.template.static_outputs:
-        bbox = denormalize_bbox_in_view(spec.bbox, match.game_view) if spec.bbox else (0, 0, 0, 0)
+        spec_bbox = spec.bbox_for_profile(match.viewport_profile_label)
+        bbox = denormalize_bbox_in_view(spec_bbox, match.game_view) if spec_bbox else (0, 0, 0, 0)
         elements.append(
             Element(
                 id=spec.id,
@@ -133,6 +134,7 @@ def analyze_screenshot(
             },
             "match": {
                 "aspect_ratio_label": match.aspect_ratio_label,
+                "viewport_profile_label": match.viewport_profile_label,
                 "fallback_reason": match.fallback_reason,
                 "measurable_template_count": match.measurable_template_count,
                 "anchor_matches": [

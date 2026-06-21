@@ -34,6 +34,7 @@ class MatchResult:
     game_view: GameView
     anchor_matches: list[AnchorMatch]
     aspect_ratio_label: Optional[str] = None
+    viewport_profile_label: Optional[str] = None
     fallback_reason: Optional[str] = None
     measurable_template_count: int = 0
 
@@ -49,23 +50,23 @@ class TemplateMatcher:
     def __init__(
         self,
         templates: list[TemplateSpec],
-        supported_sizes: set[tuple[int, int]],
+        supported_sizes: dict[tuple[int, int], str] | set[tuple[int, int]],
         aspect_profiles: list[AspectRatioProfile],
     ) -> None:
         if not templates:
             raise ValueError("至少需要一个模板")
         self._templates = templates
-        self._supported_sizes = supported_sizes
+        self._supported_sizes = _normalize_supported_sizes(supported_sizes)
         self._aspect_profiles = aspect_profiles
 
     def match(self, screenshot_path: Path) -> MatchResult:
         width, height = image_size(screenshot_path)
         game_view = detect_game_view(screenshot_path)
-        aspect_label, size_score = self._score_viewport(game_view.width, game_view.height)
+        aspect_label, profile_label, size_score = self._score_viewport(game_view.width, game_view.height)
         measurable_template_count = sum(1 for template in self._templates if template.measurable_anchor_count)
 
         scored = [
-            (self._score_template(screenshot_path, template, game_view, size_score), template)
+            (self._score_template(screenshot_path, template, game_view, profile_label, size_score), template)
             for template in self._templates
         ]
         best, template = max(scored, key=lambda item: (item[0][0], item[1].priority))
@@ -95,30 +96,32 @@ class TemplateMatcher:
             game_view=game_view,
             anchor_matches=anchor_matches,
             aspect_ratio_label=aspect_label,
+            viewport_profile_label=profile_label,
             fallback_reason=fallback_reason,
             measurable_template_count=measurable_template_count,
         )
 
-    def _score_viewport(self, width: int, height: int) -> tuple[Optional[str], float]:
+    def _score_viewport(self, width: int, height: int) -> tuple[Optional[str], Optional[str], float]:
         if (width, height) in self._supported_sizes:
-            return ("fixed_window", 1.0)
+            return ("fixed_window", self._supported_sizes[(width, height)], 1.0)
 
         if not self._aspect_profiles:
-            return (None, 1.0 if not self._supported_sizes else 0.55)
+            return (None, None, 1.0 if not self._supported_sizes else 0.55)
 
         actual_ratio = width / height
         best = min(self._aspect_profiles, key=lambda profile: abs(actual_ratio - profile.ratio))
         delta = abs(actual_ratio - best.ratio)
         if delta <= best.tolerance:
             score = max(0.75, 1.0 - (delta / best.tolerance) * 0.25)
-            return (best.label, score)
-        return (None, 0.45)
+            return (best.label, best.label, score)
+        return (None, None, 0.45)
 
     def _score_template(
         self,
         screenshot_path: Path,
         template: TemplateSpec,
         game_view: GameView,
+        profile_label: Optional[str],
         size_score: float,
     ) -> tuple[float, list[AnchorMatch]]:
         measurable = [anchor for anchor in template.anchors if anchor.measurable_hashes]
@@ -130,7 +133,7 @@ class TemplateMatcher:
         matches: list[AnchorMatch] = []
 
         for anchor in measurable:
-            bbox = denormalize_bbox_in_view(anchor.bbox, game_view)
+            bbox = denormalize_bbox_in_view(anchor.bbox_for_profile(profile_label), game_view)
             actual_hash = region_hash(screenshot_path, bbox)
             expected_hash, distance = min(
                 (
@@ -161,3 +164,11 @@ class TemplateMatcher:
             if template.screen_type == "main_world":
                 return template
         return self._templates[-1]
+
+
+def _normalize_supported_sizes(
+    supported_sizes: dict[tuple[int, int], str] | set[tuple[int, int]],
+) -> dict[tuple[int, int], str]:
+    if isinstance(supported_sizes, dict):
+        return supported_sizes
+    return {size: "fixed_window" for size in supported_sizes}

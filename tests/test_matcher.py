@@ -39,7 +39,7 @@ def test_matcher_uses_nearest_expected_hash_variant(tmp_path: Path, monkeypatch)
             ]),
             _template("main_world", 10, []),
         ],
-        supported_sizes={(1280, 720)},
+        supported_sizes={(1280, 720): "fixed_window_1280x720"},
         aspect_profiles=[],
     )
     monkeypatch.setattr("agent_template_builder.matcher.template_matcher.region_hash", lambda _path, _bbox: actual_hash)
@@ -49,6 +49,8 @@ def test_matcher_uses_nearest_expected_hash_variant(tmp_path: Path, monkeypatch)
     assert result.template.screen_type == "reward_popup"
     assert result.anchor_matches[0].expected_hash == "0000000000000000"
     assert result.anchor_matches[0].hamming_distance == 4
+    assert result.aspect_ratio_label == "fixed_window"
+    assert result.viewport_profile_label == "fixed_window_1280x720"
 
 
 def test_matcher_falls_back_on_low_nonzero_anchor_score(tmp_path: Path, monkeypatch) -> None:
@@ -67,7 +69,7 @@ def test_matcher_falls_back_on_low_nonzero_anchor_score(tmp_path: Path, monkeypa
             ]),
             _template("main_world", 10, []),
         ],
-        supported_sizes={(1280, 720)},
+        supported_sizes={(1280, 720): "fixed_window_1280x720"},
         aspect_profiles=[],
     )
     monkeypatch.setattr("agent_template_builder.matcher.template_matcher.region_hash", lambda _path, _bbox: actual_hash)
@@ -78,3 +80,63 @@ def test_matcher_falls_back_on_low_nonzero_anchor_score(tmp_path: Path, monkeypa
     assert result.confidence == 0.35
     assert result.fallback_reason == "low_anchor_score_match"
     assert result.anchor_matches[0].score > 0
+
+
+def test_matcher_uses_profile_bbox_for_anchor_hash(tmp_path: Path, monkeypatch) -> None:
+    screenshot = _screenshot(tmp_path)
+    captured_bboxes = []
+    matcher = TemplateMatcher(
+        templates=[
+            _template("reward_popup", 40, [
+                AnchorSpec(
+                    id="reward",
+                    type="layout_region",
+                    bbox=(0.0, 0.0, 1.0, 1.0),
+                    bbox_by_profile={"fixed_window_1280x720": (0.0, 0.0, 0.5, 0.5)},
+                    expected_hash="0000000000000000",
+                    max_hamming_distance=8,
+                )
+            ]),
+            _template("main_world", 10, []),
+        ],
+        supported_sizes={(1280, 720): "fixed_window_1280x720"},
+        aspect_profiles=[],
+    )
+
+    def fake_region_hash(_path: Path, bbox: tuple[int, int, int, int]) -> str:
+        captured_bboxes.append(bbox)
+        return "0000000000000000"
+
+    monkeypatch.setattr("agent_template_builder.matcher.template_matcher.region_hash", fake_region_hash)
+
+    result = matcher.match(screenshot)
+
+    assert result.template.screen_type == "reward_popup"
+    assert captured_bboxes == [(0, 0, 640, 360)]
+
+
+def test_matcher_accepts_legacy_supported_size_set(tmp_path: Path, monkeypatch) -> None:
+    screenshot = _screenshot(tmp_path)
+    matcher = TemplateMatcher(
+        templates=[
+            _template("reward_popup", 40, [
+                AnchorSpec(
+                    id="reward",
+                    type="layout_region",
+                    bbox=(0.0, 0.0, 1.0, 1.0),
+                    expected_hash="0000000000000000",
+                    max_hamming_distance=8,
+                )
+            ]),
+            _template("main_world", 10, []),
+        ],
+        supported_sizes={(1280, 720)},
+        aspect_profiles=[],
+    )
+    monkeypatch.setattr("agent_template_builder.matcher.template_matcher.region_hash", lambda _path, _bbox: "0000000000000000")
+
+    result = matcher.match(screenshot)
+
+    assert result.template.screen_type == "reward_popup"
+    assert result.aspect_ratio_label == "fixed_window"
+    assert result.viewport_profile_label == "fixed_window"

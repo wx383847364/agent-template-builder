@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from numbers import Real
 from typing import Any, Optional
 import json
 
@@ -14,6 +15,7 @@ class AnchorSpec:
     id: str
     type: str
     bbox: NormalizedBBox
+    bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
     weight: float = 1.0
     expected_hash: Optional[str] = None
     expected_hashes: tuple[str, ...] = ()
@@ -27,6 +29,11 @@ class AnchorSpec:
         hashes.extend(item for item in self.expected_hashes if item)
         return tuple(dict.fromkeys(hashes))
 
+    def bbox_for_profile(self, profile_label: Optional[str]) -> NormalizedBBox:
+        if profile_label and profile_label in self.bbox_by_profile:
+            return self.bbox_by_profile[profile_label]
+        return self.bbox
+
 
 @dataclass(frozen=True)
 class ElementSpec:
@@ -35,6 +42,12 @@ class ElementSpec:
     bbox: NormalizedBBox
     ocr_required: bool
     semantic_role: Optional[str] = None
+    bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
+
+    def bbox_for_profile(self, profile_label: Optional[str]) -> NormalizedBBox:
+        if profile_label and profile_label in self.bbox_by_profile:
+            return self.bbox_by_profile[profile_label]
+        return self.bbox
 
 
 @dataclass(frozen=True)
@@ -45,6 +58,12 @@ class StaticOutputSpec:
     text: Optional[str] = None
     value: Optional[str] = None
     bbox: Optional[NormalizedBBox] = None
+    bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
+
+    def bbox_for_profile(self, profile_label: Optional[str]) -> Optional[NormalizedBBox]:
+        if profile_label and profile_label in self.bbox_by_profile:
+            return self.bbox_by_profile[profile_label]
+        return self.bbox
 
 
 @dataclass(frozen=True)
@@ -93,7 +112,8 @@ def _load_template(path: Path) -> TemplateSpec:
         AnchorSpec(
             id=item["id"],
             type=item["type"],
-            bbox=tuple(item["bbox"]),
+            bbox=_load_normalized_bbox(item, "bbox"),
+            bbox_by_profile=_load_bbox_by_profile(item),
             weight=float(item.get("weight", 1.0)),
             expected_hash=item.get("expected_hash"),
             expected_hashes=_load_expected_hashes(item),
@@ -105,9 +125,10 @@ def _load_template(path: Path) -> TemplateSpec:
         ElementSpec(
             id=item["id"],
             type=item["type"],
-            bbox=tuple(item["bbox"]),
+            bbox=_load_normalized_bbox(item, "bbox"),
             ocr_required=bool(item.get("ocr_required", False)),
             semantic_role=item.get("semantic_role"),
+            bbox_by_profile=_load_bbox_by_profile(item),
         )
         for item in data.get("elements", [])
     ]
@@ -142,7 +163,7 @@ def _load_static_output(item: dict[str, Any]) -> StaticOutputSpec:
 
     bbox = item.get("bbox")
     if bbox is not None:
-        bbox = tuple(bbox)
+        bbox = _load_normalized_bbox(item, "bbox")
 
     return StaticOutputSpec(
         id=item["id"],
@@ -151,4 +172,36 @@ def _load_static_output(item: dict[str, Any]) -> StaticOutputSpec:
         text=item.get("text"),
         value=item.get("value"),
         bbox=bbox,
+        bbox_by_profile=_load_bbox_by_profile(item),
     )
+
+
+def _load_bbox_by_profile(item: dict[str, Any]) -> dict[str, NormalizedBBox]:
+    raw = item.get("bbox_by_profile", {})
+    if raw is None:
+        return {}
+    if not isinstance(raw, dict):
+        raise ValueError(f"{item.get('id', '<unknown>')}: bbox_by_profile must be an object")
+
+    result = {}
+    for profile_label, bbox in raw.items():
+        if not isinstance(profile_label, str):
+            raise ValueError(f"{item.get('id', '<unknown>')}: bbox_by_profile keys must be strings")
+        result[profile_label] = _load_normalized_bbox(
+            {"id": item.get("id", "<unknown>"), "bbox": bbox},
+            f"bbox_by_profile[{profile_label}]",
+        )
+    return result
+
+
+def _load_normalized_bbox(item: dict[str, Any], field_name: str) -> NormalizedBBox:
+    bbox = item.get("bbox")
+    if not isinstance(bbox, list) or len(bbox) != 4:
+        raise ValueError(f"{item.get('id', '<unknown>')}: {field_name} must be a bbox array")
+    if not all(isinstance(value, Real) and not isinstance(value, bool) for value in bbox):
+        raise ValueError(f"{item.get('id', '<unknown>')}: {field_name} values must be numbers")
+
+    left, top, right, bottom = (float(value) for value in bbox)
+    if not (0 <= left < right <= 1 and 0 <= top < bottom <= 1):
+        raise ValueError(f"{item.get('id', '<unknown>')}: {field_name} must satisfy 0 <= left < right <= 1 and 0 <= top < bottom <= 1")
+    return (left, top, right, bottom)
