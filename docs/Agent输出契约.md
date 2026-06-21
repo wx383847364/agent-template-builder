@@ -51,3 +51,5 @@ screenshot -> analyze_screenshot() -> AgentData -> AgentRowsExporter -> JSON row
 ```
 
 字段编号和 semantic role 映射来自根目录运行时配置 `agent_fields.json`。导出器必须输出配置中的全部字段，并按 index 升序排列；当 OCR 或识别结果没有文本时，`value` 保持空字符串。导出器只读取 `AgentData.elements[].text`，不从 `raw.match`、`bbox` 或 `confidence` 推断业务字段值。
+
+Agent Rows 的长期编号区间、字段状态和发布规则见 [AgentRows字段编号规划.md](AgentRows字段编号规划.md)。`agent_fields.json` 仍是当前运行时事实源；规划字段只有进入该配置后才属于稳定运行时输出。
