@@ -256,8 +256,8 @@
           "blocking_modal": false,
           "available_intents": ["read_server_list", "confirm_server", "go_back"]
         },
-        "required_elements": ["server_list", "server_confirm"],
-        "ocr_field_numbers": [3],
+        "required_elements": ["selected_server", "account_servers", "server_confirm"],
+        "ocr_field_numbers": [3, 400, 401],
         "field_values": []
       }
     },

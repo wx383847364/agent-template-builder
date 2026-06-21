@@ -52,4 +52,6 @@ screenshot -> analyze_screenshot() -> AgentData -> AgentRowsExporter -> JSON row
 
 字段编号和 semantic role 映射来自根目录运行时配置 `agent_fields.json`。内部 `AgentRowsOutput.rows[]` 可以保留配置中的全部字段，并按 index 升序排列；当 OCR 或识别结果没有文本时，内部 `value` 保持空字符串。面向外部 agent 的扁平 index/value JSON 只输出有值字段，空字符串字段必须省略。导出器只读取 `AgentData.elements[].text`，不从 `raw.match`、`bbox` 或 `confidence` 推断业务字段值。
 
+为了保持外部消费简单，服务器选择字段可以把点击坐标编码进字符串值。当前约定为 `名称@x,y`，多个目标用英文分号分隔，例如 `水晶宫@655,715;爱你万年@272,260`。坐标使用截图坐标系中的整数点击中心点。
+
 Agent Rows 的长期编号区间、字段状态和发布规则见 [AgentRows字段编号规划.md](AgentRows字段编号规划.md)。`agent_fields.json` 仍是当前运行时事实源；规划字段只有进入该配置后才属于稳定运行时输出。

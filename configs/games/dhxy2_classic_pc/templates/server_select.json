@@ -21,11 +21,18 @@
   ],
   "elements": [
     {
-      "id": "server_list",
+      "id": "account_servers",
       "type": "text_region",
-      "bbox": [0.035, 0.339, 0.758, 0.735],
+      "bbox": [0.035, 0.226, 0.758, 0.278],
       "ocr_required": true,
-      "semantic_role": "server_list"
+      "semantic_role": "account_servers"
+    },
+    {
+      "id": "selected_server",
+      "type": "text_region",
+      "bbox": [0.310, 0.810, 0.417, 0.858],
+      "ocr_required": true,
+      "semantic_role": "selected_server"
     },
     {
       "id": "server_confirm",

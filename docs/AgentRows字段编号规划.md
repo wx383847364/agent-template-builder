@@ -102,8 +102,8 @@ Agent Rows 面向外部 agent 的兼容 JSON 是扁平 index/value 对象：
 | `300` | `login_account_input` | - | `planned` | 登录账号输入框文本；进入运行时前不得假定会输出。 |
 | `301` | `login_password_input` | - | `planned` | 登录密码输入框文本；进入运行时前不得假定会输出。 |
 | `302` | `login_guard_prompt` | - | `planned` | 登录安全验证提示；进入运行时前不得假定会输出。 |
-| `400` | `selected_server` | - | `planned` | 当前选中的服务器；进入运行时前不得假定会输出。 |
-| `401` | `server_list_text` | - | `planned` | 服务器列表文本；进入运行时前不得假定会输出。 |
+| `400` | `selected_server` | `selected_server` | `published runtime` | 当前选中的服务器，值格式为 `服务器名@x,y`。 |
+| `401` | `account_servers` | `account_servers` | `published runtime` | 当前账号已建立角色的服务器列表，值格式为 `服务器名@x,y;服务器名@x,y`。 |
 | `500` | `selected_character_name` | - | `planned` | 当前选中角色名称；进入运行时前不得假定会输出。 |
 | `501` | `selected_character_level` | - | `planned` | 当前选中角色等级；进入运行时前不得假定会输出。 |
 | `5000` | `reward_text` | `reward_text` | `published runtime` | 奖励弹窗标题或提示文本。 |
@@ -117,3 +117,13 @@ Agent Rows 面向外部 agent 的兼容 JSON 是扁平 index/value 对象：
 - `planned` 字段不得被外部消费方当作稳定输出。
 - `9000-9999` 只用于调试、兼容和实验；稳定消费方不应依赖。
 - expected 样本字典中的历史编号可以保留为说明资产，但不自动成为运行时 Agent Rows 字段。
+
+## 坐标值格式
+
+服务器选择类字段允许把点击坐标混入文本值，以保持外部输出仍是纯扁平 index/value JSON。
+
+- 单个目标格式：`名称@x,y`。
+- 多个目标使用英文分号分隔：`名称@x,y;名称@x,y`。
+- `x,y` 是截图坐标系中的整数点击中心点。
+- 字段值只输出已识别到的目标；无法确认名称或坐标时，不输出该项。
+- `3` 是兼容字段，语义跟随 `400`，新消费方应优先读取 `400` 和 `401`。

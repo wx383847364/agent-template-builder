@@ -48,6 +48,8 @@ def test_required_semantic_role_mappings_exist() -> None:
     roles = set(config.mappings.values())
 
     assert {
+        "selected_server",
+        "account_servers",
         "current_task",
         "dialog_text",
         "dialog_options",
@@ -137,12 +139,12 @@ def test_cli_data_omits_empty_values() -> None:
         ),
         elements=[
             Element(
-                id="server_list",
+                id="selected_server",
                 type="text_region",
                 bbox=(1, 2, 3, 4),
                 confidence=0.8,
-                semantic_role="server_list",
-                text="水晶宫",
+                semantic_role="selected_server",
+                text="水晶宫@165,260",
             ),
         ],
         state=RuntimeState(blocking_modal=False),
@@ -150,4 +152,44 @@ def test_cli_data_omits_empty_values() -> None:
 
     output = AgentRowsExporter(config).export(data)
 
-    assert to_index_value_data(output) == {"3": "水晶宫"}
+    assert to_index_value_data(output) == {"3": "水晶宫@165,260", "400": "水晶宫@165,260"}
+
+
+def test_server_select_rows_keep_click_coordinates_in_values() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = AgentData(
+        game={"id": "dhxy2", "client": "classic_pc"},
+        screen=Screen(
+            type="server_select",
+            template_id="dhxy2_classic_server_select_v1",
+            confidence=0.88,
+            resolution=Resolution(width=1280, height=720),
+        ),
+        elements=[
+            Element(
+                id="selected_server",
+                type="text_region",
+                bbox=(610, 700, 700, 730),
+                confidence=0.8,
+                semantic_role="selected_server",
+                text="水晶宫@655,715",
+            ),
+            Element(
+                id="account_servers",
+                type="text_region",
+                bbox=(120, 245, 430, 275),
+                confidence=0.8,
+                semantic_role="account_servers",
+                text="水晶宫@165,260;爱你万年@272,260",
+            ),
+        ],
+        state=RuntimeState(blocking_modal=False),
+    )
+
+    rows = to_index_value_data(AgentRowsExporter(config).export(data))
+
+    assert rows == {
+        "3": "水晶宫@655,715",
+        "400": "水晶宫@655,715",
+        "401": "水晶宫@165,260;爱你万年@272,260",
+    }

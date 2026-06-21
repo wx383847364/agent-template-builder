@@ -5,7 +5,19 @@
       "index": 3,
       "key": "server_name",
       "type": "text",
-      "description": "登录选服界面的服务器名称或服务器列表文本。"
+      "description": "兼容字段。登录选服界面的当前选中服务器；新消费方优先使用 400。"
+    },
+    {
+      "index": 400,
+      "key": "selected_server",
+      "type": "text",
+      "description": "登录选服界面的当前选中服务器，值格式为 服务器名@x,y。"
+    },
+    {
+      "index": 401,
+      "key": "account_servers",
+      "type": "text",
+      "description": "当前账号已建立角色的服务器列表，值格式为 服务器名@x,y;服务器名@x,y。"
     },
     {
       "index": 4,
@@ -51,7 +63,9 @@
     }
   ],
   "mappings": {
-    "3": "server_list",
+    "3": "selected_server",
+    "400": "selected_server",
+    "401": "account_servers",
     "4": "current_task",
     "6": "dialog_text",
     "7": "dialog_options",
