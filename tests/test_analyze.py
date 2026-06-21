@@ -111,3 +111,18 @@ def test_existing_repository_samples_match_expected_templates(tmp_path: Path) ->
 
         assert result.screen.type == case["screen_type"]
         assert result.screen.template_id == case["template_id"]
+
+
+def test_analyze_injects_template_static_outputs() -> None:
+    screenshot = SAMPLES_DIR / "screenshots" / "server_select__manual_complete1.png"
+
+    result = analyze_screenshot(screenshot, GAME_DIR)
+    static_elements = [
+        element
+        for element in result.elements
+        if element.evidence and element.evidence.source == "template_static"
+    ]
+
+    assert result.screen.type == "server_select"
+    assert {element.id for element in static_elements} >= {"account_server_slot_1", "selected_server_slot"}
+    assert any(element.semantic_role == "confirm_server" and element.text == "进入游戏" for element in static_elements)

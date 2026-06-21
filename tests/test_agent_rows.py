@@ -193,3 +193,67 @@ def test_server_select_rows_keep_click_coordinates_in_values() -> None:
         "400": "水晶宫@655,715",
         "401": "水晶宫@165,260;爱你万年@272,260",
     }
+
+
+def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = AgentData(
+        game={"id": "dhxy2", "client": "classic_pc"},
+        screen=Screen(
+            type="server_select",
+            template_id="dhxy2_classic_server_select_v1",
+            confidence=0.88,
+            resolution=Resolution(width=1280, height=720),
+        ),
+        elements=[
+            Element(
+                id="selected_server",
+                type="text_region",
+                bbox=(610, 700, 700, 730),
+                confidence=0.8,
+                semantic_role="selected_server",
+                text="水晶宫",
+            ),
+            Element(
+                id="account_servers",
+                type="text_region",
+                bbox=(120, 245, 430, 275),
+                confidence=0.8,
+                semantic_role="account_servers",
+                text="水晶宫\n爱你万年",
+            ),
+            Element(
+                id="selected_server_slot",
+                type="button_slot",
+                bbox=(610, 700, 700, 730),
+                confidence=0.88,
+                semantic_role="selected_server_slot",
+                text="",
+            ),
+            Element(
+                id="account_server_slot_1",
+                type="button_slot",
+                bbox=(155, 248, 175, 272),
+                confidence=0.88,
+                semantic_role="account_server_slot",
+                text="",
+            ),
+            Element(
+                id="account_server_slot_2",
+                type="button_slot",
+                bbox=(262, 248, 282, 272),
+                confidence=0.88,
+                semantic_role="account_server_slot",
+                text="",
+            ),
+        ],
+        state=RuntimeState(blocking_modal=False),
+    )
+
+    rows = to_index_value_data(AgentRowsExporter(config).export(data))
+
+    assert rows == {
+        "3": "水晶宫@655,715",
+        "400": "水晶宫@655,715",
+        "401": "水晶宫@165,260;爱你万年@272,260",
+    }

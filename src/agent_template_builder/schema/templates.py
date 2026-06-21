@@ -38,12 +38,23 @@ class ElementSpec:
 
 
 @dataclass(frozen=True)
+class StaticOutputSpec:
+    id: str
+    type: str
+    semantic_role: str
+    text: Optional[str] = None
+    value: Optional[str] = None
+    bbox: Optional[NormalizedBBox] = None
+
+
+@dataclass(frozen=True)
 class TemplateSpec:
     template_id: str
     screen_type: str
     priority: int
     anchors: list[AnchorSpec]
     elements: list[ElementSpec]
+    static_outputs: list[StaticOutputSpec] = field(default_factory=list)
     available_intents: list[str] = field(default_factory=list)
     blocking_modal: bool = False
     description: str = ""
@@ -100,12 +111,14 @@ def _load_template(path: Path) -> TemplateSpec:
         )
         for item in data.get("elements", [])
     ]
+    static_outputs = [_load_static_output(item) for item in data.get("static_outputs", [])]
     return TemplateSpec(
         template_id=data["template_id"],
         screen_type=data["screen_type"],
         priority=int(data.get("priority", 0)),
         anchors=anchors,
         elements=elements,
+        static_outputs=static_outputs,
         available_intents=list(data.get("available_intents", [])),
         blocking_modal=bool(data.get("blocking_modal", False)),
         description=data.get("description", ""),
@@ -121,3 +134,21 @@ def _load_expected_hashes(anchor: dict[str, Any]) -> tuple[str, ...]:
     if not all(isinstance(item, str) for item in expected_hashes):
         raise ValueError(f"anchor {anchor.get('id', '<unknown>')}: expected_hashes items must be strings")
     return tuple(expected_hashes)
+
+
+def _load_static_output(item: dict[str, Any]) -> StaticOutputSpec:
+    if "text" not in item and "value" not in item:
+        raise ValueError(f"static_output {item.get('id', '<unknown>')}: text or value is required")
+
+    bbox = item.get("bbox")
+    if bbox is not None:
+        bbox = tuple(bbox)
+
+    return StaticOutputSpec(
+        id=item["id"],
+        type=item["type"],
+        semantic_role=item["semantic_role"],
+        text=item.get("text"),
+        value=item.get("value"),
+        bbox=bbox,
+    )

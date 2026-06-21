@@ -87,6 +87,24 @@ def analyze_screenshot(
                 evidence=evidence,
             )
 
+    for spec in match.template.static_outputs:
+        bbox = denormalize_bbox_in_view(spec.bbox, match.game_view) if spec.bbox else (0, 0, 0, 0)
+        elements.append(
+            Element(
+                id=spec.id,
+                type=spec.type,
+                bbox=bbox,
+                confidence=match.confidence,
+                semantic_role=spec.semantic_role,
+                text=spec.text if spec.text is not None else spec.value,
+                evidence=Evidence(
+                    region_id=spec.id,
+                    source="template_static",
+                    template_id=match.template.template_id,
+                ),
+            )
+        )
+
     return AgentData(
         game={
             "id": game_config["game_id"],

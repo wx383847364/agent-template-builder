@@ -55,3 +55,11 @@ screenshot -> analyze_screenshot() -> AgentData -> AgentRowsExporter -> JSON row
 为了保持外部消费简单，服务器选择字段可以把点击坐标编码进字符串值。当前约定为 `名称@x,y`，多个目标用英文分号分隔，例如 `水晶宫@655,715;爱你万年@272,260`。坐标使用截图坐标系中的整数点击中心点。
 
 Agent Rows 的长期编号区间、字段状态和发布规则见 [AgentRows字段编号规划.md](AgentRows字段编号规划.md)。`agent_fields.json` 仍是当前运行时事实源；规划字段只有进入该配置后才属于稳定运行时输出。
+## Template Static Evidence
+
+- 模板识别后，`templates/*.json` 中的 `static_outputs` 会注入 `AgentData.elements[]`。
+- 这类元素的 `evidence.source` 固定为 `template_static`，用于区分 OCR 文本和模板自带的固定 UI 文案、固定按钮、固定槽位。
+- 如果 `static_outputs[].bbox` 存在，运行时按截图坐标系换算为像素 bbox；服务器选择字段可使用该 bbox 中心点生成点击坐标。
+- 外部 Agent Rows 仍保持扁平 index/value JSON；不会新增结构化 `action_targets`。
+
+服务器选择是当前唯一会使用模板静态槽位做坐标补全的导出场景：当 `selected_server` 或 `account_servers` 已有服务器名但没有 `@x,y` 时，导出层会按 `selected_server_slot` / `account_server_slot` 的 bbox 中心点生成 `服务器名@x,y`。已经包含坐标的值原样保留。

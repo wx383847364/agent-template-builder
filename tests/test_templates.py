@@ -38,6 +38,16 @@ def test_anchor_supports_multiple_expected_hashes() -> None:
     assert notice.measurable_hashes == ("f7fefec1fdc0e000", "fffe008000000000")
 
 
+def test_template_loads_static_outputs() -> None:
+    templates = load_templates(GAME_DIR)
+    server_select = next(template for template in templates if template.screen_type == "server_select")
+
+    ids = {item.id for item in server_select.static_outputs}
+
+    assert {"account_server_slot_1", "selected_server_slot"}.issubset(ids)
+    assert any(item.semantic_role == "confirm_server" and item.text == "进入游戏" for item in server_select.static_outputs)
+
+
 def test_rejects_invalid_expected_hashes_shape(tmp_path: Path) -> None:
     template_path = tmp_path / "template.json"
     template_path.write_text(
@@ -60,4 +70,28 @@ def test_rejects_invalid_expected_hashes_shape(tmp_path: Path) -> None:
     )
 
     with pytest.raises(ValueError, match="expected_hashes must be a list"):
+        _load_template(template_path)
+
+
+def test_rejects_static_output_without_text_or_value(tmp_path: Path) -> None:
+    template_path = tmp_path / "template.json"
+    template_path.write_text(
+        """
+        {
+          "template_id": "test_template",
+          "screen_type": "test",
+          "static_outputs": [
+            {
+              "id": "bad_static",
+              "type": "button",
+              "semantic_role": "confirm"
+            }
+          ],
+          "elements": []
+        }
+        """,
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="text or value is required"):
         _load_template(template_path)
