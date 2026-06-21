@@ -26,7 +26,7 @@ Agent Rows 面向外部 agent 的兼容 JSON 是扁平 index/value 对象：
 
 这只描述 CLI 和外部消费形态。内部仍可以使用 `AgentRowsOutput.rows[]` 这类结构化对象承载 `key`、`type`、`semantic_role` 等元数据。
 
-导出器必须输出 `agent_fields.json` 中配置的全部字段，并按 index 升序排列。当 OCR 尚未接入、OCR 未读到文本或识别结果没有对应文本时，字段值保持空字符串。
+内部 `AgentRowsOutput.rows[]` 可以保留 `agent_fields.json` 中配置的全部字段，并按 index 升序排列。当 OCR 尚未接入、OCR 未读到文本或识别结果没有对应文本时，内部字段值保持空字符串。面向外部 agent 的扁平 index/value JSON 只输出有值字段，空字符串字段必须省略。
 
 ## 字段状态
 

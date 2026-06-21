@@ -122,13 +122,32 @@ def test_cli_data_shape_is_index_to_value_only() -> None:
     output = export_agent_rows(screenshot, GAME_DIR, FIELDS_CONFIG)
     data = to_index_value_data(output)
 
-    assert data == {
-        "3": "",
-        "4": "",
-        "6": "",
-        "7": "",
-        "12": "",
-        "13": "",
-        "5000": "",
-        "5001": "",
-    }
+    assert data == {}
+
+
+def test_cli_data_omits_empty_values() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = AgentData(
+        game={"id": "dhxy2", "client": "classic_pc"},
+        screen=Screen(
+            type="server_select",
+            template_id="dhxy2_classic_server_select_v1",
+            confidence=0.88,
+            resolution=Resolution(width=1280, height=720),
+        ),
+        elements=[
+            Element(
+                id="server_list",
+                type="text_region",
+                bbox=(1, 2, 3, 4),
+                confidence=0.8,
+                semantic_role="server_list",
+                text="水晶宫",
+            ),
+        ],
+        state=RuntimeState(blocking_modal=False),
+    )
+
+    output = AgentRowsExporter(config).export(data)
+
+    assert to_index_value_data(output) == {"3": "水晶宫"}

@@ -24,7 +24,7 @@ def export_agent_rows(
 
 
 def to_index_value_data(output: AgentRowsOutput) -> dict[str, str]:
-    return {str(row.index): row.value for row in output.rows}
+    return {str(row.index): row.value for row in output.rows if row.value}
 
 
 def main() -> None:
