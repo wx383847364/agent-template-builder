@@ -41,6 +41,26 @@
       "label": "fixed_window_800x574"
     },
     {
+      "width": 1024,
+      "height": 720,
+      "label": "fixed_window_1024x720"
+    },
+    {
+      "width": 1000,
+      "height": 718,
+      "label": "fixed_window_1000x718"
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "label": "fixed_window_1280x900"
+    },
+    {
+      "width": 1708,
+      "height": 960,
+      "label": "fixed_window_1708x960"
+    },
+    {
       "width": 1603,
       "height": 940,
       "label": "launcher_window_1603x940"
@@ -49,6 +69,11 @@
       "width": 1280,
       "height": 720,
       "label": "fixed_window_1280x720"
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "label": "fixed_window_1366x768"
     }
   ],
   "ocr_policy": {

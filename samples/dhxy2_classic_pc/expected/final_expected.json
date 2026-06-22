@@ -190,6 +190,126 @@
       }
     },
     {
+      "case_id": "main_world__manual_800x574_1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/main_world__manual_800x574_1.png",
+      "template_id": "dhxy2_classic_main_world_v1",
+      "screen_type": "main_world",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "main_world",
+          "template_id": "dhxy2_classic_main_world_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_task", "open_map", "continue_navigation"]
+        },
+        "required_elements": ["task_tracker", "chat_panel", "map_entry"],
+        "ocr_field_numbers": [4],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "main_world__manual_1366x768_1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/main_world__manual_1366x768_1.png",
+      "template_id": "dhxy2_classic_main_world_v1",
+      "screen_type": "main_world",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "main_world",
+          "template_id": "dhxy2_classic_main_world_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_task", "open_map", "continue_navigation"]
+        },
+        "required_elements": ["task_tracker", "chat_panel", "map_entry"],
+        "ocr_field_numbers": [4],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "main_world__manual_1708x960_1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/main_world__manual_1708x960_1.png",
+      "template_id": "dhxy2_classic_main_world_v1",
+      "screen_type": "main_world",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "main_world",
+          "template_id": "dhxy2_classic_main_world_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_task", "open_map", "continue_navigation"]
+        },
+        "required_elements": ["task_tracker", "chat_panel", "map_entry"],
+        "ocr_field_numbers": [4],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "main_world__manual_1280x900_1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/main_world__manual_1280x900_1.png",
+      "template_id": "dhxy2_classic_main_world_v1",
+      "screen_type": "main_world",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "main_world",
+          "template_id": "dhxy2_classic_main_world_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_task", "open_map", "continue_navigation"]
+        },
+        "required_elements": ["task_tracker", "chat_panel", "map_entry"],
+        "ocr_field_numbers": [4],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "main_world__manual_1000x718_1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/main_world__manual_1000x718_1.png",
+      "template_id": "dhxy2_classic_main_world_v1",
+      "screen_type": "main_world",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "main_world",
+          "template_id": "dhxy2_classic_main_world_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_task", "open_map", "continue_navigation"]
+        },
+        "required_elements": ["task_tracker", "chat_panel", "map_entry"],
+        "ocr_field_numbers": [4],
+        "field_values": []
+      }
+    },
+    {
       "case_id": "battle__legacy_battle1",
       "screenshot": "samples/dhxy2_classic_pc/screenshots/battle__legacy_battle1.png",
       "template_id": "dhxy2_classic_battle_v1",

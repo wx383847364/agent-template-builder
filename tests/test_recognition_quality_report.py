@@ -33,7 +33,7 @@ def test_reports_repository_sample_quality() -> None:
     assert reward.anchor_matches
     assert login_waterfall.confidence is not None
     assert login_waterfall.confidence >= 0.6
-    assert blocking.confidence == 0.79
+    assert blocking.confidence == 0.95
 
 
 def test_reports_directory_items_without_expected(tmp_path: Path) -> None:
