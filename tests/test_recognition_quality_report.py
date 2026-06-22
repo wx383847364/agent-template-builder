@@ -18,19 +18,22 @@ SAMPLES_DIR = Path(__file__).resolve().parents[1] / "samples" / "dhxy2_classic_p
 def test_reports_repository_sample_quality() -> None:
     report = build_quality_report(GAME_DIR)
 
-    login_waterfall = next(item for item in report.items if item.case_id == "login_waterfall__legacy_login1")
+    login_waterfall = next(item for item in report.items if item.case_id == "login_waterfall__manual_login1")
+    main_world = next(item for item in report.items if item.case_id == "main_world__baseline")
     reward = next(item for item in report.items if item.case_id == "reward_popup__manual_summon_reward1")
     blocking = next(item for item in report.items if item.case_id == "blocking_modal__baseline")
-    placeholder = next(item for item in report.items if item.case_id == "main_world__baseline")
 
+    assert main_world.actual_screen_type == "main_world"
+    assert main_world.passed_expected is True
+    assert main_world.confidence is not None
+    assert main_world.confidence >= 0.6
     assert reward.expected_screen_type == "reward_popup"
     assert reward.actual_screen_type == "reward_popup"
     assert reward.passed_expected is True
     assert reward.anchor_matches
     assert login_waterfall.confidence is not None
-    assert login_waterfall.confidence < 0.6
+    assert login_waterfall.confidence >= 0.6
     assert blocking.confidence == 0.79
-    assert placeholder.issue == "missing_screenshot"
 
 
 def test_reports_directory_items_without_expected(tmp_path: Path) -> None:

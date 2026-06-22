@@ -9,22 +9,40 @@
       "id": "center_modal_area",
       "type": "layout_region",
       "bbox": [0.2402, 0.3861, 0.7607, 0.6014],
+      "bbox_by_profile": {
+        "fixed_window_800x574": [0.28125, 0.3537, 0.7100, 0.6324]
+      },
       "weight": 0.60,
-      "expected_hash": "3ffe800000003c24"
+      "expected_hash": "3ffe800000003c24",
+      "expected_hashes": [
+        "feffc0c0c0fefe58"
+      ]
     },
     {
       "id": "modal_confirm_area",
       "type": "layout_region",
       "bbox": [0.3945, 0.5458, 0.4541, 0.5819],
+      "bbox_by_profile": {
+        "fixed_window_800x574": [0.3875, 0.5749, 0.4650, 0.6202]
+      },
       "weight": 0.20,
-      "expected_hash": "007e7e4a4e7e7e00"
+      "expected_hash": "007e7e4a4e7e7e00",
+      "expected_hashes": [
+        "207e52424e7e0081"
+      ]
     },
     {
       "id": "modal_cancel_area",
       "type": "layout_region",
       "bbox": [0.5566, 0.5458, 0.6162, 0.5819],
+      "bbox_by_profile": {
+        "fixed_window_800x574": [0.5425, 0.5749, 0.6200, 0.6202]
+      },
       "weight": 0.20,
-      "expected_hash": "007e7e5a5a7e7e00"
+      "expected_hash": "007e7e5a5a7e7e00",
+      "expected_hashes": [
+        "7c7e5246567c00a1"
+      ]
     }
   ],
   "elements": [
@@ -32,6 +50,9 @@
       "id": "modal_body",
       "type": "text_region",
       "bbox": [0.2539, 0.4222, 0.7344, 0.4972],
+      "bbox_by_profile": {
+        "fixed_window_800x574": [0.3100, 0.3937, 0.6775, 0.5540]
+      },
       "ocr_required": true,
       "semantic_role": "modal_text"
     },
@@ -39,6 +60,9 @@
       "id": "modal_confirm",
       "type": "button",
       "bbox": [0.3945, 0.5458, 0.4541, 0.5819],
+      "bbox_by_profile": {
+        "fixed_window_800x574": [0.3875, 0.5749, 0.4650, 0.6202]
+      },
       "ocr_required": false,
       "semantic_role": "confirm"
     },
@@ -46,6 +70,9 @@
       "id": "modal_cancel",
       "type": "button",
       "bbox": [0.5566, 0.5458, 0.6162, 0.5819],
+      "bbox_by_profile": {
+        "fixed_window_800x574": [0.5425, 0.5749, 0.6200, 0.6202]
+      },
       "ocr_required": false,
       "semantic_role": "cancel"
     }

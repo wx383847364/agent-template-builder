@@ -288,7 +288,7 @@ def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
             Element(
                 id="selected_server",
                 type="text_region",
-                bbox=(610, 700, 700, 730),
+                bbox=(397, 729, 534, 772),
                 confidence=0.8,
                 semantic_role="selected_server",
                 text=WATER_CRYSTAL_PALACE,
@@ -304,7 +304,7 @@ def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
             Element(
                 id="selected_server_slot",
                 type="button_slot",
-                bbox=(610, 700, 700, 730),
+                bbox=(397, 729, 534, 772),
                 confidence=0.88,
                 semantic_role="selected_server_slot",
                 text="",
@@ -312,7 +312,7 @@ def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
             Element(
                 id="account_server_slot_1",
                 type="button_slot",
-                bbox=(155, 248, 175, 272),
+                bbox=(51, 207, 191, 247),
                 confidence=0.88,
                 semantic_role="account_server_slot",
                 text="",
@@ -320,7 +320,7 @@ def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
             Element(
                 id="account_server_slot_2",
                 type="button_slot",
-                bbox=(262, 248, 282, 272),
+                bbox=(205, 207, 346, 247),
                 confidence=0.88,
                 semantic_role="account_server_slot",
                 text="",
@@ -334,8 +334,8 @@ def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
         "202": "server_select",
         "203": "dhxy2_classic_server_select_v1",
         "204": "0.880",
-        "3": f"{WATER_CRYSTAL_PALACE}@655,715",
-        "400": f"{WATER_CRYSTAL_PALACE}@655,715",
-        "401": f"{WATER_CRYSTAL_PALACE}@165,260;{LOVE_YOU_FOREVER}@272,260",
+        "3": f"{WATER_CRYSTAL_PALACE}@466,750",
+        "400": f"{WATER_CRYSTAL_PALACE}@466,750",
+        "401": f"{WATER_CRYSTAL_PALACE}@121,227;{LOVE_YOU_FOREVER}@276,227",
         "4000": "0",
     }

@@ -74,7 +74,7 @@
       "screenshot": "samples/dhxy2_classic_pc/screenshots/main_world__baseline.png",
       "template_id": "dhxy2_classic_main_world_v1",
       "screen_type": "main_world",
-      "sample_status": "placeholder_no_screenshot",
+      "sample_status": "manual_screenshot_anchor_calibrated",
       "expected": {
         "game": {
           "id": "dhxy2",
@@ -120,6 +120,30 @@
     {
       "case_id": "blocking_modal__baseline",
       "screenshot": "samples/dhxy2_classic_pc/screenshots/blocking_modal__manual_discard_item1.png",
+      "template_id": "dhxy2_classic_blocking_modal_v1",
+      "screen_type": "blocking_modal",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "blocking_modal",
+          "template_id": "dhxy2_classic_blocking_modal_v1"
+        },
+        "state": {
+          "blocking_modal": true,
+          "available_intents": ["read_modal", "confirm_modal", "cancel_modal"]
+        },
+        "required_elements": ["modal_body", "modal_confirm", "modal_cancel"],
+        "ocr_field_numbers": [8],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "blocking_modal__manual_team_invite1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/blocking_modal__manual_team_invite1.png",
       "template_id": "dhxy2_classic_blocking_modal_v1",
       "screen_type": "blocking_modal",
       "sample_status": "manual_screenshot_anchor_calibrated",
@@ -190,11 +214,11 @@
       }
     },
     {
-      "case_id": "login_waterfall__legacy_login1",
-      "screenshot": "samples/dhxy2_classic_pc/screenshots/login_waterfall__legacy_login1.png",
+      "case_id": "login_waterfall__manual_login1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/login_waterfall__manual_login1.png",
       "template_id": "dhxy2_classic_login_waterfall_v1",
       "screen_type": "login_waterfall",
-      "sample_status": "legacy_screenshot_anchor_calibrated",
+      "sample_status": "manual_screenshot_anchor_calibrated",
       "expected": {
         "game": {
           "id": "dhxy2",
@@ -259,6 +283,191 @@
         "required_elements": ["selected_server", "account_servers", "server_confirm"],
         "ocr_field_numbers": [3, 400, 401],
         "field_values": []
+      }
+    },
+    {
+      "case_id": "server_select__manual_recommend_full_list1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/server_select__manual_recommend_full_list1.png",
+      "template_id": "dhxy2_classic_server_select_v1",
+      "screen_type": "server_select",
+      "sample_status": "manual_screenshot_server_list_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "server_select",
+          "template_id": "dhxy2_classic_server_select_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_server_list", "confirm_server", "go_back"]
+        },
+        "required_elements": ["selected_server", "account_servers", "server_confirm"],
+        "ocr_field_numbers": [3, 400, 401],
+        "field_values": [
+          {
+            "field_no": 3,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 400,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 401,
+            "value": "水晶宫;爱你万年;游戏试玩;雾隐云居;陕西专区;水云仙府"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "server_select__manual_heaven_full_list1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/server_select__manual_heaven_full_list1.png",
+      "template_id": "dhxy2_classic_server_select_v1",
+      "screen_type": "server_select",
+      "sample_status": "manual_screenshot_server_list_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "server_select",
+          "template_id": "dhxy2_classic_server_select_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_server_list", "confirm_server", "go_back"]
+        },
+        "required_elements": ["selected_server", "account_servers", "server_confirm"],
+        "ocr_field_numbers": [3, 400, 401],
+        "field_values": [
+          {
+            "field_no": 3,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 400,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 401,
+            "value": "水晶宫;爱你万年;游戏试玩;雾隐云居;陕西专区;水云仙府"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "server_select__manual_earth_full_list1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/server_select__manual_earth_full_list1.png",
+      "template_id": "dhxy2_classic_server_select_v1",
+      "screen_type": "server_select",
+      "sample_status": "manual_screenshot_server_list_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "server_select",
+          "template_id": "dhxy2_classic_server_select_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_server_list", "confirm_server", "go_back"]
+        },
+        "required_elements": ["selected_server", "account_servers", "server_confirm"],
+        "ocr_field_numbers": [3, 400, 401],
+        "field_values": [
+          {
+            "field_no": 3,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 400,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 401,
+            "value": "水晶宫;爱你万年;游戏试玩;雾隐云居;陕西专区;水云仙府"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "server_select__manual_human_full_list1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/server_select__manual_human_full_list1.png",
+      "template_id": "dhxy2_classic_server_select_v1",
+      "screen_type": "server_select",
+      "sample_status": "manual_screenshot_server_list_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "server_select",
+          "template_id": "dhxy2_classic_server_select_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_server_list", "confirm_server", "go_back"]
+        },
+        "required_elements": ["selected_server", "account_servers", "server_confirm"],
+        "ocr_field_numbers": [3, 400, 401],
+        "field_values": [
+          {
+            "field_no": 3,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 400,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 401,
+            "value": "水晶宫;爱你万年;游戏试玩;雾隐云居;陕西专区;水云仙府"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "server_select__manual_demon_full_list1",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/server_select__manual_demon_full_list1.png",
+      "template_id": "dhxy2_classic_server_select_v1",
+      "screen_type": "server_select",
+      "sample_status": "manual_screenshot_server_list_anchor_calibrated",
+      "expected": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "server_select",
+          "template_id": "dhxy2_classic_server_select_v1"
+        },
+        "state": {
+          "blocking_modal": false,
+          "available_intents": ["read_server_list", "confirm_server", "go_back"]
+        },
+        "required_elements": ["selected_server", "account_servers", "server_confirm"],
+        "ocr_field_numbers": [3, 400, 401],
+        "field_values": [
+          {
+            "field_no": 3,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 400,
+            "value": "水晶宫"
+          },
+          {
+            "field_no": 401,
+            "value": "水晶宫;爱你万年;游戏试玩;雾隐云居;陕西专区;水云仙府"
+          }
+        ]
       }
     },
     {

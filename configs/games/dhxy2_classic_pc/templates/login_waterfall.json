@@ -15,7 +15,10 @@
       "type": "layout_region",
       "bbox": [0.805, 0.70, 0.925, 0.86],
       "weight": 0.45,
-      "expected_hash": "38fcfcfc7c381000"
+      "expected_hash": "38fcfcfc7c381000",
+      "expected_hashes": [
+        "38fcfcfc7c281000"
+      ]
     }
   ],
   "elements": [

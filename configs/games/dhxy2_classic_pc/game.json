@@ -36,6 +36,16 @@
   ],
   "supported_windows": [
     {
+      "width": 800,
+      "height": 574,
+      "label": "fixed_window_800x574"
+    },
+    {
+      "width": 1603,
+      "height": 940,
+      "label": "launcher_window_1603x940"
+    },
+    {
       "width": 1280,
       "height": 720,
       "label": "fixed_window_1280x720"
