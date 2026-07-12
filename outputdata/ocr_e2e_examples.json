@@ -1,0 +1,755 @@
+{
+  "description": "PaddleOCR end-to-end examples from curated repository screenshots.",
+  "ocr_backend": "paddle",
+  "ocr_device": "auto",
+  "cases": [
+    {
+      "case_id": "main_world_task_tracker",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/main_world__manual_1000x718_1.png",
+      "agent_data": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "main_world",
+          "template_id": "dhxy2_classic_main_world_v1",
+          "confidence": 0.91,
+          "resolution": {
+            "width": 1000,
+            "height": 718
+          }
+        },
+        "elements": [
+          {
+            "id": "task_tracker",
+            "type": "text_region",
+            "bbox": [
+              0,
+              182,
+              238,
+              292
+            ],
+            "confidence": 0.7695190981030464,
+            "semantic_role": "current_task",
+            "text": "Z\n任务追踪\n名望伊始[山河名望]\n穷奇境界业已破碎，为何逆天\n魔仍是忧心中中？",
+            "visible": true,
+            "evidence": {
+              "region_id": "task_tracker",
+              "source": "ocr",
+              "ocr_text": "Z\n任务追踪\n名望伊始[山河名望]\n穷奇境界业已破碎，为何逆天\n魔仍是忧心中中？",
+              "template_id": "dhxy2_classic_main_world_v1"
+            }
+          },
+          {
+            "id": "chat_panel",
+            "type": "panel",
+            "bbox": [
+              0,
+              687,
+              640,
+              718
+            ],
+            "confidence": 0.91,
+            "semantic_role": "chat",
+            "text": null,
+            "visible": true,
+            "evidence": {
+              "region_id": "chat_panel",
+              "source": "template",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_main_world_v1"
+            }
+          },
+          {
+            "id": "map_entry",
+            "type": "button",
+            "bbox": [
+              244,
+              2,
+              292,
+              50
+            ],
+            "confidence": 0.91,
+            "semantic_role": "open_map",
+            "text": null,
+            "visible": true,
+            "evidence": {
+              "region_id": "map_entry",
+              "source": "template",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_main_world_v1"
+            }
+          }
+        ],
+        "state": {
+          "blocking_modal": false,
+          "available_intents": [
+            "read_task",
+            "open_map",
+            "continue_navigation"
+          ]
+        },
+        "task": {
+          "visible": true,
+          "text": "Z\n任务追踪\n名望伊始[山河名望]\n穷奇境界业已破碎，为何逆天\n魔仍是忧心中中？",
+          "confidence": 0.7695190981030464,
+          "evidence": {
+            "region_id": "task_tracker",
+            "source": "ocr",
+            "ocr_text": "Z\n任务追踪\n名望伊始[山河名望]\n穷奇境界业已破碎，为何逆天\n魔仍是忧心中中？",
+            "template_id": "dhxy2_classic_main_world_v1"
+          }
+        },
+        "raw": {
+          "coordinate_space": {
+            "type": "normalized",
+            "base_width": 1280,
+            "base_height": 720,
+            "bbox_unit": "screen_ratio"
+          },
+          "ocr_policy": {
+            "language": "zh_cn",
+            "only_when_required": true,
+            "cache_by_region_hash": true
+          },
+          "game_view": {
+            "bbox": [
+              0,
+              0,
+              1000,
+              718
+            ],
+            "width": 1000,
+            "height": 718,
+            "source": "full_image"
+          },
+          "match": {
+            "aspect_ratio_label": "fixed_window",
+            "viewport_profile_label": "fixed_window_1000x718",
+            "fallback_reason": null,
+            "measurable_template_count": 10,
+            "anchor_matches": [
+              {
+                "id": "task_tracker_area",
+                "score": 1.0,
+                "actual_hash": "fcfc00787e7e7000",
+                "expected_hash": "fcfc00787e7e7000",
+                "hamming_distance": 0
+              }
+            ]
+          }
+        }
+      },
+      "agent_rows": {
+        "4": "Z\n任务追踪\n名望伊始[山河名望]\n穷奇境界业已破碎，为何逆天\n魔仍是忧心中中？",
+        "202": "main_world",
+        "203": "dhxy2_classic_main_world_v1",
+        "204": "0.910",
+        "4000": "0",
+        "8000": "read_task;open_map;continue_navigation"
+      }
+    },
+    {
+      "case_id": "blocking_modal_team_invite",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/blocking_modal__manual_team_invite1.png",
+      "agent_data": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "blocking_modal",
+          "template_id": "dhxy2_classic_blocking_modal_v1",
+          "confidence": 0.95,
+          "resolution": {
+            "width": 800,
+            "height": 574
+          }
+        },
+        "elements": [
+          {
+            "id": "modal_body",
+            "type": "text_region",
+            "bbox": [
+              248,
+              226,
+              542,
+              318
+            ],
+            "confidence": 0.9184553980827331,
+            "semantic_role": "modal_text",
+            "text": "改名为终极邀请您加入队伍\n飞升176\n?\n?\n?",
+            "visible": true,
+            "evidence": {
+              "region_id": "modal_body",
+              "source": "ocr",
+              "ocr_text": "改名为终极邀请您加入队伍\n飞升176\n?\n?\n?",
+              "template_id": "dhxy2_classic_blocking_modal_v1"
+            }
+          },
+          {
+            "id": "modal_confirm",
+            "type": "button",
+            "bbox": [
+              310,
+              330,
+              372,
+              356
+            ],
+            "confidence": 0.95,
+            "semantic_role": "confirm",
+            "text": null,
+            "visible": true,
+            "evidence": {
+              "region_id": "modal_confirm",
+              "source": "template",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_blocking_modal_v1"
+            }
+          },
+          {
+            "id": "modal_cancel",
+            "type": "button",
+            "bbox": [
+              434,
+              330,
+              496,
+              356
+            ],
+            "confidence": 0.95,
+            "semantic_role": "cancel",
+            "text": null,
+            "visible": true,
+            "evidence": {
+              "region_id": "modal_cancel",
+              "source": "template",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_blocking_modal_v1"
+            }
+          }
+        ],
+        "state": {
+          "blocking_modal": true,
+          "available_intents": [
+            "read_modal",
+            "confirm_modal",
+            "cancel_modal"
+          ]
+        },
+        "task": null,
+        "raw": {
+          "coordinate_space": {
+            "type": "normalized",
+            "base_width": 1280,
+            "base_height": 720,
+            "bbox_unit": "screen_ratio"
+          },
+          "ocr_policy": {
+            "language": "zh_cn",
+            "only_when_required": true,
+            "cache_by_region_hash": true
+          },
+          "game_view": {
+            "bbox": [
+              0,
+              0,
+              800,
+              574
+            ],
+            "width": 800,
+            "height": 574,
+            "source": "full_image"
+          },
+          "match": {
+            "aspect_ratio_label": "fixed_window",
+            "viewport_profile_label": "fixed_window_800x574",
+            "fallback_reason": null,
+            "measurable_template_count": 10,
+            "anchor_matches": [
+              {
+                "id": "center_modal_area",
+                "score": 1.0,
+                "actual_hash": "feffc0c0c0fefe58",
+                "expected_hash": "feffc0c0c0fefe58",
+                "hamming_distance": 0
+              },
+              {
+                "id": "modal_confirm_area",
+                "score": 1.0,
+                "actual_hash": "207e52424e7e0081",
+                "expected_hash": "207e52424e7e0081",
+                "hamming_distance": 0
+              },
+              {
+                "id": "modal_cancel_area",
+                "score": 1.0,
+                "actual_hash": "7c7e5246567c00a1",
+                "expected_hash": "7c7e5246567c00a1",
+                "hamming_distance": 0
+              }
+            ]
+          }
+        }
+      },
+      "agent_rows": {
+        "202": "blocking_modal",
+        "203": "dhxy2_classic_blocking_modal_v1",
+        "204": "0.950",
+        "4000": "1",
+        "8000": "read_modal;confirm_modal;cancel_modal"
+      }
+    },
+    {
+      "case_id": "npc_dialog",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/npc_dialog__manual_dialog1.png",
+      "agent_data": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "npc_dialog",
+          "template_id": "dhxy2_classic_npc_dialog_v1",
+          "confidence": 0.93,
+          "resolution": {
+            "width": 1280,
+            "height": 900
+          }
+        },
+        "elements": [
+          {
+            "id": "dialog_body",
+            "type": "text_region",
+            "bbox": [
+              256,
+              522,
+              998,
+              702
+            ],
+            "confidence": 0.93,
+            "semantic_role": "dialog_text",
+            "text": "蓝衣少年",
+            "visible": true,
+            "evidence": {
+              "region_id": "dialog_body",
+              "source": "ocr",
+              "ocr_text": "蓝衣少年",
+              "template_id": "dhxy2_classic_npc_dialog_v1"
+            }
+          },
+          {
+            "id": "dialog_options",
+            "type": "text_region",
+            "bbox": [
+              742,
+              558,
+              1050,
+              810
+            ],
+            "confidence": 0.8762581944465637,
+            "semantic_role": "dialog_options",
+            "text": "打开道具栏（alt\né，右键点击装备图\n标，穿戴武器教训仙\n族少年！\nO",
+            "visible": true,
+            "evidence": {
+              "region_id": "dialog_options",
+              "source": "ocr",
+              "ocr_text": "打开道具栏（alt\né，右键点击装备图\n标，穿戴武器教训仙\n族少年！\nO",
+              "template_id": "dhxy2_classic_npc_dialog_v1"
+            }
+          },
+          {
+            "id": "dialog_continue",
+            "type": "button",
+            "bbox": [
+              870,
+              738,
+              1050,
+              828
+            ],
+            "confidence": 0.93,
+            "semantic_role": "continue_dialog",
+            "text": null,
+            "visible": true,
+            "evidence": {
+              "region_id": "dialog_continue",
+              "source": "template",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_npc_dialog_v1"
+            }
+          }
+        ],
+        "state": {
+          "blocking_modal": false,
+          "available_intents": [
+            "read_dialog",
+            "continue_dialog",
+            "choose_dialog_option"
+          ]
+        },
+        "task": null,
+        "raw": {
+          "coordinate_space": {
+            "type": "normalized",
+            "base_width": 1280,
+            "base_height": 720,
+            "bbox_unit": "screen_ratio"
+          },
+          "ocr_policy": {
+            "language": "zh_cn",
+            "only_when_required": true,
+            "cache_by_region_hash": true
+          },
+          "game_view": {
+            "bbox": [
+              0,
+              0,
+              1280,
+              900
+            ],
+            "width": 1280,
+            "height": 900,
+            "source": "full_image"
+          },
+          "match": {
+            "aspect_ratio_label": "fixed_window",
+            "viewport_profile_label": "fixed_window_1280x900",
+            "fallback_reason": null,
+            "measurable_template_count": 10,
+            "anchor_matches": [
+              {
+                "id": "dialog_panel_area",
+                "score": 1.0,
+                "actual_hash": "81c3fefefef8f8f0",
+                "expected_hash": "81c3fefefef8f8f0",
+                "hamming_distance": 0
+              },
+              {
+                "id": "dialog_options_area",
+                "score": 1.0,
+                "actual_hash": "fefcf8fcfc800002",
+                "expected_hash": "fefcf8fcfc800002",
+                "hamming_distance": 0
+              }
+            ]
+          }
+        }
+      },
+      "agent_rows": {
+        "6": "蓝衣少年",
+        "7": "打开道具栏（alt\né，右键点击装备图\n标，穿戴武器教训仙\n族少年！\nO",
+        "202": "npc_dialog",
+        "203": "dhxy2_classic_npc_dialog_v1",
+        "204": "0.930",
+        "4000": "0",
+        "8000": "read_dialog;continue_dialog;choose_dialog_option"
+      }
+    },
+    {
+      "case_id": "server_select",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/server_select__manual_complete1.png",
+      "agent_data": {
+        "game": {
+          "id": "dhxy2",
+          "client": "classic_pc"
+        },
+        "screen": {
+          "type": "server_select",
+          "template_id": "dhxy2_classic_server_select_v1",
+          "confidence": 0.915,
+          "resolution": {
+            "width": 1280,
+            "height": 900
+          }
+        },
+        "elements": [
+          {
+            "id": "account_servers",
+            "type": "text_region",
+            "bbox": [
+              45,
+              203,
+              970,
+              250
+            ],
+            "confidence": 0.915,
+            "semantic_role": "account_servers",
+            "text": "水晶宫\n爱你万年\n游戏试玩\n雾隐云居\n陕西专区\n水云仙府",
+            "visible": true,
+            "evidence": {
+              "region_id": "account_servers",
+              "source": "ocr",
+              "ocr_text": "水晶宫\n爱你万年\n游戏试玩\n雾隐云居\n陕西专区\n水云仙府",
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "selected_server",
+            "type": "text_region",
+            "bbox": [
+              397,
+              729,
+              534,
+              772
+            ],
+            "confidence": 0.915,
+            "semantic_role": "selected_server",
+            "text": "水晶宫",
+            "visible": true,
+            "evidence": {
+              "region_id": "selected_server",
+              "source": "ocr",
+              "ocr_text": "水晶宫",
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "server_confirm",
+            "type": "button",
+            "bbox": [
+              543,
+              733,
+              649,
+              770
+            ],
+            "confidence": 0.915,
+            "semantic_role": "confirm_server",
+            "text": null,
+            "visible": true,
+            "evidence": {
+              "region_id": "server_confirm",
+              "source": "template",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "account_server_slot_1",
+            "type": "button_slot",
+            "bbox": [
+              51,
+              207,
+              191,
+              247
+            ],
+            "confidence": 0.915,
+            "semantic_role": "account_server_slot",
+            "text": "",
+            "visible": true,
+            "evidence": {
+              "region_id": "account_server_slot_1",
+              "source": "template_static",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "account_server_slot_2",
+            "type": "button_slot",
+            "bbox": [
+              205,
+              207,
+              346,
+              247
+            ],
+            "confidence": 0.915,
+            "semantic_role": "account_server_slot",
+            "text": "",
+            "visible": true,
+            "evidence": {
+              "region_id": "account_server_slot_2",
+              "source": "template_static",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "account_server_slot_3",
+            "type": "button_slot",
+            "bbox": [
+              358,
+              207,
+              499,
+              247
+            ],
+            "confidence": 0.915,
+            "semantic_role": "account_server_slot",
+            "text": "",
+            "visible": true,
+            "evidence": {
+              "region_id": "account_server_slot_3",
+              "source": "template_static",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "account_server_slot_4",
+            "type": "button_slot",
+            "bbox": [
+              512,
+              207,
+              654,
+              247
+            ],
+            "confidence": 0.915,
+            "semantic_role": "account_server_slot",
+            "text": "",
+            "visible": true,
+            "evidence": {
+              "region_id": "account_server_slot_4",
+              "source": "template_static",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "account_server_slot_5",
+            "type": "button_slot",
+            "bbox": [
+              666,
+              207,
+              806,
+              247
+            ],
+            "confidence": 0.915,
+            "semantic_role": "account_server_slot",
+            "text": "",
+            "visible": true,
+            "evidence": {
+              "region_id": "account_server_slot_5",
+              "source": "template_static",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "account_server_slot_6",
+            "type": "button_slot",
+            "bbox": [
+              819,
+              207,
+              961,
+              247
+            ],
+            "confidence": 0.915,
+            "semantic_role": "account_server_slot",
+            "text": "",
+            "visible": true,
+            "evidence": {
+              "region_id": "account_server_slot_6",
+              "source": "template_static",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "selected_server_slot",
+            "type": "button_slot",
+            "bbox": [
+              397,
+              729,
+              534,
+              772
+            ],
+            "confidence": 0.915,
+            "semantic_role": "selected_server_slot",
+            "text": "",
+            "visible": true,
+            "evidence": {
+              "region_id": "selected_server_slot",
+              "source": "template_static",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          },
+          {
+            "id": "server_confirm_button",
+            "type": "button",
+            "bbox": [
+              543,
+              733,
+              649,
+              770
+            ],
+            "confidence": 0.915,
+            "semantic_role": "confirm_server",
+            "text": "进入游戏",
+            "visible": true,
+            "evidence": {
+              "region_id": "server_confirm_button",
+              "source": "template_static",
+              "ocr_text": null,
+              "template_id": "dhxy2_classic_server_select_v1"
+            }
+          }
+        ],
+        "state": {
+          "blocking_modal": false,
+          "available_intents": [
+            "read_server_list",
+            "confirm_server",
+            "go_back"
+          ]
+        },
+        "task": null,
+        "raw": {
+          "coordinate_space": {
+            "type": "normalized",
+            "base_width": 1280,
+            "base_height": 720,
+            "bbox_unit": "screen_ratio"
+          },
+          "ocr_policy": {
+            "language": "zh_cn",
+            "only_when_required": true,
+            "cache_by_region_hash": true
+          },
+          "game_view": {
+            "bbox": [
+              0,
+              0,
+              1280,
+              900
+            ],
+            "width": 1280,
+            "height": 900,
+            "source": "full_image"
+          },
+          "match": {
+            "aspect_ratio_label": "fixed_window",
+            "viewport_profile_label": "fixed_window_1280x900",
+            "fallback_reason": null,
+            "measurable_template_count": 10,
+            "anchor_matches": [
+              {
+                "id": "center_server_panel",
+                "score": 1.0,
+                "actual_hash": "fffffcf8df000000",
+                "expected_hash": "fffffcf8df000000",
+                "hamming_distance": 0
+              },
+              {
+                "id": "server_confirm_area",
+                "score": 1.0,
+                "actual_hash": "f0000024b4feffff",
+                "expected_hash": "f0000024b4feffff",
+                "hamming_distance": 0
+              }
+            ]
+          }
+        }
+      },
+      "agent_rows": {
+        "3": "水晶宫@466,750",
+        "202": "server_select",
+        "203": "dhxy2_classic_server_select_v1",
+        "204": "0.915",
+        "400": "水晶宫@466,750",
+        "401": "水晶宫@121,227;爱你万年@276,227;游戏试玩@428,227;雾隐云居@583,227;陕西专区@736,227;水云仙府@890,227",
+        "4000": "0",
+        "8000": "read_server_list;confirm_server;go_back"
+      }
+    }
+  ]
+}

@@ -3,8 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 import argparse
 import json
+from typing import Optional
 
 from agent_template_builder.exporters.agent_rows import AgentRowsExporter
+from agent_template_builder.ocr.base import OCREngine
+from agent_template_builder.ocr.runtime import add_ocr_argument, create_ocr_engine_or_error
 from agent_template_builder.paths import default_game_dir, find_project_root
 from agent_template_builder.pipeline.analyze import analyze_screenshot
 from agent_template_builder.schema.agent_rows import AgentRowsOutput
@@ -17,8 +20,9 @@ def export_agent_rows(
     screenshot_path: Path,
     game_dir: Path = default_game_dir(),
     fields_config: Path = DEFAULT_FIELDS_CONFIG,
+    ocr_engine: Optional[OCREngine] = None,
 ) -> AgentRowsOutput:
-    data = analyze_screenshot(screenshot_path, game_dir)
+    data = analyze_screenshot(screenshot_path, game_dir, ocr_engine)
     exporter = AgentRowsExporter.from_config_path(fields_config)
     return exporter.export(data)
 
@@ -33,9 +37,11 @@ def main() -> None:
     parser.add_argument("--game-dir", type=Path, default=default_game_dir())
     parser.add_argument("--fields-config", type=Path, default=DEFAULT_FIELDS_CONFIG)
     parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output.")
+    add_ocr_argument(parser)
     args = parser.parse_args()
 
-    result = export_agent_rows(args.screenshot, args.game_dir, args.fields_config)
+    ocr_engine = create_ocr_engine_or_error(parser, args.ocr, args.ocr_device)
+    result = export_agent_rows(args.screenshot, args.game_dir, args.fields_config, ocr_engine)
     indent = 2 if args.pretty else None
     print(json.dumps(to_index_value_data(result), ensure_ascii=False, indent=indent))
 

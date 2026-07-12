@@ -8,6 +8,7 @@ import json
 from agent_template_builder.matcher.template_matcher import AspectRatioProfile, TemplateMatcher
 from agent_template_builder.matcher.roi import denormalize_bbox_in_view
 from agent_template_builder.ocr.base import NullOCREngine, OCREngine
+from agent_template_builder.ocr.runtime import add_ocr_argument, create_ocr_engine_or_error
 from agent_template_builder.paths import default_game_dir
 from agent_template_builder.schema.agent_data import AgentData, Element, Evidence, Resolution, RuntimeState, Screen, TaskState
 from agent_template_builder.schema.templates import load_game_config, load_templates
@@ -156,9 +157,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="将游戏截图分析为 AgentData JSON。")
     parser.add_argument("screenshot", type=Path)
     parser.add_argument("--game-dir", type=Path, default=DEFAULT_GAME_DIR)
+    add_ocr_argument(parser)
     args = parser.parse_args()
 
-    result = analyze_screenshot(args.screenshot, args.game_dir)
+    ocr_engine = create_ocr_engine_or_error(parser, args.ocr, args.ocr_device)
+    result = analyze_screenshot(args.screenshot, args.game_dir, ocr_engine)
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
 
 

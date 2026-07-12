@@ -6,6 +6,8 @@ import argparse
 import json
 
 from agent_template_builder.paths import DEFAULT_GAME_ID, default_game_dir, default_screenshot_dir
+from agent_template_builder.ocr.base import OCREngine
+from agent_template_builder.ocr.runtime import add_ocr_argument, create_ocr_engine_or_error
 from agent_template_builder.pipeline.analyze import analyze_screenshot
 
 
@@ -44,8 +46,12 @@ def latest_screenshot(directory: Path) -> Path:
     return screenshots[-1]
 
 
-def summarize_screenshot(screenshot_path: Path, game_dir: Path = default_game_dir()) -> ScreenshotSummary:
-    data = analyze_screenshot(screenshot_path, game_dir).to_dict()
+def summarize_screenshot(
+    screenshot_path: Path,
+    game_dir: Path = default_game_dir(),
+    ocr_engine: OCREngine | None = None,
+) -> ScreenshotSummary:
+    data = analyze_screenshot(screenshot_path, game_dir, ocr_engine).to_dict()
     screen = data["screen"]
     resolution = screen["resolution"]
     return ScreenshotSummary(
@@ -61,8 +67,12 @@ def summarize_screenshot(screenshot_path: Path, game_dir: Path = default_game_di
     )
 
 
-def summarize_directory(directory: Path, game_dir: Path = default_game_dir()) -> list[ScreenshotSummary]:
-    return [summarize_screenshot(path, game_dir) for path in list_screenshots(directory)]
+def summarize_directory(
+    directory: Path,
+    game_dir: Path = default_game_dir(),
+    ocr_engine: OCREngine | None = None,
+) -> list[ScreenshotSummary]:
+    return [summarize_screenshot(path, game_dir, ocr_engine) for path in list_screenshots(directory)]
 
 
 def main() -> None:
@@ -77,21 +87,26 @@ def main() -> None:
     parser.add_argument("--latest", action="store_true", help="Only analyze the newest screenshot.")
     parser.add_argument("--agent-data", action="store_true", help="With --latest, print full AgentData JSON.")
     parser.add_argument("--jsonl", action="store_true", help="Print batch summaries as JSON Lines.")
+    add_ocr_argument(parser)
     args = parser.parse_args()
 
+    if args.ocr != "none" and not (args.latest and args.agent_data):
+        parser.error("OCR is only available with --latest --agent-data because summary output does not include OCR text.")
+
     directory = args.directory or default_screenshot_dir(DEFAULT_GAME_ID)
+    ocr_engine = create_ocr_engine_or_error(parser, args.ocr, args.ocr_device)
 
     if args.latest:
         screenshot = latest_screenshot(directory)
         if args.agent_data:
-            result = analyze_screenshot(screenshot, args.game_dir)
+            result = analyze_screenshot(screenshot, args.game_dir, ocr_engine)
             print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
             return
-        summary = summarize_screenshot(screenshot, args.game_dir)
+        summary = summarize_screenshot(screenshot, args.game_dir, ocr_engine)
         print(json.dumps(asdict(summary), ensure_ascii=False, indent=2))
         return
 
-    summaries = summarize_directory(directory, args.game_dir)
+    summaries = summarize_directory(directory, args.game_dir, ocr_engine)
     if args.jsonl:
         for summary in summaries:
             print(json.dumps(asdict(summary), ensure_ascii=False))

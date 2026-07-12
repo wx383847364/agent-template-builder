@@ -19,6 +19,7 @@ agent-template-builder-export-agent-rows = "agent_template_builder.pipeline.expo
 agent-template-builder-audit-templates = "agent_template_builder.tools.audit_templates:main"
 agent-template-builder-template-coverage = "agent_template_builder.tools.report_template_coverage:main"
 agent-template-builder-recognition-quality = "agent_template_builder.tools.report_recognition_quality:main"
+agent-template-builder-ocr-smoke-test = "agent_template_builder.tools.ocr_smoke_test:main"
 
 [project.optional-dependencies]
 dev = [
