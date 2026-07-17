@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from threading import RLock
 from typing import Any
 
 from PIL import Image
@@ -18,11 +19,24 @@ class PaddleOCREngine:
         text_recognition_model_name: str = "PP-OCRv5_mobile_rec",
         ocr: Any | None = None,
     ) -> None:
+        self._cache_identity = ":".join(
+            (
+                "paddleocr",
+                device,
+                text_detection_model_name,
+                text_recognition_model_name,
+            )
+        )
+        self._inference_lock = RLock()
         self._ocr = ocr or self._create_ocr(
             device=device,
             text_detection_model_name=text_detection_model_name,
             text_recognition_model_name=text_recognition_model_name,
         )
+
+    @property
+    def cache_identity(self) -> str:
+        return self._cache_identity
 
     def read_region(self, image_path: Path, bbox: tuple[int, int, int, int]) -> OCRResult:
         with Image.open(image_path) as image:
@@ -30,9 +44,13 @@ class PaddleOCREngine:
             if crop is None:
                 return OCRResult(text="", confidence=0.0)
 
-            with TemporaryDirectory(prefix="agent_template_builder_ocr_") as tmp_dir:
-                crop_path = Path(tmp_dir) / "roi.png"
-                crop.save(crop_path)
+            return self.read_image(crop)
+
+    def read_image(self, image: Image.Image) -> OCRResult:
+        with TemporaryDirectory(prefix="agent_template_builder_ocr_") as tmp_dir:
+            crop_path = Path(tmp_dir) / "roi.png"
+            image.save(crop_path)
+            with self._inference_lock:
                 raw_result = self._predict(crop_path)
 
         return _parse_result(raw_result)
@@ -117,4 +135,3 @@ def _collect_text_scores(raw: Any, texts: list[str], scores: list[float]) -> Non
 
         for item in raw:
             _collect_text_scores(item, texts, scores)
-

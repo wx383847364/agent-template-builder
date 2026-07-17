@@ -4,8 +4,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from agent_template_builder.matcher.hash import hamming_distance, image_size, region_hash
-from agent_template_builder.matcher.roi import GameView, denormalize_bbox_in_view, detect_game_view
+from PIL import Image
+
+from agent_template_builder.matcher.hash import hamming_distance, region_hash_image
+from agent_template_builder.matcher.roi import GameView, denormalize_bbox_in_view, detect_game_view_image
 from agent_template_builder.schema.templates import TemplateSpec
 
 
@@ -52,21 +54,28 @@ class TemplateMatcher:
         templates: list[TemplateSpec],
         supported_sizes: dict[tuple[int, int], str] | set[tuple[int, int]],
         aspect_profiles: list[AspectRatioProfile],
+        viewport_profiles: dict[tuple[int, int], str] | None = None,
     ) -> None:
         if not templates:
             raise ValueError("至少需要一个模板")
         self._templates = templates
         self._supported_sizes = _normalize_supported_sizes(supported_sizes)
         self._aspect_profiles = aspect_profiles
+        self._viewport_profiles = viewport_profiles or {}
 
     def match(self, screenshot_path: Path) -> MatchResult:
-        width, height = image_size(screenshot_path)
-        game_view = detect_game_view(screenshot_path)
+        with Image.open(screenshot_path) as image:
+            return self.match_image(image)
+
+    def match_image(self, image: Image.Image) -> MatchResult:
+        """Match one immutable image snapshot without reopening its source path."""
+        width, height = image.size
+        game_view = detect_game_view_image(image)
         aspect_label, profile_label, size_score = self._score_viewport(game_view.width, game_view.height)
         measurable_template_count = sum(1 for template in self._templates if template.measurable_anchor_count)
 
         scored = [
-            (self._score_template(screenshot_path, template, game_view, profile_label, size_score), template)
+            (self._score_template(image, template, game_view, profile_label, size_score), template)
             for template in self._templates
         ]
         best, template = max(scored, key=lambda item: (item[0][0], item[1].priority))
@@ -105,20 +114,26 @@ class TemplateMatcher:
         if (width, height) in self._supported_sizes:
             return ("fixed_window", self._supported_sizes[(width, height)], 1.0)
 
+        viewport_profile = self._viewport_profiles.get((width, height))
+
         if not self._aspect_profiles:
-            return (None, None, 1.0 if not self._supported_sizes else 0.55)
+            return (
+                None,
+                viewport_profile,
+                1.0 if not self._supported_sizes else 0.55,
+            )
 
         actual_ratio = width / height
         best = min(self._aspect_profiles, key=lambda profile: abs(actual_ratio - profile.ratio))
         delta = abs(actual_ratio - best.ratio)
         if delta <= best.tolerance:
             score = max(0.75, 1.0 - (delta / best.tolerance) * 0.25)
-            return (best.label, best.label, score)
-        return (None, None, 0.45)
+            return (best.label, viewport_profile or best.label, score)
+        return (None, viewport_profile, 0.45)
 
     def _score_template(
         self,
-        screenshot_path: Path,
+        image: Image.Image,
         template: TemplateSpec,
         game_view: GameView,
         profile_label: Optional[str],
@@ -134,7 +149,7 @@ class TemplateMatcher:
 
         for anchor in measurable:
             bbox = denormalize_bbox_in_view(anchor.bbox_for_profile(profile_label), game_view)
-            actual_hash = region_hash(screenshot_path, bbox)
+            actual_hash = region_hash_image(image, bbox)
             expected_hash, distance = min(
                 (
                     (expected_hash, hamming_distance(actual_hash, expected_hash))

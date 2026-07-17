@@ -40,7 +40,7 @@ screenshot
 
 - `game.json`：客户端标识、支持的窗口尺寸和流水线默认值；
 - `templates/*.json`：屏幕模板和元素区域；
-- `vocab/*.txt`：用于 OCR 后处理的纠错词典。
+- `vocab/*.txt`：用于 OCR 后处理的业务词典；`vocab/ocr_confusions.json` 记录有真实证据的定向字符混淆规则。
 
 ## 坐标策略
 

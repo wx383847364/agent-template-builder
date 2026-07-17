@@ -22,7 +22,12 @@ def image_size(path: Path) -> tuple[int, int]:
 
 def region_hash(path: Path, bbox: tuple[int, int, int, int]) -> str:
     with Image.open(path) as image:
-        return average_hash(image.crop(bbox))
+        return region_hash_image(image, bbox)
+
+
+def region_hash_image(image: Image.Image, bbox: tuple[int, int, int, int]) -> str:
+    """Hash a region without taking ownership of the caller's image."""
+    return average_hash(image.crop(bbox))
 
 
 def hamming_distance(left: str, right: str) -> int:

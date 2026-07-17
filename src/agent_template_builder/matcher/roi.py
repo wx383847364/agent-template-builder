@@ -31,10 +31,15 @@ def detect_game_view(path: Path) -> GameView:
     removed before template bbox and anchor calculations.
     """
     with Image.open(path) as image:
-        width, height = image.size
-        if _looks_like_window_capture(image):
-            return GameView((7, 78, width - 8, height - 6), "window_capture")
-        return GameView((0, 0, width, height), "full_image")
+        return detect_game_view_image(image)
+
+
+def detect_game_view_image(image: Image.Image) -> GameView:
+    """Detect the gameplay viewport without closing the supplied image."""
+    width, height = image.size
+    if _looks_like_window_capture(image):
+        return GameView((7, 78, width - 8, height - 6), "window_capture")
+    return GameView((0, 0, width, height), "full_image")
 
 
 def denormalize_bbox_in_view(

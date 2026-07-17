@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "substitutions": [
+    {"observed": "条", "expected": "务"},
+    {"observed": "受", "expected": "兽"},
+    {"observed": "品", "expected": "晶"},
+    {"observed": "君", "expected": "居"},
+    {"observed": "闾", "expected": "阁"}
+  ]
+}

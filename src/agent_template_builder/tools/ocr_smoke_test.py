@@ -9,7 +9,11 @@ import time
 from agent_template_builder.ocr.base import OCREngine, OCRResult
 from agent_template_builder.ocr.runtime import add_ocr_device_argument, create_ocr_engine_or_error
 from agent_template_builder.paths import default_game_dir, find_project_root
-from agent_template_builder.pipeline.analyze import analyze_screenshot
+from agent_template_builder.pipeline.analyze import (
+    analyze_screenshot,
+    clear_engine_region_cache,
+    get_engine_region_cache_stats,
+)
 
 
 @dataclass(frozen=True)
@@ -33,10 +37,54 @@ class OCRSmokeResult:
     elapsed_seconds: float
 
 
+@dataclass(frozen=True)
+class CachedAnalysisBenchmark:
+    warmup_seconds: float
+    hit_avg_seconds: float
+    hit_p95_seconds: float
+    analyses_per_second: float
+    warmup_misses: int
+    warmup_writes: int
+    timed_hits: int
+    timed_misses: int
+
+
 DEFAULT_TARGETS = (
     OCRSmokeTarget(
         "main_world.task_tracker",
         "main_world__manual_1000x718_1.png",
+        "task_tracker",
+        "dhxy2_classic_main_world_v1",
+        "任务追踪",
+        0.70,
+    ),
+    OCRSmokeTarget(
+        "main_world.task_tracker.1024x720",
+        "main_world__baseline.png",
+        "task_tracker",
+        "dhxy2_classic_main_world_v1",
+        "任务追踪",
+        0.70,
+    ),
+    OCRSmokeTarget(
+        "main_world.task_tracker.800x574",
+        "main_world__manual_800x574_1.png",
+        "task_tracker",
+        "dhxy2_classic_main_world_v1",
+        "任务追踪",
+        0.70,
+    ),
+    OCRSmokeTarget(
+        "main_world.task_tracker.1366x768",
+        "main_world__manual_1366x768_1.png",
+        "task_tracker",
+        "dhxy2_classic_main_world_v1",
+        "任务追踪",
+        0.70,
+    ),
+    OCRSmokeTarget(
+        "main_world.task_tracker.legacy_1203x872",
+        "main_world__legacy_game1.png",
         "task_tracker",
         "dhxy2_classic_main_world_v1",
         "任务追踪",
@@ -58,6 +106,12 @@ DEFAULT_TARGETS = (
         "蓝衣少年",
         0.70,
     ),
+)
+
+DEFAULT_BENCHMARK_LABELS = (
+    "main_world.task_tracker",
+    "blocking_modal.modal_body",
+    "npc_dialog.dialog_body",
 )
 
 
@@ -127,6 +181,71 @@ def benchmark(
     return mean(timings), p95, iterations / total
 
 
+def benchmark_cached_analysis(
+    ocr_engine: OCREngine,
+    game_dir: Path,
+    smoke_results: list[OCRSmokeResult],
+    iterations: int,
+) -> CachedAnalysisBenchmark:
+    if iterations < 1:
+        raise ValueError("iterations must be at least 1")
+    if not smoke_results:
+        raise ValueError("at least one smoke result is required")
+    if not clear_engine_region_cache(ocr_engine, reset_stats=True):
+        raise RuntimeError("analysis cache benchmark requires a weak-referenceable OCR engine")
+
+    warmup_started = time.perf_counter()
+    for item in smoke_results:
+        analyze_screenshot(item.screenshot_path, game_dir, ocr_engine)
+    warmup_seconds = time.perf_counter() - warmup_started
+    warmup_stats = get_engine_region_cache_stats(ocr_engine)
+    if warmup_stats is None or warmup_stats.misses <= 0 or warmup_stats.writes <= 0:
+        raise RuntimeError("analysis cache warmup did not produce real cache misses and writes")
+
+    timings: list[float] = []
+    for index in range(iterations):
+        item = smoke_results[index % len(smoke_results)]
+        started = time.perf_counter()
+        analyze_screenshot(item.screenshot_path, game_dir, ocr_engine)
+        timings.append(time.perf_counter() - started)
+
+    total = sum(timings)
+    p95 = quantiles(timings, n=20)[18] if len(timings) >= 20 else max(timings)
+    if total <= 0:
+        raise RuntimeError("benchmark clock produced a non-positive elapsed time")
+    final_stats = get_engine_region_cache_stats(ocr_engine)
+    if final_stats is None:
+        raise RuntimeError("analysis cache statistics disappeared during benchmark")
+    timed_hits = final_stats.hits - warmup_stats.hits
+    timed_misses = final_stats.misses - warmup_stats.misses
+    if timed_misses != 0 or timed_hits <= 0:
+        raise RuntimeError(
+            "analysis cache timed phase was not cache-only: "
+            f"hits={timed_hits} misses={timed_misses}"
+        )
+    return CachedAnalysisBenchmark(
+        warmup_seconds=warmup_seconds,
+        hit_avg_seconds=mean(timings),
+        hit_p95_seconds=p95,
+        analyses_per_second=iterations / total,
+        warmup_misses=warmup_stats.misses,
+        warmup_writes=warmup_stats.writes,
+        timed_hits=timed_hits,
+        timed_misses=timed_misses,
+    )
+
+
+def select_benchmark_results(
+    smoke_results: list[OCRSmokeResult],
+    labels: tuple[str, ...] = DEFAULT_BENCHMARK_LABELS,
+) -> list[OCRSmokeResult]:
+    results_by_label = {item.label: item for item in smoke_results}
+    missing = [label for label in labels if label not in results_by_label]
+    if missing:
+        raise ValueError(f"missing benchmark smoke results: {', '.join(missing)}")
+    return [results_by_label[label] for label in labels]
+
+
 def smoke_failures(
     results: list[OCRSmokeResult],
     targets: tuple[OCRSmokeTarget, ...] = DEFAULT_TARGETS,
@@ -178,10 +297,26 @@ def main() -> None:
         raise SystemExit(f"OCR smoke test failed: {'; '.join(failures)}")
 
     if args.benchmark:
-        avg, p95, roi_per_second = benchmark(engine, results, args.iterations)
+        benchmark_results = select_benchmark_results(results)
+        avg, p95, roi_per_second = benchmark(engine, benchmark_results, args.iterations)
         print(
-            f"benchmark count={args.iterations} avg={avg:.4f}s p95={p95:.4f}s "
+            f"roi_benchmark count={args.iterations} avg={avg:.4f}s p95={p95:.4f}s "
             f"roi_per_s={roi_per_second:.2f}"
+        )
+        cached = benchmark_cached_analysis(
+            engine,
+            args.game_dir,
+            benchmark_results,
+            args.iterations,
+        )
+        print(
+            f"analysis_cache_benchmark warmup_count={len(benchmark_results)} "
+            f"warmup_total={cached.warmup_seconds:.4f}s "
+            f"warmup_misses={cached.warmup_misses} warmup_writes={cached.warmup_writes} "
+            f"hit_count={args.iterations} hit_avg={cached.hit_avg_seconds:.4f}s "
+            f"hit_p95={cached.hit_p95_seconds:.4f}s "
+            f"timed_hits={cached.timed_hits} timed_misses={cached.timed_misses} "
+            f"analyses_per_s={cached.analyses_per_second:.2f}"
         )
 
 

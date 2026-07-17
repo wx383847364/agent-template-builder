@@ -76,6 +76,13 @@
       "label": "fixed_window_1366x768"
     }
   ],
+  "viewport_profiles": [
+    {
+      "width": 1203,
+      "height": 872,
+      "label": "legacy_window_capture_1203x872"
+    }
+  ],
   "ocr_policy": {
     "language": "zh_cn",
     "only_when_required": true,
