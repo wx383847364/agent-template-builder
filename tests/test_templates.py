@@ -41,11 +41,18 @@ def test_anchor_supports_multiple_expected_hashes() -> None:
 def test_template_loads_static_outputs() -> None:
     templates = load_templates(GAME_DIR)
     server_select = next(template for template in templates if template.screen_type == "server_select")
+    login_waterfall = next(template for template in templates if template.screen_type == "login_waterfall")
 
     ids = {item.id for item in server_select.static_outputs}
 
     assert {"account_server_slot_1", "selected_server_slot"}.issubset(ids)
     assert any(item.semantic_role == "confirm_server" and item.text == "进入游戏" for item in server_select.static_outputs)
+    assert any(
+        item.semantic_role == "start_game_button"
+        and item.text == "开始游戏"
+        and item.bbox == (0.810, 0.700, 0.906, 0.864)
+        for item in login_waterfall.static_outputs
+    )
 
 
 def test_template_loads_bbox_by_profile(tmp_path: Path) -> None:

@@ -28,7 +28,10 @@ class AgentRowsExporter:
         for element in data.elements:
             if not element.semantic_role or not element.text:
                 continue
-            values_by_role[element.semantic_role].append(element.text)
+            value = element.text
+            if element.type in {"button", "button_slot"}:
+                value = _format_target_at(value, element)
+            values_by_role[element.semantic_role].append(value)
 
         self._bind_server_select_values(data.elements, values_by_role)
 
@@ -97,7 +100,7 @@ def _format_available_intents(intents: list[str]) -> str:
 
 
 def _bind_single_server(value: str, slots: list[Element], fallback_regions: list[Element]) -> str:
-    if _has_bound_coordinate(value):
+    if _has_bound_bbox(value):
         return value
     candidates = _split_server_names(value)
     if not candidates:
@@ -107,7 +110,7 @@ def _bind_single_server(value: str, slots: list[Element], fallback_regions: list
 
 
 def _bind_server_list(value: str, slots: list[Element], fallback_regions: list[Element]) -> str:
-    if _has_bound_coordinate(value):
+    if _has_bound_bbox(value):
         return value
     names = _split_server_names(value)
     if not names:
@@ -122,15 +125,30 @@ def _bind_server_list(value: str, slots: list[Element], fallback_regions: list[E
 
 
 def _split_server_names(value: str) -> list[str]:
-    return [item.strip() for item in re.split(r"[;\n\r,，、\s]+", value) if item.strip()]
+    labels_only = _strip_target_suffixes(value)
+    return [item.strip() for item in re.split(r"[;\n\r,，、\s]+", labels_only) if item.strip()]
 
 
-def _has_bound_coordinate(value: str) -> bool:
-    return bool(re.search(r"@\d+,\d+", value))
+def _has_bound_bbox(value: str) -> bool:
+    targets = [item.strip() for item in value.split(";") if item.strip()]
+    return bool(targets) and all(
+        re.search(r"@\[\d+,\s*\d+,\s*\d+,\s*\d+\]$", target)
+        for target in targets
+    )
+
+
+def _strip_target_suffixes(value: str) -> str:
+    value = re.sub(r"@\[\d+,\s*\d+,\s*\d+,\s*\d+\]", "", value)
+    return re.sub(r"@\d+,\d+", "", value)
 
 
 def _format_server_at(name: str, element: Element) -> str:
+    return _format_target_at(name, element)
+
+
+def _format_target_at(label: str, element: Element) -> str:
+    if _has_bound_bbox(label):
+        return label
+    label = _strip_target_suffixes(label)
     left, top, right, bottom = element.bbox
-    center_x = round((left + right) / 2)
-    center_y = round((top + bottom) / 2)
-    return f"{name}@{center_x},{center_y}"
+    return f"{label}@[{left}, {top}, {right}, {bottom}]"

@@ -1,0 +1,7 @@
+{
+  "202": "login_guard",
+  "203": "dhxy2_classic_login_guard_v1",
+  "204": "0.945",
+  "4000": "1",
+  "8000": "read_login_guard_prompt;enter_login_guard_code;go_back"
+}

@@ -127,6 +127,19 @@ def test_analyze_injects_template_static_outputs() -> None:
     assert {element.id for element in static_elements} >= {"account_server_slot_1", "selected_server_slot"}
     assert any(element.semantic_role == "confirm_server" and element.text == "进入游戏" for element in static_elements)
 
+
+def test_analyze_injects_login_start_game_button_coordinates() -> None:
+    screenshot = SAMPLES_DIR / "screenshots" / "login_waterfall__manual_login1.png"
+
+    result = analyze_screenshot(screenshot, GAME_DIR)
+    start_button = next(element for element in result.elements if element.id == "start_game_button")
+
+    assert result.screen.type == "login_waterfall"
+    assert start_button.text == "开始游戏"
+    assert start_button.bbox == (1298, 658, 1452, 812)
+    assert start_button.evidence is not None
+    assert start_button.evidence.source == "template_static"
+
 def test_analyze_uses_bbox_by_profile_for_static_outputs(tmp_path: Path) -> None:
     game_dir = tmp_path / "game"
     templates_dir = game_dir / "templates"

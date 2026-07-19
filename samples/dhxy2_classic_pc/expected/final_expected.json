@@ -66,6 +66,11 @@
       "no": 13,
       "key": "panel_title",
       "meaning": "系统面板标题文本"
+    },
+    {
+      "no": 303,
+      "key": "start_game_button",
+      "meaning": "登录瀑布界面开始游戏按钮，格式为文字@像素bbox"
     }
   ],
   "cases": [
@@ -352,9 +357,14 @@
           "blocking_modal": false,
           "available_intents": ["read_login_notice", "open_server_select", "switch_login_style"]
         },
-        "required_elements": ["login_action_stack", "login_notice_text"],
+        "required_elements": ["login_action_stack", "login_notice_text", "start_game_button"],
         "ocr_field_numbers": [11],
-        "field_values": []
+        "field_values": [
+          {
+            "field_no": 303,
+            "value": "开始游戏@[1298, 658, 1452, 812]"
+          }
+        ]
       }
     },
     {

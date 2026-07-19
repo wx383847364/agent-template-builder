@@ -56,16 +56,22 @@
       "description": "Foreground template match confidence formatted as a three-decimal string."
     },
     {
+      "index": 303,
+      "key": "start_game_button",
+      "type": "text",
+      "description": "Start game button on the login waterfall screen. Value format: label@[left, top, right, bottom]."
+    },
+    {
       "index": 400,
       "key": "selected_server",
       "type": "text",
-      "description": "Selected server on the login server selection screen. Value format: server_name@x,y."
+      "description": "Selected server on the login server selection screen. Value format: server_name@[left, top, right, bottom]."
     },
     {
       "index": 401,
       "key": "account_servers",
       "type": "text",
-      "description": "Servers with an existing character for the current account. Value format: server_name@x,y;server_name@x,y."
+      "description": "Servers with an existing character for the current account. Value format: server_name@[left, top, right, bottom];server_name@[left, top, right, bottom]."
     },
     {
       "index": 4000,
@@ -102,6 +108,7 @@
     "202": "screen_type",
     "203": "template_id",
     "204": "screen_confidence",
+    "303": "start_game_button",
     "400": "selected_server",
     "401": "account_servers",
     "4000": "blocking_modal",

@@ -1,0 +1,7 @@
+{
+  "202": "npc_dialog",
+  "203": "dhxy2_classic_npc_dialog_v1",
+  "204": "0.930",
+  "4000": "0",
+  "8000": "read_dialog;continue_dialog;choose_dialog_option"
+}

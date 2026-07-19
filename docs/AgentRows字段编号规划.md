@@ -102,8 +102,9 @@ Agent Rows 面向外部 agent 的兼容 JSON 是扁平 index/value 对象：
 | `300` | `login_account_input` | - | `planned` | 登录账号输入框文本；进入运行时前不得假定会输出。 |
 | `301` | `login_password_input` | - | `planned` | 登录密码输入框文本；进入运行时前不得假定会输出。 |
 | `302` | `login_guard_prompt` | - | `planned` | 登录安全验证提示；进入运行时前不得假定会输出。 |
-| `400` | `selected_server` | `selected_server` | `published runtime` | 当前选中的服务器，值格式为 `服务器名@x,y`。 |
-| `401` | `account_servers` | `account_servers` | `published runtime` | 当前账号已建立角色的服务器列表，值格式为 `服务器名@x,y;服务器名@x,y`。 |
+| `303` | `start_game_button` | `start_game_button` | `published runtime` | 登录瀑布界面的开始游戏按钮，值格式为 `开始游戏@[left, top, right, bottom]`。 |
+| `400` | `selected_server` | `selected_server` | `published runtime` | 当前选中的服务器，值格式为 `服务器名@[left, top, right, bottom]`。 |
+| `401` | `account_servers` | `account_servers` | `published runtime` | 当前账号已建立角色的服务器列表，值格式为 `服务器名@[left, top, right, bottom];服务器名@[left, top, right, bottom]`。 |
 | `4000` | `blocking_modal` | `blocking_modal` | `published runtime` | 阻塞状态；`1` 表示阻塞，`0` 表示已知无阻塞且必须保留输出。 |
 | `500` | `selected_character_name` | - | `planned` | 当前选中角色名称；进入运行时前不得假定会输出。 |
 | `501` | `selected_character_level` | - | `planned` | 当前选中角色等级；进入运行时前不得假定会输出。 |
@@ -134,27 +135,28 @@ v1 只表示当前识别到的前景模板，不表示完整 UI 栈或“同时�
 
 ## 坐标值格式
 
-服务器选择类字段允许把点击坐标混入文本值，以保持外部输出仍是纯扁平 index/value JSON。
+可点击目标字段允许把像素 bbox 混入文本值，以保持外部输出仍是纯扁平 index/value JSON。
 
-- 单个目标格式：`名称@x,y`。
-- 多个目标使用英文分号分隔：`名称@x,y;名称@x,y`。
-- `x,y` 是截图坐标系中的整数点击中心点。
-- 字段值只输出已识别到的目标；无法确认名称或坐标时，不输出该项。
+- 单个目标格式：`名称@[left, top, right, bottom]`。
+- 多个目标使用英文分号分隔：`名称@[left, top, right, bottom];名称@[left, top, right, bottom]`。
+- bbox 是截图坐标系中的整数 `[left, top, right, bottom]`，不是归一化模板 bbox，也不是点击中心点。
+- 字段值只输出已识别到的目标；无法确认名称或 bbox 时，不输出该项。
 - `3` 是兼容字段，语义跟随 `400`，新消费方应优先读取 `400` 和 `401`。
+- `303 start_game_button` 的文字来自登录瀑布模板静态证据，bbox 来自按钮区域在当前截图坐标系中的像素换算结果。
 ## Template Static 来源
 
 服务器选择字段 `400 selected_server`、`401 account_servers` 和兼容字段 `3 server_name` 可以由两类输入共同形成：
 
 - 动态文本：后续 OCR 或人工替代输入提供服务器名。
-- 模板静态槽位：`template_static` 元素提供可点击 bbox，导出层取 bbox 中心点作为 `x,y`。
+- 模板静态槽位：`template_static` 元素提供可点击 bbox，导出层直接输出该像素 bbox。
 
 输出格式保持不变：
 
 ```json
 {
-  "400": "水晶宫@655,715",
-  "401": "水晶宫@165,260;爱你万年@272,260"
+  "400": "水晶宫@[397, 729, 534, 772]",
+  "401": "水晶宫@[51, 207, 191, 247];爱你万年@[205, 207, 346, 247]"
 }
 ```
 
-只有名称和坐标都可确认时才输出字段；空值继续省略。`3 server_name` 继续跟随 `400 selected_server`，新消费方优先读取 `400` 和 `401`。
+只有名称和 bbox 都可确认时才输出字段；空值继续省略。`3 server_name` 继续跟随 `400 selected_server`，新消费方优先读取 `400` 和 `401`。

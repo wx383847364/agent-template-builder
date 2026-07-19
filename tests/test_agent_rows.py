@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import pytest
@@ -79,6 +81,7 @@ def test_required_semantic_role_mappings_exist() -> None:
         "screen_type",
         "template_id",
         "screen_confidence",
+        "start_game_button",
         "blocking_modal",
         "available_intents",
         "selected_server",
@@ -188,7 +191,16 @@ def test_real_sample_exports_agent_rows() -> None:
 
     assert output.schema == "dhxy2_classic_pc.agent_rows.v1"
     assert output.screen_type == "reward_popup"
-    assert {3, 4, 6, 7, 12, 13, 202, 203, 204, 4000, 5000, 5001, 8000}.issubset(row_indexes)
+    assert {3, 4, 6, 7, 12, 13, 202, 203, 204, 303, 4000, 5000, 5001, 8000}.issubset(row_indexes)
+
+
+def test_login_waterfall_exports_start_game_button_with_click_coordinates() -> None:
+    screenshot = SAMPLES_DIR / "screenshots" / "login_waterfall__manual_login1.png"
+
+    output = export_agent_rows(screenshot, GAME_DIR, FIELDS_CONFIG)
+    data = to_index_value_data(output)
+
+    assert data["303"] == "开始游戏@[1298, 658, 1452, 812]"
 
 
 def test_cli_data_shape_is_sparse_index_to_value_only() -> None:
@@ -208,7 +220,7 @@ def test_cli_data_shape_is_sparse_index_to_value_only() -> None:
 
 def test_cli_data_omits_empty_values() -> None:
     config = load_agent_rows_config(FIELDS_CONFIG)
-    selected = f"{WATER_CRYSTAL_PALACE}@165,260"
+    selected = f"{WATER_CRYSTAL_PALACE}@[1, 2, 3, 4]"
     data = _data(
         screen_type="server_select",
         template_id="dhxy2_classic_server_select_v1",
@@ -237,10 +249,10 @@ def test_cli_data_omits_empty_values() -> None:
     }
 
 
-def test_server_select_rows_keep_click_coordinates_in_values() -> None:
+def test_server_select_rows_keep_click_bboxes_in_values() -> None:
     config = load_agent_rows_config(FIELDS_CONFIG)
-    selected = f"{WATER_CRYSTAL_PALACE}@655,715"
-    account_servers = f"{WATER_CRYSTAL_PALACE}@165,260;{LOVE_YOU_FOREVER}@272,260"
+    selected = f"{WATER_CRYSTAL_PALACE}@[610, 700, 700, 730]"
+    account_servers = f"{WATER_CRYSTAL_PALACE}@[120, 245, 275, 275];{LOVE_YOU_FOREVER}@[275, 245, 430, 275]"
     data = _data(
         screen_type="server_select",
         template_id="dhxy2_classic_server_select_v1",
@@ -278,7 +290,7 @@ def test_server_select_rows_keep_click_coordinates_in_values() -> None:
     }
 
 
-def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
+def test_server_select_rows_bind_names_to_static_slot_bboxes() -> None:
     config = load_agent_rows_config(FIELDS_CONFIG)
     data = _data(
         screen_type="server_select",
@@ -334,8 +346,40 @@ def test_server_select_rows_bind_names_to_static_slot_centers() -> None:
         "202": "server_select",
         "203": "dhxy2_classic_server_select_v1",
         "204": "0.880",
-        "3": f"{WATER_CRYSTAL_PALACE}@466,750",
-        "400": f"{WATER_CRYSTAL_PALACE}@466,750",
-        "401": f"{WATER_CRYSTAL_PALACE}@121,227;{LOVE_YOU_FOREVER}@276,227",
+        "3": f"{WATER_CRYSTAL_PALACE}@[397, 729, 534, 772]",
+        "400": f"{WATER_CRYSTAL_PALACE}@[397, 729, 534, 772]",
+        "401": f"{WATER_CRYSTAL_PALACE}@[51, 207, 191, 247];{LOVE_YOU_FOREVER}@[205, 207, 346, 247]",
         "4000": "0",
     }
+
+
+def test_server_select_rows_replace_legacy_click_centers_with_static_slot_bboxes() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = _data(
+        screen_type="server_select",
+        template_id="dhxy2_classic_server_select_v1",
+        confidence=0.88,
+        elements=[
+            Element(
+                id="selected_server",
+                type="text_region",
+                bbox=(397, 729, 534, 772),
+                confidence=0.8,
+                semantic_role="selected_server",
+                text=f"{WATER_CRYSTAL_PALACE}@466,750",
+            ),
+            Element(
+                id="selected_server_slot",
+                type="button_slot",
+                bbox=(397, 729, 534, 772),
+                confidence=0.88,
+                semantic_role="selected_server_slot",
+                text="",
+            ),
+        ],
+    )
+
+    rows = to_index_value_data(AgentRowsExporter(config).export(data))
+
+    assert rows["3"] == f"{WATER_CRYSTAL_PALACE}@[397, 729, 534, 772]"
+    assert rows["400"] == f"{WATER_CRYSTAL_PALACE}@[397, 729, 534, 772]"

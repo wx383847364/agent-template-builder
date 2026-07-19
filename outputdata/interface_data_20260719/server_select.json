@@ -1,0 +1,7 @@
+{
+  "202": "server_select",
+  "203": "dhxy2_classic_server_select_v1",
+  "204": "0.915",
+  "4000": "0",
+  "8000": "read_server_list;confirm_server;go_back"
+}

@@ -37,5 +37,14 @@
       "semantic_role": "system_notice"
     }
   ],
+  "static_outputs": [
+    {
+      "id": "start_game_button",
+      "type": "button",
+      "semantic_role": "start_game_button",
+      "text": "开始游戏",
+      "bbox": [0.810, 0.700, 0.906, 0.864]
+    }
+  ],
   "available_intents": ["read_login_notice", "open_server_select", "switch_login_style"]
 }
