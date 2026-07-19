@@ -79,4 +79,4 @@ v1 只表达当前识别到的前景模板，不表达完整 UI 栈，也不发�
 
 服务器选择使用模板静态槽位补全点击区域：当 `selected_server` 或 `account_servers` 已有服务器名但没有 bbox 时，导出层会按 `selected_server_slot` / `account_server_slot` 输出 `服务器名@[left, top, right, bottom]`。已经包含 bbox 的值原样保留；遗留的 `@x,y` 输入会按当前槽位重新绑定为 bbox。
 
-固定按钮和点击槽位可以通过模板 `static_outputs` 发布为可点击目标。Agent Rows 导出器会将 `type="button"` 或 `type="button_slot"` 的非空文字格式化为 `文字@[left, top, right, bottom]`。所有界面的按钮或点击区域均使用当前截图坐标系中的整数像素 bbox；不再输出点击中心点。登录瀑布模板当前通过 `303 start_game_button` 输出 `开始游戏@[1298, 658, 1452, 812]`。
+固定按钮、点击槽位和定位图像区域可以通过模板 `static_outputs` 发布为坐标目标。Agent Rows 导出器会将 `type="button"`、`type="button_slot"` 或 `type="image_region"` 的非空文字格式化为 `文字@[left, top, right, bottom]`。所有界面的目标均使用当前截图坐标系中的整数像素 bbox；不再输出点击中心点。登录瀑布模板通过 `303 start_game_button` 输出开始游戏按钮；二维码登录模板通过 `304 login_qr_code` 使用 `screen_bbox_by_profile` 按完整截图坐标输出二维码外扩区域，不经 `game_view` 换算。

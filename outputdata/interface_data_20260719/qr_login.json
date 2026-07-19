@@ -1,0 +1,8 @@
+{
+  "202": "qr_login",
+  "203": "dhxy2_classic_qr_login_v1",
+  "204": "0.912",
+  "304": "二维码@[453, 398, 725, 669]",
+  "4000": "0",
+  "8000": "read_qr_login_notice;refresh_qr_code;switch_login_style"
+}

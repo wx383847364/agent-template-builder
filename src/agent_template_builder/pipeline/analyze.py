@@ -30,7 +30,7 @@ from agent_template_builder.ocr.postprocess import (
 from agent_template_builder.ocr.runtime import add_ocr_argument, create_ocr_engine_or_error
 from agent_template_builder.paths import default_game_dir
 from agent_template_builder.schema.agent_data import AgentData, Element, Evidence, Resolution, RuntimeState, Screen, TaskState
-from agent_template_builder.schema.templates import load_game_config, load_templates
+from agent_template_builder.schema.templates import denormalize_bbox, load_game_config, load_templates
 
 
 DEFAULT_GAME_DIR = default_game_dir()
@@ -79,6 +79,7 @@ def analyze_screenshot(
         (int(item["width"]), int(item["height"])): item["label"]
         for item in game_config.get("viewport_profiles", [])
     }
+    game_view_profiles = list(game_config.get("game_view_profiles", []))
     aspect_profiles = [
         AspectRatioProfile(
             label=item["label"],
@@ -93,6 +94,7 @@ def analyze_screenshot(
         supported_sizes=supported_sizes,
         aspect_profiles=aspect_profiles,
         viewport_profiles=viewport_profiles,
+        game_view_profiles=game_view_profiles,
     )
     ocr = ocr_engine or NullOCREngine()
     ocr_policy = game_config.get("ocr_policy", {})
@@ -105,7 +107,12 @@ def analyze_screenshot(
     with _open_screenshot_snapshot(screenshot_path) as screenshot_snapshot:
         match = matcher.match_image(screenshot_snapshot.image)
         for spec in match.template.elements:
-            bbox = denormalize_bbox_in_view(spec.bbox_for_profile(match.viewport_profile_label), match.game_view)
+            screen_bbox = spec.screen_bbox_for_profile(match.viewport_profile_label)
+            bbox = (
+                denormalize_bbox(screen_bbox, match.width, match.height)
+                if screen_bbox
+                else denormalize_bbox_in_view(spec.bbox_for_profile(match.viewport_profile_label), match.game_view)
+            )
             text = None
             confidence = match.confidence
             evidence = Evidence(
@@ -154,8 +161,12 @@ def analyze_screenshot(
                 )
 
     for spec in match.template.static_outputs:
-        spec_bbox = spec.bbox_for_profile(match.viewport_profile_label)
-        bbox = denormalize_bbox_in_view(spec_bbox, match.game_view) if spec_bbox else (0, 0, 0, 0)
+        screen_bbox = spec.screen_bbox_for_profile(match.viewport_profile_label)
+        if screen_bbox:
+            bbox = denormalize_bbox(screen_bbox, match.width, match.height)
+        else:
+            spec_bbox = spec.bbox_for_profile(match.viewport_profile_label)
+            bbox = denormalize_bbox_in_view(spec_bbox, match.game_view) if spec_bbox else (0, 0, 0, 0)
         elements.append(
             Element(
                 id=spec.id,

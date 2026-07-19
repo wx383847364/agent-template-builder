@@ -9,14 +9,28 @@
       "type": "layout_region",
       "bbox": [0.784, 0.244, 0.999, 0.513],
       "weight": 0.45,
-      "expected_hash": "0c4040c0e8f8f8f8"
+      "expected_hash": "0c4040c0e8f8f8f8",
+      "expected_hashes": [
+        "884040c0e8f8f8fe",
+        "ffff000101031fbf"
+      ],
+      "screen_bbox_by_profile": {
+        "desktop_1920x1080_windowed": [0.495833333, 0.301851852, 0.6109375, 0.483333333]
+      }
     },
     {
       "id": "enter_game_button_area",
       "type": "layout_region",
       "bbox": [0.448, 0.793, 0.582, 0.835],
       "weight": 0.40,
-      "expected_hash": "e100006cfcffefff"
+      "expected_hash": "e100006cfcffefff",
+      "expected_hashes": [
+        "00006cfcffefff00",
+        "3333333038393b33"
+      ],
+      "screen_bbox_by_profile": {
+        "desktop_1920x1080_windowed": [0.316145833, 0.672222222, 0.3875, 0.7]
+      }
     }
   ],
   "elements": [

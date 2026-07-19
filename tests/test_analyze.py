@@ -28,7 +28,7 @@ def test_analyze_accepts_same_ratio_different_resolution(tmp_path: Path) -> None
     assert data["screen"]["resolution"] == {"width": 1920, "height": 1080}
     assert data["raw"]["match"]["aspect_ratio_label"] == "wide_16_9"
     assert data["raw"]["match"]["fallback_reason"] == "no_anchor_hash_match"
-    assert data["raw"]["match"]["measurable_template_count"] == 10
+    assert data["raw"]["match"]["measurable_template_count"] == 11
     assert data["elements"][0]["bbox"] == (1382, 130, 1901, 475)
 
 
@@ -41,7 +41,7 @@ def test_analyze_penalizes_unknown_aspect_ratio(tmp_path: Path) -> None:
     assert result.screen.confidence == 0.158
     assert result.raw["match"]["aspect_ratio_label"] is None
     assert result.raw["match"]["fallback_reason"] == "no_anchor_hash_match"
-    assert result.raw["match"]["measurable_template_count"] == 10
+    assert result.raw["match"]["measurable_template_count"] == 11
 
 
 def test_lists_screenshots_without_using_names_for_classification(tmp_path: Path) -> None:
@@ -95,6 +95,7 @@ def test_existing_repository_samples_match_expected_templates(tmp_path: Path) ->
         "character_select",
         "login_guard",
         "login_waterfall",
+        "qr_login",
         "main_world",
         "npc_dialog",
         "reward_popup",
@@ -139,6 +140,17 @@ def test_analyze_injects_login_start_game_button_coordinates() -> None:
     assert start_button.bbox == (1298, 658, 1452, 812)
     assert start_button.evidence is not None
     assert start_button.evidence.source == "template_static"
+
+
+def test_qr_login_uses_full_screenshot_bbox_profile() -> None:
+    screenshot = SAMPLES_DIR / "screenshots" / "登陆二维码扫码界面.png"
+
+    result = analyze_screenshot(screenshot, GAME_DIR)
+    qr_target = next(element for element in result.elements if element.id == "qr_code_target")
+
+    assert result.screen.type == "qr_login"
+    assert qr_target.bbox == (453, 398, 725, 669)
+    assert result.raw["game_view"]["bbox"] == (146, 149, 1174, 876)
 
 def test_analyze_uses_bbox_by_profile_for_static_outputs(tmp_path: Path) -> None:
     game_dir = tmp_path / "game"

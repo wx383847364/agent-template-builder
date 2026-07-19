@@ -29,7 +29,7 @@ class AgentRowsExporter:
             if not element.semantic_role or not element.text:
                 continue
             value = element.text
-            if element.type in {"button", "button_slot"}:
+            if element.type in {"button", "button_slot", "image_region"}:
                 value = _format_target_at(value, element)
             values_by_role[element.semantic_role].append(value)
 

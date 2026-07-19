@@ -82,6 +82,7 @@ def test_required_semantic_role_mappings_exist() -> None:
         "template_id",
         "screen_confidence",
         "start_game_button",
+        "login_qr_code",
         "blocking_modal",
         "available_intents",
         "selected_server",
@@ -191,7 +192,7 @@ def test_real_sample_exports_agent_rows() -> None:
 
     assert output.schema == "dhxy2_classic_pc.agent_rows.v1"
     assert output.screen_type == "reward_popup"
-    assert {3, 4, 6, 7, 12, 13, 202, 203, 204, 303, 4000, 5000, 5001, 8000}.issubset(row_indexes)
+    assert {3, 4, 6, 7, 12, 13, 202, 203, 204, 303, 304, 4000, 5000, 5001, 8000}.issubset(row_indexes)
 
 
 def test_login_waterfall_exports_start_game_button_with_click_coordinates() -> None:
@@ -201,6 +202,15 @@ def test_login_waterfall_exports_start_game_button_with_click_coordinates() -> N
     data = to_index_value_data(output)
 
     assert data["303"] == "开始游戏@[1298, 658, 1452, 812]"
+
+
+def test_qr_login_exports_padded_qr_code_coordinates() -> None:
+    screenshot = SAMPLES_DIR / "screenshots" / "登陆二维码扫码界面.png"
+
+    output = export_agent_rows(screenshot, GAME_DIR, FIELDS_CONFIG)
+    data = to_index_value_data(output)
+
+    assert data["304"] == "二维码@[453, 398, 725, 669]"
 
 
 def test_cli_data_shape_is_sparse_index_to_value_only() -> None:

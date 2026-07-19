@@ -121,6 +121,47 @@ def test_matcher_uses_profile_bbox_for_anchor_hash(tmp_path: Path, monkeypatch) 
     assert captured_bboxes == [(0, 0, 640, 360)]
 
 
+def test_matcher_uses_full_screenshot_bbox_for_screen_profile(tmp_path: Path, monkeypatch) -> None:
+    screenshot = tmp_path / "desktop.png"
+    Image.new("RGB", (100, 80), color=(10, 20, 30)).save(screenshot)
+    captured_bboxes = []
+    matcher = TemplateMatcher(
+        templates=[
+            _template("qr_login", 40, [
+                AnchorSpec(
+                    id="qr",
+                    type="layout_region",
+                    bbox=(0.0, 0.0, 0.5, 0.5),
+                    screen_bbox_by_profile={"desktop": (0.6, 0.5, 0.9, 0.75)},
+                    expected_hash="0000000000000000",
+                )
+            ]),
+            _template("main_world", 10, []),
+        ],
+        supported_sizes=set(),
+        aspect_profiles=[],
+        game_view_profiles=[
+            {
+                "label": "desktop",
+                "screenshot_width": 100,
+                "screenshot_height": 80,
+                "bbox": [10, 10, 50, 50],
+            }
+        ],
+    )
+
+    def fake_region_hash(_image: Image.Image, bbox: tuple[int, int, int, int]) -> str:
+        captured_bboxes.append(bbox)
+        return "0000000000000000"
+
+    monkeypatch.setattr("agent_template_builder.matcher.template_matcher.region_hash_image", fake_region_hash)
+
+    result = matcher.match(screenshot)
+
+    assert result.template.screen_type == "qr_login"
+    assert captured_bboxes == [(60, 40, 90, 60)]
+
+
 def test_matcher_accepts_legacy_supported_size_set(tmp_path: Path, monkeypatch) -> None:
     screenshot = _screenshot(tmp_path)
     matcher = TemplateMatcher(

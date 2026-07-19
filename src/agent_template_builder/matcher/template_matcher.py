@@ -8,7 +8,7 @@ from PIL import Image
 
 from agent_template_builder.matcher.hash import hamming_distance, region_hash_image
 from agent_template_builder.matcher.roi import GameView, denormalize_bbox_in_view, detect_game_view_image
-from agent_template_builder.schema.templates import TemplateSpec
+from agent_template_builder.schema.templates import TemplateSpec, denormalize_bbox
 
 
 @dataclass(frozen=True)
@@ -55,6 +55,7 @@ class TemplateMatcher:
         supported_sizes: dict[tuple[int, int], str] | set[tuple[int, int]],
         aspect_profiles: list[AspectRatioProfile],
         viewport_profiles: dict[tuple[int, int], str] | None = None,
+        game_view_profiles: list[dict[str, object]] | None = None,
     ) -> None:
         if not templates:
             raise ValueError("至少需要一个模板")
@@ -62,6 +63,7 @@ class TemplateMatcher:
         self._supported_sizes = _normalize_supported_sizes(supported_sizes)
         self._aspect_profiles = aspect_profiles
         self._viewport_profiles = viewport_profiles or {}
+        self._game_view_profiles = game_view_profiles or []
 
     def match(self, screenshot_path: Path) -> MatchResult:
         with Image.open(screenshot_path) as image:
@@ -70,8 +72,11 @@ class TemplateMatcher:
     def match_image(self, image: Image.Image) -> MatchResult:
         """Match one immutable image snapshot without reopening its source path."""
         width, height = image.size
-        game_view = detect_game_view_image(image)
-        aspect_label, profile_label, size_score = self._score_viewport(game_view.width, game_view.height)
+        game_view = detect_game_view_image(image, self._game_view_profiles)
+        if game_view.profile_label:
+            aspect_label, profile_label, size_score = ("fixed_window", game_view.profile_label, 1.0)
+        else:
+            aspect_label, profile_label, size_score = self._score_viewport(game_view.width, game_view.height)
         measurable_template_count = sum(1 for template in self._templates if template.measurable_anchor_count)
 
         scored = [
@@ -148,7 +153,12 @@ class TemplateMatcher:
         matches: list[AnchorMatch] = []
 
         for anchor in measurable:
-            bbox = denormalize_bbox_in_view(anchor.bbox_for_profile(profile_label), game_view)
+            screen_bbox = anchor.screen_bbox_for_profile(profile_label)
+            bbox = (
+                denormalize_bbox(screen_bbox, image.width, image.height)
+                if screen_bbox
+                else denormalize_bbox_in_view(anchor.bbox_for_profile(profile_label), game_view)
+            )
             actual_hash = region_hash_image(image, bbox)
             expected_hash, distance = min(
                 (

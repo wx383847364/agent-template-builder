@@ -62,6 +62,12 @@
       "description": "Start game button on the login waterfall screen. Value format: label@[left, top, right, bottom]."
     },
     {
+      "index": 304,
+      "key": "login_qr_code",
+      "type": "text",
+      "description": "QR code target on the QR login screen, padded by 50 pixels on every side. Value format: 二维码@[left, top, right, bottom]."
+    },
+    {
       "index": 400,
       "key": "selected_server",
       "type": "text",
@@ -109,6 +115,7 @@
     "203": "template_id",
     "204": "screen_confidence",
     "303": "start_game_button",
+    "304": "login_qr_code",
     "400": "selected_server",
     "401": "account_servers",
     "4000": "blocking_modal",

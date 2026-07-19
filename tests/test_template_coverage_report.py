@@ -12,7 +12,7 @@ def test_reports_current_template_gaps() -> None:
     data = report.to_dict()
 
     assert data["template_count"] >= 1
-    assert data["complete_count"] == 10
+    assert data["complete_count"] == 11
     sampled_and_calibrated = {
         "dhxy2_classic_main_world_v1",
         "dhxy2_classic_battle_v1",

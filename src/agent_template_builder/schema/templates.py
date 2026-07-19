@@ -16,6 +16,7 @@ class AnchorSpec:
     type: str
     bbox: NormalizedBBox
     bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
+    screen_bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
     weight: float = 1.0
     expected_hash: Optional[str] = None
     expected_hashes: tuple[str, ...] = ()
@@ -34,6 +35,11 @@ class AnchorSpec:
             return self.bbox_by_profile[profile_label]
         return self.bbox
 
+    def screen_bbox_for_profile(self, profile_label: Optional[str]) -> Optional[NormalizedBBox]:
+        if profile_label and profile_label in self.screen_bbox_by_profile:
+            return self.screen_bbox_by_profile[profile_label]
+        return None
+
 
 @dataclass(frozen=True)
 class ElementSpec:
@@ -43,11 +49,17 @@ class ElementSpec:
     ocr_required: bool
     semantic_role: Optional[str] = None
     bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
+    screen_bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
 
     def bbox_for_profile(self, profile_label: Optional[str]) -> NormalizedBBox:
         if profile_label and profile_label in self.bbox_by_profile:
             return self.bbox_by_profile[profile_label]
         return self.bbox
+
+    def screen_bbox_for_profile(self, profile_label: Optional[str]) -> Optional[NormalizedBBox]:
+        if profile_label and profile_label in self.screen_bbox_by_profile:
+            return self.screen_bbox_by_profile[profile_label]
+        return None
 
 
 @dataclass(frozen=True)
@@ -59,11 +71,17 @@ class StaticOutputSpec:
     value: Optional[str] = None
     bbox: Optional[NormalizedBBox] = None
     bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
+    screen_bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
 
     def bbox_for_profile(self, profile_label: Optional[str]) -> Optional[NormalizedBBox]:
         if profile_label and profile_label in self.bbox_by_profile:
             return self.bbox_by_profile[profile_label]
         return self.bbox
+
+    def screen_bbox_for_profile(self, profile_label: Optional[str]) -> Optional[NormalizedBBox]:
+        if profile_label and profile_label in self.screen_bbox_by_profile:
+            return self.screen_bbox_by_profile[profile_label]
+        return None
 
 
 @dataclass(frozen=True)
@@ -114,6 +132,7 @@ def _load_template(path: Path) -> TemplateSpec:
             type=item["type"],
             bbox=_load_normalized_bbox(item, "bbox"),
             bbox_by_profile=_load_bbox_by_profile(item),
+            screen_bbox_by_profile=_load_bbox_by_profile(item, "screen_bbox_by_profile"),
             weight=float(item.get("weight", 1.0)),
             expected_hash=item.get("expected_hash"),
             expected_hashes=_load_expected_hashes(item),
@@ -129,6 +148,7 @@ def _load_template(path: Path) -> TemplateSpec:
             ocr_required=bool(item.get("ocr_required", False)),
             semantic_role=item.get("semantic_role"),
             bbox_by_profile=_load_bbox_by_profile(item),
+            screen_bbox_by_profile=_load_bbox_by_profile(item, "screen_bbox_by_profile"),
         )
         for item in data.get("elements", [])
     ]
@@ -173,15 +193,16 @@ def _load_static_output(item: dict[str, Any]) -> StaticOutputSpec:
         value=item.get("value"),
         bbox=bbox,
         bbox_by_profile=_load_bbox_by_profile(item),
+        screen_bbox_by_profile=_load_bbox_by_profile(item, "screen_bbox_by_profile"),
     )
 
 
-def _load_bbox_by_profile(item: dict[str, Any]) -> dict[str, NormalizedBBox]:
-    raw = item.get("bbox_by_profile", {})
+def _load_bbox_by_profile(item: dict[str, Any], field_name: str = "bbox_by_profile") -> dict[str, NormalizedBBox]:
+    raw = item.get(field_name, {})
     if raw is None:
         return {}
     if not isinstance(raw, dict):
-        raise ValueError(f"{item.get('id', '<unknown>')}: bbox_by_profile must be an object")
+        raise ValueError(f"{item.get('id', '<unknown>')}: {field_name} must be an object")
 
     result = {}
     for profile_label, bbox in raw.items():
@@ -189,7 +210,7 @@ def _load_bbox_by_profile(item: dict[str, Any]) -> dict[str, NormalizedBBox]:
             raise ValueError(f"{item.get('id', '<unknown>')}: bbox_by_profile keys must be strings")
         result[profile_label] = _load_normalized_bbox(
             {"id": item.get("id", "<unknown>"), "bbox": bbox},
-            f"bbox_by_profile[{profile_label}]",
+            f"{field_name}[{profile_label}]",
         )
     return result
 

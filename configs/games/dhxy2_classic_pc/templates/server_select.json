@@ -13,8 +13,12 @@
       "expected_hashes": [
         "fffffcf8df060000",
         "fffffc785f000000",
-        "fffffc781f000000"
-      ]
+        "fffffc781f000000",
+        "ffffff7fdf000000"
+      ],
+      "screen_bbox_by_profile": {
+        "desktop_1920x1080_windowed": [0.092708333, 0.215740741, 0.4828125, 0.712037037]
+      }
     },
     {
       "id": "server_confirm_area",
@@ -23,8 +27,12 @@
       "weight": 0.35,
       "expected_hash": "f0000024b4feffff",
       "expected_hashes": [
-        "ff000020b4eef6ff"
-      ]
+        "ff000020b4eef6ff",
+        "8000a0b4feffff00"
+      ],
+      "screen_bbox_by_profile": {
+        "desktop_1920x1080_windowed": [0.303125, 0.686111111, 0.347395833, 0.713888889]
+      }
     }
   ],
   "elements": [

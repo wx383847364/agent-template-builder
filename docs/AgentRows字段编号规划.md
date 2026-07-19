@@ -103,6 +103,7 @@ Agent Rows 面向外部 agent 的兼容 JSON 是扁平 index/value 对象：
 | `301` | `login_password_input` | - | `planned` | 登录密码输入框文本；进入运行时前不得假定会输出。 |
 | `302` | `login_guard_prompt` | - | `planned` | 登录安全验证提示；进入运行时前不得假定会输出。 |
 | `303` | `start_game_button` | `start_game_button` | `published runtime` | 登录瀑布界面的开始游戏按钮，值格式为 `开始游戏@[left, top, right, bottom]`。 |
+| `304` | `login_qr_code` | `login_qr_code` | `published runtime` | 二维码登录界面的二维码目标区域，默认四周外扩 50 像素，值格式为 `二维码@[left, top, right, bottom]`。 |
 | `400` | `selected_server` | `selected_server` | `published runtime` | 当前选中的服务器，值格式为 `服务器名@[left, top, right, bottom]`。 |
 | `401` | `account_servers` | `account_servers` | `published runtime` | 当前账号已建立角色的服务器列表，值格式为 `服务器名@[left, top, right, bottom];服务器名@[left, top, right, bottom]`。 |
 | `4000` | `blocking_modal` | `blocking_modal` | `published runtime` | 阻塞状态；`1` 表示阻塞，`0` 表示已知无阻塞且必须保留输出。 |

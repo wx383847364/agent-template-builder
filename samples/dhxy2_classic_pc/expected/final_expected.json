@@ -671,6 +671,66 @@
         "ocr_field_numbers": [],
         "field_values": []
       }
+    },
+    {
+      "case_id": "login_waterfall__moonlight_1920x1080",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/登陆瀑布界面-1920x1080.png",
+      "template_id": "dhxy2_classic_login_waterfall_v1",
+      "screen_type": "login_waterfall",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {"id": "dhxy2", "client": "classic_pc"},
+        "screen": {"type": "login_waterfall", "template_id": "dhxy2_classic_login_waterfall_v1"},
+        "state": {"blocking_modal": false, "available_intents": ["read_login_notice", "open_server_select", "switch_login_style"]},
+        "required_elements": ["login_action_stack", "login_notice_text"],
+        "ocr_field_numbers": [11],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "qr_login__moonlight_1920x1080",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/登陆二维码扫码界面.png",
+      "template_id": "dhxy2_classic_qr_login_v1",
+      "screen_type": "qr_login",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {"id": "dhxy2", "client": "classic_pc"},
+        "screen": {"type": "qr_login", "template_id": "dhxy2_classic_qr_login_v1"},
+        "state": {"blocking_modal": false, "available_intents": ["read_qr_login_notice", "refresh_qr_code", "switch_login_style"]},
+        "required_elements": ["qr_code", "qr_login_notice", "qr_refresh_action"],
+        "ocr_field_numbers": [],
+        "field_values": []
+      }
+    },
+    {
+      "case_id": "server_select__moonlight_1920x1080",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/登陆界面服务器选择界面1920x1080.png",
+      "template_id": "dhxy2_classic_server_select_v1",
+      "screen_type": "server_select",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {"id": "dhxy2", "client": "classic_pc"},
+        "screen": {"type": "server_select", "template_id": "dhxy2_classic_server_select_v1"},
+        "state": {"blocking_modal": false, "available_intents": ["read_server_list", "confirm_server", "go_back"]},
+        "required_elements": ["account_servers", "selected_server", "server_confirm"],
+        "ocr_field_numbers": [3],
+        "field_values": [{"field_no": 3, "value": "水晶宫"}]
+      }
+    },
+    {
+      "case_id": "character_select__moonlight_1920x1080",
+      "screenshot": "samples/dhxy2_classic_pc/screenshots/登陆界面选择角色界面-1920x1080.png",
+      "template_id": "dhxy2_classic_character_select_v1",
+      "screen_type": "character_select",
+      "sample_status": "manual_screenshot_anchor_calibrated",
+      "expected": {
+        "game": {"id": "dhxy2", "client": "classic_pc"},
+        "screen": {"type": "character_select", "template_id": "dhxy2_classic_character_select_v1"},
+        "state": {"blocking_modal": false, "available_intents": ["read_selected_character", "enter_game", "create_character"]},
+        "required_elements": ["character_grid", "selected_character_summary", "enter_game"],
+        "ocr_field_numbers": [],
+        "field_values": []
+      }
     }
   ]
 }
