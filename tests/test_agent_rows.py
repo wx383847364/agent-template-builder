@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from agent_template_builder.exporters.agent_rows import AgentRowsExporter
+from agent_template_builder.matcher.template_matcher import UnsupportedResolutionError
 from agent_template_builder.pipeline.export_agent_rows import export_agent_rows, to_index_value_data
 from agent_template_builder.schema.agent_data import AgentData, Element, Resolution, RuntimeState, Screen
 from agent_template_builder.schema.agent_rows import load_agent_rows_config
@@ -85,8 +86,13 @@ def test_required_semantic_role_mappings_exist() -> None:
         "login_qr_code",
         "blocking_modal",
         "available_intents",
+        "window_center_offset",
         "selected_server",
         "account_servers",
+        "common_login_characters",
+        "selected_character",
+        "character_selection_list",
+        "enter_game_button",
         "current_task",
         "dialog_text",
         "dialog_options",
@@ -184,24 +190,20 @@ def test_exporter_maps_element_text_to_configured_indexes() -> None:
     assert rows[12] == ""
 
 
-def test_real_sample_exports_agent_rows() -> None:
+def test_legacy_sample_is_rejected_for_agent_rows() -> None:
     screenshot = SAMPLES_DIR / "screenshots" / "reward_popup__manual_summon_reward1.png"
 
-    output = export_agent_rows(screenshot, GAME_DIR, FIELDS_CONFIG)
-    row_indexes = {row.index for row in output.rows}
-
-    assert output.schema == "dhxy2_classic_pc.agent_rows.v1"
-    assert output.screen_type == "reward_popup"
-    assert {3, 4, 6, 7, 12, 13, 202, 203, 204, 303, 304, 4000, 5000, 5001, 8000}.issubset(row_indexes)
+    with pytest.raises(UnsupportedResolutionError, match="unsupported_resolution"):
+        export_agent_rows(screenshot, GAME_DIR, FIELDS_CONFIG)
 
 
 def test_login_waterfall_exports_start_game_button_with_click_coordinates() -> None:
-    screenshot = SAMPLES_DIR / "screenshots" / "login_waterfall__manual_login1.png"
+    screenshot = SAMPLES_DIR / "screenshots" / "登陆瀑布界面-1920x1080.png"
 
     output = export_agent_rows(screenshot, GAME_DIR, FIELDS_CONFIG)
     data = to_index_value_data(output)
 
-    assert data["303"] == "开始游戏@[1298, 658, 1452, 812]"
+    assert data["303"] == "开始游戏@[1350, 640, 1470, 760]"
 
 
 def test_qr_login_exports_padded_qr_code_coordinates() -> None:
@@ -214,17 +216,17 @@ def test_qr_login_exports_padded_qr_code_coordinates() -> None:
 
 
 def test_cli_data_shape_is_sparse_index_to_value_only() -> None:
-    screenshot = SAMPLES_DIR / "screenshots" / "reward_popup__manual_summon_reward1.png"
+    screenshot = SAMPLES_DIR / "screenshots" / "登陆二维码扫码界面.png"
 
     output = export_agent_rows(screenshot, GAME_DIR, FIELDS_CONFIG)
     data = to_index_value_data(output)
 
-    assert data["202"] == "reward_popup"
-    assert data["203"] == "dhxy2_classic_reward_popup_v1"
+    assert data["202"] == "qr_login"
+    assert data["203"] == "dhxy2_classic_qr_login_v1"
     assert data["204"].count(".") == 1
     assert len(data["204"].split(".")[1]) == 3
-    assert data["4000"] == "1"
-    assert data["8000"] == "read_reward;continue_dialog"
+    assert data["4000"] == "0"
+    assert data["8000"] == "read_qr_login_notice;refresh_qr_code;switch_login_style"
     assert all(isinstance(key, str) and isinstance(value, str) for key, value in data.items())
 
 
@@ -361,6 +363,93 @@ def test_server_select_rows_bind_names_to_static_slot_bboxes() -> None:
         "401": f"{WATER_CRYSTAL_PALACE}@[51, 207, 191, 247];{LOVE_YOU_FOREVER}@[205, 207, 346, 247]",
         "4000": "0",
     }
+
+
+def test_exporter_publishes_window_offset_only_when_it_exceeds_five_pixels() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = _data()
+    object.__setattr__(data, "raw", {"calibration": {"offset": [6, -7]}})
+
+    rows = to_index_value_data(AgentRowsExporter(config).export(data))
+
+    assert rows["9000"] == "window_center_offset@[6, -7]"
+
+
+def test_server_select_rows_export_each_common_login_character_bbox() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = _data(
+        screen_type="server_select",
+        template_id="dhxy2_classic_server_select_v1",
+        confidence=0.915,
+        elements=[
+            Element(
+                id="common_login_character_1",
+                type="button",
+                bbox=(949, 288, 1146, 360),
+                confidence=0.9,
+                semantic_role="common_login_characters",
+                text="绝情魔女|0转68级|女魔|水晶宫",
+            ),
+            Element(
+                id="common_login_character_2",
+                type="button",
+                bbox=(949, 365, 1146, 437),
+                confidence=0.9,
+                semantic_role="common_login_characters",
+                text="第二角色|1转100级|男人|爱你万年",
+            ),
+        ],
+    )
+
+    rows = to_index_value_data(AgentRowsExporter(config).export(data))
+
+    assert rows["402"] == (
+        "绝情魔女|0转68级|女魔|水晶宫@[949, 288, 1146, 360];"
+        "第二角色|1转100级|男人|爱你万年@[949, 365, 1146, 437]"
+    )
+
+
+def test_character_select_rows_export_targets() -> None:
+    config = load_agent_rows_config(FIELDS_CONFIG)
+    data = _data(
+        screen_type="character_select",
+        template_id="dhxy2_classic_character_select_v1",
+        confidence=0.92,
+        elements=[
+            Element(
+                id="character_slot_1",
+                type="button",
+                bbox=(951, 324, 1174, 391),
+                confidence=0.9,
+                semantic_role="character_selection_list",
+                text="绝情魔女|0转68级|女魔",
+            ),
+            Element(
+                id="character_slot_2",
+                type="button",
+                bbox=(988, 399, 1174, 464),
+                confidence=0.9,
+                semantic_role="character_selection_list",
+                text="灵剑寻花|0转10级|女魔",
+            ),
+            Element(
+                id="enter_game_button",
+                type="button",
+                bbox=(606, 723, 745, 758),
+                confidence=0.92,
+                semantic_role="enter_game_button",
+                text="进入游戏",
+            ),
+        ],
+    )
+
+    rows = to_index_value_data(AgentRowsExporter(config).export(data))
+    first = "绝情魔女|0转68级|女魔@[951, 324, 1174, 391]"
+    second = "灵剑寻花|0转10级|女魔@[988, 399, 1174, 464]"
+
+    assert rows["500"] == first
+    assert rows["502"] == f"{first};{second}"
+    assert rows["503"] == "进入游戏@[606, 723, 745, 758]"
 
 
 def test_server_select_rows_replace_legacy_click_centers_with_static_slot_bboxes() -> None:

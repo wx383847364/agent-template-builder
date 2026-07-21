@@ -49,70 +49,11 @@ class CachedAnalysisBenchmark:
     timed_misses: int
 
 
-DEFAULT_TARGETS = (
-    OCRSmokeTarget(
-        "main_world.task_tracker",
-        "main_world__manual_1000x718_1.png",
-        "task_tracker",
-        "dhxy2_classic_main_world_v1",
-        "任务追踪",
-        0.70,
-    ),
-    OCRSmokeTarget(
-        "main_world.task_tracker.1024x720",
-        "main_world__baseline.png",
-        "task_tracker",
-        "dhxy2_classic_main_world_v1",
-        "任务追踪",
-        0.70,
-    ),
-    OCRSmokeTarget(
-        "main_world.task_tracker.800x574",
-        "main_world__manual_800x574_1.png",
-        "task_tracker",
-        "dhxy2_classic_main_world_v1",
-        "任务追踪",
-        0.70,
-    ),
-    OCRSmokeTarget(
-        "main_world.task_tracker.1366x768",
-        "main_world__manual_1366x768_1.png",
-        "task_tracker",
-        "dhxy2_classic_main_world_v1",
-        "任务追踪",
-        0.70,
-    ),
-    OCRSmokeTarget(
-        "main_world.task_tracker.legacy_1203x872",
-        "main_world__legacy_game1.png",
-        "task_tracker",
-        "dhxy2_classic_main_world_v1",
-        "任务追踪",
-        0.70,
-    ),
-    OCRSmokeTarget(
-        "blocking_modal.modal_body",
-        "blocking_modal__manual_team_invite1.png",
-        "modal_body",
-        "dhxy2_classic_blocking_modal_v1",
-        "邀请您加入队伍",
-        0.70,
-    ),
-    OCRSmokeTarget(
-        "npc_dialog.dialog_body",
-        "npc_dialog__manual_dialog1.png",
-        "dialog_body",
-        "dhxy2_classic_npc_dialog_v1",
-        "蓝衣少年",
-        0.70,
-    ),
-)
+# Existing OCR smoke images are legacy resolutions. Add targets only after a
+# confirmed 1920×1080 template and its OCR text baseline are captured.
+DEFAULT_TARGETS: tuple[OCRSmokeTarget, ...] = ()
 
-DEFAULT_BENCHMARK_LABELS = (
-    "main_world.task_tracker",
-    "blocking_modal.modal_body",
-    "npc_dialog.dialog_body",
-)
+DEFAULT_BENCHMARK_LABELS: tuple[str, ...] = ()
 
 
 def default_screenshots_dir() -> Path:

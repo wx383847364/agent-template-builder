@@ -15,25 +15,14 @@ GAME_DIR = Path(__file__).resolve().parents[1] / "configs" / "games" / "dhxy2_cl
 SAMPLES_DIR = Path(__file__).resolve().parents[1] / "samples" / "dhxy2_classic_pc"
 
 
-def test_reports_repository_sample_quality() -> None:
+def test_reports_repository_sample_quality_marks_legacy_cases_unsupported() -> None:
     report = build_quality_report(GAME_DIR)
 
-    login_waterfall = next(item for item in report.items if item.case_id == "login_waterfall__manual_login1")
-    main_world = next(item for item in report.items if item.case_id == "main_world__baseline")
-    reward = next(item for item in report.items if item.case_id == "reward_popup__manual_summon_reward1")
-    blocking = next(item for item in report.items if item.case_id == "blocking_modal__baseline")
+    legacy = next(item for item in report.items if item.case_id == "main_world__baseline")
 
-    assert main_world.actual_screen_type == "main_world"
-    assert main_world.passed_expected is True
-    assert main_world.confidence is not None
-    assert main_world.confidence >= 0.6
-    assert reward.expected_screen_type == "reward_popup"
-    assert reward.actual_screen_type == "reward_popup"
-    assert reward.passed_expected is True
-    assert reward.anchor_matches
-    assert login_waterfall.confidence is not None
-    assert login_waterfall.confidence >= 0.6
-    assert blocking.confidence == 0.95
+    assert legacy.actual_screen_type is None
+    assert legacy.issue is not None
+    assert legacy.issue.startswith("unsupported_resolution")
 
 
 def test_reports_directory_items_without_expected(tmp_path: Path) -> None:
@@ -46,6 +35,7 @@ def test_reports_directory_items_without_expected(tmp_path: Path) -> None:
     assert report.items[0].screenshot == str(screenshot.resolve())
     assert report.items[0].expected_screen_type is None
     assert report.items[0].passed_expected is None
+    assert report.items[0].issue is not None
 
 
 def test_matches_directory_items_to_expected_manifest(tmp_path: Path) -> None:
@@ -76,7 +66,8 @@ def test_matches_directory_items_to_expected_manifest(tmp_path: Path) -> None:
     )
 
     assert report.items[0].case_id == "runtime"
-    assert report.items[0].passed_expected is True
+    assert report.items[0].passed_expected is False
+    assert report.items[0].issue is not None
 
 
 def test_text_report_sorting_uses_configured_low_confidence_threshold() -> None:

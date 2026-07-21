@@ -16,6 +16,10 @@ from agent_template_builder.schema.agent_rows import AgentRowsOutput
 DEFAULT_FIELDS_CONFIG = find_project_root(Path(__file__)) / "agent_fields.json"
 
 
+class CalibrationError(RuntimeError):
+    pass
+
+
 def export_agent_rows(
     screenshot_path: Path,
     game_dir: Path = default_game_dir(),
@@ -23,6 +27,10 @@ def export_agent_rows(
     ocr_engine: Optional[OCREngine] = None,
 ) -> AgentRowsOutput:
     data = analyze_screenshot(screenshot_path, game_dir, ocr_engine)
+    calibration = data.raw.get("calibration", {})
+    if calibration.get("status") != "calibrated":
+        reason = calibration.get("reason") or "unknown_calibration_failure"
+        raise CalibrationError(f"calibration_failed: {reason}")
     exporter = AgentRowsExporter.from_config_path(fields_config)
     return exporter.export(data)
 

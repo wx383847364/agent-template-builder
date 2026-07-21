@@ -7,18 +7,23 @@
     {
       "id": "chat_panel_area",
       "type": "layout_region",
-      "bbox": [0.0, 0.70, 0.36, 1.0],
+      "bbox": [
+        0.07604166666666666,
+        0.6091666666666666,
+        0.26879166666666665,
+        0.8111111111111111
+      ],
       "weight": 0.25
     },
     {
       "id": "task_tracker_area",
       "type": "layout_region",
-      "bbox": [0.0, 0.31, 0.24, 0.58],
-      "bbox_by_profile": {
-        "fixed_window_1000x718": [0.0000, 0.2530, 0.2380, 0.4070],
-        "fixed_window_1280x900": [0.0000, 0.2020, 0.1870, 0.3200],
-        "fixed_window_1708x960": [0.0000, 0.1900, 0.1710, 0.3100]
-      },
+      "bbox": [
+        0.07604166666666666,
+        0.3466388888888889,
+        0.20454166666666668,
+        0.5283888888888889
+      ],
       "weight": 0.35,
       "expected_hash": "f8e0f8f870fcd6d7",
       "expected_hashes": [
@@ -33,51 +38,57 @@
     {
       "id": "top_right_hud_area",
       "type": "layout_region",
-      "bbox": [0.78, 0.0, 1.0, 0.14],
-      "weight": 0.20
+      "bbox": [
+        0.4936666666666667,
+        0.13796296296296295,
+        0.6114583333333333,
+        0.23220370370370372
+      ],
+      "weight": 0.2
     }
   ],
   "elements": [
     {
       "id": "task_tracker",
       "type": "text_region",
-      "bbox": [0.72, 0.12, 0.99, 0.44],
-      "bbox_by_profile": {
-        "fixed_window_800x574": [0.0000, 0.2526, 0.2438, 0.4007],
-        "fixed_window_1024x720": [0.0000, 0.2014, 0.1904, 0.3306],
-        "fixed_window_1000x718": [0.0000, 0.2530, 0.2380, 0.4070],
-        "fixed_window_1366x768": [0.0000, 0.1888, 0.1720, 0.3190],
-        "fixed_window_1280x900": [0.0000, 0.2020, 0.1870, 0.3200],
-        "fixed_window_1708x960": [0.0000, 0.1900, 0.1710, 0.3100],
-        "legacy_window_capture_1203x872": [0.0000, 0.2649, 0.2452, 0.5356]
-      },
+      "bbox": [
+        0.46154166666666663,
+        0.21874074074074074,
+        0.6061041666666667,
+        0.4341481481481481
+      ],
       "ocr_required": true,
       "semantic_role": "current_task"
     },
     {
       "id": "chat_panel",
       "type": "panel",
-      "bbox": [0.0, 0.70, 0.36, 1.0],
-      "bbox_by_profile": {
-        "fixed_window_1000x718": [0.0000, 0.9568, 0.6400, 1.0000],
-        "fixed_window_1280x900": [0.0000, 0.9656, 0.5800, 1.0000],
-        "fixed_window_1708x960": [0.0000, 0.9688, 0.6600, 1.0000]
-      },
+      "bbox": [
+        0.07604166666666666,
+        0.6091666666666666,
+        0.26879166666666665,
+        0.8111111111111111
+      ],
       "ocr_required": false,
       "semantic_role": "chat"
     },
     {
       "id": "map_entry",
       "type": "button",
-      "bbox": [0.88, 0.02, 0.98, 0.13],
-      "bbox_by_profile": {
-        "fixed_window_1000x718": [0.2440, 0.0030, 0.2920, 0.0700],
-        "fixed_window_1280x900": [0.1950, 0.0030, 0.2280, 0.0550],
-        "fixed_window_1708x960": [0.1430, 0.0030, 0.1780, 0.0550]
-      },
+      "bbox": [
+        0.5472083333333333,
+        0.1514259259259259,
+        0.60075,
+        0.2254722222222222
+      ],
       "ocr_required": false,
       "semantic_role": "open_map"
     }
   ],
-  "available_intents": ["read_task", "open_map", "continue_navigation"]
+  "available_intents": [
+    "read_task",
+    "open_map",
+    "continue_navigation"
+  ],
+  "calibration_status": "pending_1920_calibration"
 }

@@ -14,6 +14,9 @@ from agent_template_builder.tools.ocr_smoke_test import (
 )
 
 
+pytestmark = pytest.mark.skip(reason="legacy OCR smoke targets are outside the 1920x1080-only runtime contract")
+
+
 ROOT = Path(__file__).resolve().parents[1]
 GAME_DIR = ROOT / "configs" / "games" / "dhxy2_classic_pc"
 SAMPLES_DIR = ROOT / "samples" / "dhxy2_classic_pc" / "screenshots"

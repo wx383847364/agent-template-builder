@@ -12,8 +12,7 @@ import json
 
 from PIL import Image
 
-from agent_template_builder.matcher.template_matcher import AspectRatioProfile, TemplateMatcher
-from agent_template_builder.matcher.roi import denormalize_bbox_in_view
+from agent_template_builder.matcher.template_matcher import TemplateMatcher
 from agent_template_builder.ocr.base import NullOCREngine, OCREngine, OCRResult
 from agent_template_builder.ocr.cache import (
     EngineRuntimeState,
@@ -71,30 +70,13 @@ def analyze_screenshot(
 ) -> AgentData:
     game_config = load_game_config(game_dir)
     templates = load_templates(game_dir)
-    supported_sizes = {
-        (int(item["width"]), int(item["height"])): item["label"]
-        for item in game_config.get("supported_windows", [])
-    }
-    viewport_profiles = {
-        (int(item["width"]), int(item["height"])): item["label"]
-        for item in game_config.get("viewport_profiles", [])
-    }
-    game_view_profiles = list(game_config.get("game_view_profiles", []))
-    aspect_profiles = [
-        AspectRatioProfile(
-            label=item["label"],
-            ratio=float(item["width"]) / float(item["height"]),
-            tolerance=float(item.get("tolerance", 0.04)),
-        )
-        for item in game_config.get("supported_aspect_ratios", [])
-    ]
-
+    runtime = game_config["runtime_screenshot"]
+    calibration = game_config["window_calibration"]
     matcher = TemplateMatcher(
         templates=templates,
-        supported_sizes=supported_sizes,
-        aspect_profiles=aspect_profiles,
-        viewport_profiles=viewport_profiles,
-        game_view_profiles=game_view_profiles,
+        resolution=(int(runtime["width"]), int(runtime["height"])),
+        reference_window_bbox=tuple(int(value) for value in calibration["reference_window_bbox"]),
+        min_confidence=float(game_config.get("template_defaults", {}).get("min_confidence", 0.65)),
     )
     ocr = ocr_engine or NullOCREngine()
     ocr_policy = game_config.get("ocr_policy", {})
@@ -106,13 +88,10 @@ def analyze_screenshot(
 
     with _open_screenshot_snapshot(screenshot_path) as screenshot_snapshot:
         match = matcher.match_image(screenshot_snapshot.image)
+        dx, dy = match.calibration.offset
         for spec in match.template.elements:
-            screen_bbox = spec.screen_bbox_for_profile(match.viewport_profile_label)
-            bbox = (
-                denormalize_bbox(screen_bbox, match.width, match.height)
-                if screen_bbox
-                else denormalize_bbox_in_view(spec.bbox_for_profile(match.viewport_profile_label), match.game_view)
-            )
+            base_bbox = denormalize_bbox(spec.bbox, match.width, match.height)
+            bbox = _translate_bbox(base_bbox, dx, dy)
             text = None
             confidence = match.confidence
             evidence = Evidence(
@@ -161,12 +140,8 @@ def analyze_screenshot(
                 )
 
     for spec in match.template.static_outputs:
-        screen_bbox = spec.screen_bbox_for_profile(match.viewport_profile_label)
-        if screen_bbox:
-            bbox = denormalize_bbox(screen_bbox, match.width, match.height)
-        else:
-            spec_bbox = spec.bbox_for_profile(match.viewport_profile_label)
-            bbox = denormalize_bbox_in_view(spec_bbox, match.game_view) if spec_bbox else (0, 0, 0, 0)
+        base_bbox = denormalize_bbox(spec.bbox, match.width, match.height) if spec.bbox else (0, 0, 0, 0)
+        bbox = _translate_bbox(base_bbox, dx, dy)
         elements.append(
             Element(
                 id=spec.id,
@@ -203,15 +178,14 @@ def analyze_screenshot(
         raw={
             "coordinate_space": game_config.get("coordinate_space", {}),
             "ocr_policy": ocr_policy,
-            "game_view": {
-                "bbox": match.game_view.bbox,
-                "width": match.game_view.width,
-                "height": match.game_view.height,
-                "source": match.game_view.source,
+            "calibration": {
+                "status": match.calibration.status,
+                "reason": match.calibration.reason,
+                "offset": list(match.calibration.offset),
+                "reference_window_center": list(match.calibration.reference_center),
+                "actual_window_center": list(match.calibration.actual_center),
             },
             "match": {
-                "aspect_ratio_label": match.aspect_ratio_label,
-                "viewport_profile_label": match.viewport_profile_label,
                 "fallback_reason": match.fallback_reason,
                 "measurable_template_count": match.measurable_template_count,
                 "anchor_matches": [
@@ -227,6 +201,11 @@ def analyze_screenshot(
             },
         },
     )
+
+
+def _translate_bbox(bbox: tuple[int, int, int, int], dx: int, dy: int) -> tuple[int, int, int, int]:
+    left, top, right, bottom = bbox
+    return (left + dx, top + dy, right + dx, bottom + dy)
 
 
 def _read_ocr_region(

@@ -7,36 +7,49 @@
     {
       "id": "logo_area",
       "type": "layout_region",
-      "bbox": [0.03, 0.03, 0.28, 0.20],
+      "bbox": [
+        0.09210416666666667,
+        0.1581574074074074,
+        0.22595833333333334,
+        0.27259259259259255
+      ],
       "weight": 0.25
     },
     {
       "id": "right_login_buttons",
       "type": "layout_region",
-      "bbox": [0.805, 0.70, 0.925, 0.86],
-      "weight": 0.45,
-      "expected_hash": "38fcfcfc7c381000",
-      "expected_hashes": [
-        "38fcfcfc7c281000",
-        "fffaf8f0c0000000"
+      "bbox": [
+        0.703125,
+        0.592592593,
+        0.765625,
+        0.703703704
       ],
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_fullscreen": [0.805, 0.70, 0.925, 0.86]
-      }
+      "weight": 0.45,
+      "expected_hash": "18b4fefefe642c00"
     }
   ],
   "elements": [
     {
       "id": "login_action_stack",
       "type": "button_group",
-      "bbox": [0.76, 0.28, 0.97, 0.78],
+      "bbox": [
+        0.4829583333333333,
+        0.3264444444444445,
+        0.5953958333333332,
+        0.6630185185185186
+      ],
       "ocr_required": false,
       "semantic_role": "login_actions"
     },
     {
       "id": "login_notice_text",
       "type": "text_region",
-      "bbox": [0.02, 0.90, 0.70, 0.99],
+      "bbox": [
+        0.08675000000000001,
+        0.7437962962962964,
+        0.4508333333333333,
+        0.8043796296296296
+      ],
       "ocr_required": true,
       "semantic_role": "system_notice"
     }
@@ -47,8 +60,18 @@
       "type": "button",
       "semantic_role": "start_game_button",
       "text": "开始游戏",
-      "bbox": [0.810, 0.700, 0.906, 0.864]
+      "bbox": [
+        0.703125,
+        0.592592593,
+        0.765625,
+        0.703703704
+      ]
     }
   ],
-  "available_intents": ["read_login_notice", "open_server_select", "switch_login_style"]
+  "available_intents": [
+    "read_login_notice",
+    "open_server_select",
+    "switch_login_style"
+  ],
+  "calibration_status": "confirmed_1920"
 }

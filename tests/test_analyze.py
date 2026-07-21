@@ -1,158 +1,51 @@
 from pathlib import Path
 import json
 
+import pytest
 from PIL import Image
 
+from agent_template_builder.matcher.template_matcher import UnsupportedResolutionError
 from agent_template_builder.pipeline.analyze import analyze_screenshot
-from agent_template_builder.pipeline.analyze_screenshots import (
-    latest_screenshot,
-    list_screenshots,
-    summarize_directory,
-    summarize_screenshot,
-)
+from agent_template_builder.pipeline.export_agent_rows import export_agent_rows, to_index_value_data
 
 
-GAME_DIR = Path(__file__).resolve().parents[1] / "configs" / "games" / "dhxy2_classic_pc"
-SAMPLES_DIR = Path(__file__).resolve().parents[1] / "samples" / "dhxy2_classic_pc"
+ROOT = Path(__file__).resolve().parents[1]
+GAME_DIR = ROOT / "configs" / "games" / "dhxy2_classic_pc"
+SAMPLES_DIR = ROOT / "samples" / "dhxy2_classic_pc" / "screenshots"
 
 
-def test_analyze_accepts_same_ratio_different_resolution(tmp_path: Path) -> None:
-    screenshot = tmp_path / "wide_1080p.png"
-    Image.new("RGB", (1920, 1080), color=(10, 20, 30)).save(screenshot)
+def test_analyze_rejects_non_1920x1080_input(tmp_path: Path) -> None:
+    screenshot = tmp_path / "legacy.png"
+    Image.new("RGB", (1280, 720), color=(10, 20, 30)).save(screenshot)
 
-    result = analyze_screenshot(screenshot, GAME_DIR)
-    data = result.to_dict()
-
-    assert data["screen"]["type"] == "main_world"
-    assert data["screen"]["confidence"] == 0.35
-    assert data["screen"]["resolution"] == {"width": 1920, "height": 1080}
-    assert data["raw"]["match"]["aspect_ratio_label"] == "wide_16_9"
-    assert data["raw"]["match"]["fallback_reason"] == "no_anchor_hash_match"
-    assert data["raw"]["match"]["measurable_template_count"] == 11
-    assert data["elements"][0]["bbox"] == (1382, 130, 1901, 475)
+    with pytest.raises(UnsupportedResolutionError, match="unsupported_resolution"):
+        analyze_screenshot(screenshot, GAME_DIR)
 
 
-def test_analyze_penalizes_unknown_aspect_ratio(tmp_path: Path) -> None:
-    screenshot = tmp_path / "odd_ratio.png"
-    Image.new("RGB", (1000, 1000), color=(10, 20, 30)).save(screenshot)
-
-    result = analyze_screenshot(screenshot, GAME_DIR)
-
-    assert result.screen.confidence == 0.158
-    assert result.raw["match"]["aspect_ratio_label"] is None
-    assert result.raw["match"]["fallback_reason"] == "no_anchor_hash_match"
-    assert result.raw["match"]["measurable_template_count"] == 11
-
-
-def test_lists_screenshots_without_using_names_for_classification(tmp_path: Path) -> None:
-    old = tmp_path / "20260601_170000.png"
-    latest = tmp_path / "timestamp_only.png"
-    ignored = tmp_path / "notes.txt"
-    Image.new("RGB", (1280, 720), color=(10, 20, 30)).save(old)
-    Image.new("RGB", (1280, 720), color=(20, 30, 40)).save(latest)
-    ignored.write_text("not a screenshot", encoding="utf-8")
-
-    assert list_screenshots(tmp_path) == [old, latest]
-    assert latest_screenshot(tmp_path) == latest
-
-    summary = summarize_screenshot(latest, GAME_DIR)
-
-    assert summary.screenshot == str(latest.resolve())
-    assert summary.screen_type == "main_world"
-    assert summary.template_id == "dhxy2_classic_main_world_v1"
-    assert summary.match["fallback_reason"] == "no_anchor_hash_match"
-
-
-def test_summarizes_directory_for_batch_agent_handoff(tmp_path: Path) -> None:
-    first = tmp_path / "001.png"
-    second = tmp_path / "002.png"
-    Image.new("RGB", (1280, 720), color=(10, 20, 30)).save(first)
-    Image.new("RGB", (1000, 1000), color=(20, 30, 40)).save(second)
-
-    summaries = summarize_directory(tmp_path, GAME_DIR)
-
-    assert [item.screenshot for item in summaries] == [str(first.resolve()), str(second.resolve())]
-    assert [item.screen_type for item in summaries] == ["main_world", "main_world"]
-    assert summaries[0].match["aspect_ratio_label"] == "fixed_window"
-    assert summaries[1].match["aspect_ratio_label"] is None
-
-
-def test_existing_repository_samples_match_expected_templates(tmp_path: Path) -> None:
-    expected_path = SAMPLES_DIR / "expected" / "final_expected.json"
-    with expected_path.open("r", encoding="utf-8") as handle:
-        manifest = json.load(handle)
-
-    cases = [
-        item
-        for item in manifest["cases"]
-        if str(item.get("sample_status", "")).endswith("anchor_calibrated")
-        and (Path(__file__).resolve().parents[1] / item["screenshot"]).is_file()
-    ]
-
-    assert {item["screen_type"] for item in cases} == {
-        "battle",
-        "blocking_modal",
-        "character_select",
-        "login_guard",
-        "login_waterfall",
-        "qr_login",
-        "main_world",
-        "npc_dialog",
-        "reward_popup",
-        "server_select",
-        "system_panel",
-    }
-
-    for index, case in enumerate(cases):
-        source = Path(__file__).resolve().parents[1] / case["screenshot"]
-        timestamp_only = tmp_path / f"runtime_capture_{index:02}.png"
-        timestamp_only.write_bytes(source.read_bytes())
-
-        result = analyze_screenshot(timestamp_only, GAME_DIR)
-
-        assert result.screen.type == case["screen_type"]
-        assert result.screen.template_id == case["template_id"]
-
-
-def test_analyze_injects_template_static_outputs() -> None:
-    screenshot = SAMPLES_DIR / "screenshots" / "server_select__manual_complete1.png"
-
-    result = analyze_screenshot(screenshot, GAME_DIR)
-    static_elements = [
-        element
-        for element in result.elements
-        if element.evidence and element.evidence.source == "template_static"
-    ]
-
-    assert result.screen.type == "server_select"
-    assert {element.id for element in static_elements} >= {"account_server_slot_1", "selected_server_slot"}
-    assert any(element.semantic_role == "confirm_server" and element.text == "进入游戏" for element in static_elements)
-
-
-def test_analyze_injects_login_start_game_button_coordinates() -> None:
-    screenshot = SAMPLES_DIR / "screenshots" / "login_waterfall__manual_login1.png"
-
-    result = analyze_screenshot(screenshot, GAME_DIR)
-    start_button = next(element for element in result.elements if element.id == "start_game_button")
-
-    assert result.screen.type == "login_waterfall"
-    assert start_button.text == "开始游戏"
-    assert start_button.bbox == (1298, 658, 1452, 812)
-    assert start_button.evidence is not None
-    assert start_button.evidence.source == "template_static"
-
-
-def test_qr_login_uses_full_screenshot_bbox_profile() -> None:
-    screenshot = SAMPLES_DIR / "screenshots" / "登陆二维码扫码界面.png"
-
-    result = analyze_screenshot(screenshot, GAME_DIR)
+def test_qr_login_uses_calibrated_full_screenshot_bbox() -> None:
+    result = analyze_screenshot(SAMPLES_DIR / "登陆二维码扫码界面.png", GAME_DIR)
     qr_target = next(element for element in result.elements if element.id == "qr_code_target")
 
     assert result.screen.type == "qr_login"
     assert qr_target.bbox == (453, 398, 725, 669)
-    assert result.raw["game_view"]["bbox"] == (146, 149, 1174, 876)
+    assert result.raw["calibration"]["status"] == "calibrated"
+    assert result.raw["calibration"]["offset"] == [0, 0]
+    assert "game_view" not in result.raw
 
-def test_analyze_uses_bbox_by_profile_for_static_outputs(tmp_path: Path) -> None:
+
+def test_server_select_uses_calibrated_full_screenshot_bboxes() -> None:
+    result = analyze_screenshot(SAMPLES_DIR / "登陆界面服务器选择界面1920x1080.png", GAME_DIR)
+    elements = {element.id: element for element in result.elements}
+
+    assert result.screen.type == "server_select"
+    assert result.raw["calibration"]["status"] == "calibrated"
+    assert elements["account_servers"].bbox == (182, 313, 925, 351)
+    assert elements["selected_server_slot"].bbox == (465, 738, 575, 773)
+    assert elements["account_server_slot_1"].bbox == (187, 316, 299, 348)
+    assert elements["server_confirm_button"].bbox == (582, 741, 667, 771)
+
+
+def test_analyze_translates_all_output_bboxes_and_export_marks_large_offset(tmp_path: Path, monkeypatch) -> None:
     game_dir = tmp_path / "game"
     templates_dir = game_dir / "templates"
     templates_dir.mkdir(parents=True)
@@ -161,67 +54,54 @@ def test_analyze_uses_bbox_by_profile_for_static_outputs(tmp_path: Path) -> None
             {
                 "game_id": "test_game",
                 "client": "test_client",
-                "coordinate_space": {"bbox_unit": "screen_ratio"},
-                "supported_windows": [
-                    {"width": 1280, "height": 720, "label": "fixed_window_1280x720"}
-                ],
-                "supported_aspect_ratios": [],
+                "runtime_screenshot": {"width": 1920, "height": 1080},
+                "window_calibration": {"reference_window_bbox": [143, 95, 1177, 878]},
+                "template_defaults": {"min_confidence": 0.65},
                 "ocr_policy": {"only_when_required": True},
             }
         ),
         encoding="utf-8",
     )
-    (templates_dir / "main_world.json").write_text(
+    (templates_dir / "screen.json").write_text(
         json.dumps(
             {
-                "template_id": "test_main_world_v1",
-                "screen_type": "main_world",
-                "priority": 1,
-                "anchors": [],
-                "elements": [
-                    {
-                        "id": "test_element",
-                        "type": "text_region",
-                        "bbox": [0, 0, 1, 1],
-                        "ocr_required": False,
-                        "bbox_by_profile": {
-                            "fixed_window_1280x720": [0.5, 0.5, 0.75, 0.75]
-                        },
-                    }
-                ],
-                "static_outputs": [
-                    {
-                        "id": "test_slot",
-                        "type": "button_slot",
-                        "semantic_role": "test_slot",
-                        "value": "",
-                        "bbox": [0, 0, 1, 1],
-                        "bbox_by_profile": {
-                            "fixed_window_1280x720": [0.25, 0.25, 0.5, 0.5]
-                        },
-                    },
-                    {
-                        "id": "fallback_slot",
-                        "type": "button_slot",
-                        "semantic_role": "fallback_slot",
-                        "value": "",
-                        "bbox": [0.1, 0.1, 0.2, 0.2],
-                        "bbox_by_profile": {
-                            "other_profile": [0.25, 0.25, 0.5, 0.5]
-                        },
-                    }
-                ],
+                "template_id": "test_screen_v1",
+                "screen_type": "test_screen",
+                "priority": 50,
+                "calibration_status": "confirmed_1920",
+                "anchors": [{"id": "anchor", "type": "layout_region", "bbox": [0.1, 0.1, 0.2, 0.2], "expected_hash": "0" * 16}],
+                "elements": [{"id": "region", "type": "text_region", "bbox": [0.2, 0.2, 0.3, 0.3], "ocr_required": False}],
+                "static_outputs": [{"id": "start", "type": "button", "semantic_role": "start_game_button", "text": "开始", "bbox": [0.3, 0.3, 0.4, 0.4]}],
             }
         ),
         encoding="utf-8",
     )
     screenshot = tmp_path / "capture.png"
-    Image.new("RGB", (1280, 720), color=(10, 20, 30)).save(screenshot)
+    Image.new("RGB", (1920, 1080), color=(10, 20, 30)).save(screenshot)
+    expected_anchor = (224, 140, 416, 248)
+    monkeypatch.setattr(
+        "agent_template_builder.matcher.template_matcher.region_hash_image",
+        lambda _image, bbox: "0" * 16 if bbox == expected_anchor else "f" * 16,
+    )
 
     result = analyze_screenshot(screenshot, game_dir)
+    rows = to_index_value_data(export_agent_rows(screenshot, game_dir, ROOT / "agent_fields.json"))
 
-    assert result.raw["match"]["aspect_ratio_label"] == "fixed_window"
-    assert result.raw["match"]["viewport_profile_label"] == "fixed_window_1280x720"
-    assert result.elements[0].bbox == (640, 360, 960, 540)
-    assert result.elements[1].bbox == (320, 180, 640, 360)
-    assert result.elements[2].bbox == (128, 72, 256, 144)
+    assert result.raw["calibration"]["offset"] == [32, 32]
+    assert result.elements[0].bbox == (416, 248, 608, 356)
+    assert result.elements[1].bbox == (608, 356, 800, 464)
+    assert rows["303"] == "开始@[608, 356, 800, 464]"
+    assert rows["9000"] == "window_center_offset@[32, 32]"
+
+
+def test_character_select_uses_calibrated_full_screenshot_bboxes() -> None:
+    result = analyze_screenshot(SAMPLES_DIR / "登陆界面选择角色界面-1920x1080.png", GAME_DIR)
+    elements = {element.id: element for element in result.elements}
+
+    assert result.screen.type == "character_select"
+    assert result.raw["calibration"]["status"] == "calibrated"
+    assert result.raw["calibration"]["offset"] == [0, 0]
+    assert elements["character_grid"].bbox == (951, 324, 1174, 464)
+    assert elements["character_slot_1"].bbox == (951, 324, 1174, 391)
+    assert elements["character_slot_2"].bbox == (988, 399, 1174, 464)
+    assert elements["enter_game_button"].bbox == (606, 723, 745, 758)

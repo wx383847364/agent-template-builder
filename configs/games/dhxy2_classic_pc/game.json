@@ -4,118 +4,17 @@
   "display_name": "大话西游2经典版 PC",
   "coordinate_space": {
     "type": "normalized",
-    "base_width": 1280,
-    "base_height": 720,
+    "base_width": 1920,
+    "base_height": 1080,
     "bbox_unit": "screen_ratio"
   },
-  "supported_aspect_ratios": [
-    {
-      "label": "wide_16_9",
-      "width": 16,
-      "height": 9,
-      "tolerance": 0.04
-    },
-    {
-      "label": "classic_4_3",
-      "width": 4,
-      "height": 3,
-      "tolerance": 0.04
-    },
-    {
-      "label": "wide_16_10",
-      "width": 16,
-      "height": 10,
-      "tolerance": 0.04
-    },
-    {
-      "label": "classic_windowed_client",
-      "width": 800,
-      "height": 574,
-      "tolerance": 0.04
-    }
-  ],
-  "supported_windows": [
-    {
-      "width": 800,
-      "height": 574,
-      "label": "fixed_window_800x574"
-    },
-    {
-      "width": 1024,
-      "height": 720,
-      "label": "fixed_window_1024x720"
-    },
-    {
-      "width": 1000,
-      "height": 718,
-      "label": "fixed_window_1000x718"
-    },
-    {
-      "width": 1280,
-      "height": 900,
-      "label": "fixed_window_1280x900"
-    },
-    {
-      "width": 1708,
-      "height": 960,
-      "label": "fixed_window_1708x960"
-    },
-    {
-      "width": 1603,
-      "height": 940,
-      "label": "launcher_window_1603x940"
-    },
-    {
-      "width": 1280,
-      "height": 720,
-      "label": "fixed_window_1280x720"
-    },
-    {
-      "width": 1366,
-      "height": 768,
-      "label": "fixed_window_1366x768"
-    },
-    {
-      "width": 1028,
-      "height": 727,
-      "label": "desktop_1920x1080_windowed"
-    }
-  ],
-  "viewport_profiles": [
-    {
-      "width": 1203,
-      "height": 872,
-      "label": "legacy_window_capture_1203x872"
-    }
-  ],
-  "game_view_profiles": [
-    {
-      "label": "desktop_1920x1080_windowed",
-      "source": "configured_desktop_window",
-      "screenshot_width": 1920,
-      "screenshot_height": 1080,
-      "bbox": [146, 149, 1174, 876],
-      "pixel_probe": {
-        "x": 146,
-        "y": 96,
-        "min_rgb": [45, 60, 90],
-        "max_rgb": [140, 150, 180]
-      }
-    },
-    {
-      "label": "desktop_1920x1080_fullscreen",
-      "source": "configured_fullscreen",
-      "screenshot_width": 1920,
-      "screenshot_height": 1080,
-      "bbox": [0, 0, 1920, 1080],
-      "pixel_probe": {
-        "x": 200,
-        "y": 100,
-        "min_rgb": [0, 35, 70],
-        "max_rgb": [80, 120, 200]
-      }
-    }
-  ],
+  "runtime_screenshot": {
+    "width": 1920,
+    "height": 1080
+  },
+  "window_calibration": {
+    "reference_window_bbox": [143, 95, 1177, 878]
+  },
   "ocr_policy": {
     "language": "zh_cn",
     "only_when_required": true,

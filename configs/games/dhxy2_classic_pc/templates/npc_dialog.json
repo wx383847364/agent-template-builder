@@ -7,14 +7,24 @@
     {
       "id": "dialog_panel_area",
       "type": "layout_region",
-      "bbox": [0.16, 0.54, 0.84, 0.95],
+      "bbox": [
+        0.16170833333333334,
+        0.501462962962963,
+        0.5257916666666667,
+        0.7774537037037037
+      ],
       "weight": 0.55,
       "expected_hash": "81c3fefefef8f8f0"
     },
     {
       "id": "dialog_options_area",
       "type": "layout_region",
-      "bbox": [0.58, 0.62, 0.82, 0.90],
+      "bbox": [
+        0.38658333333333333,
+        0.5553148148148148,
+        0.5150833333333333,
+        0.7437962962962964
+      ],
       "weight": 0.25,
       "expected_hash": "fefcf8fcfc800002"
     }
@@ -23,24 +33,44 @@
     {
       "id": "dialog_body",
       "type": "text_region",
-      "bbox": [0.20, 0.58, 0.78, 0.78],
+      "bbox": [
+        0.183125,
+        0.5283888888888889,
+        0.4936666666666667,
+        0.6630185185185186
+      ],
       "ocr_required": true,
       "semantic_role": "dialog_text"
     },
     {
       "id": "dialog_options",
       "type": "text_region",
-      "bbox": [0.58, 0.62, 0.82, 0.90],
+      "bbox": [
+        0.38658333333333333,
+        0.5553148148148148,
+        0.5150833333333333,
+        0.7437962962962964
+      ],
       "ocr_required": true,
       "semantic_role": "dialog_options"
     },
     {
       "id": "dialog_continue",
       "type": "button",
-      "bbox": [0.68, 0.82, 0.82, 0.92],
+      "bbox": [
+        0.44012500000000004,
+        0.6899444444444445,
+        0.5150833333333333,
+        0.7572592592592593
+      ],
       "ocr_required": false,
       "semantic_role": "continue_dialog"
     }
   ],
-  "available_intents": ["read_dialog", "continue_dialog", "choose_dialog_option"]
+  "available_intents": [
+    "read_dialog",
+    "continue_dialog",
+    "choose_dialog_option"
+  ],
+  "calibration_status": "pending_1920_calibration"
 }

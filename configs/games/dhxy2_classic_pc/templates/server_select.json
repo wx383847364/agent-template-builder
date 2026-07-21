@@ -7,55 +7,86 @@
     {
       "id": "center_server_panel",
       "type": "layout_region",
-      "bbox": [0.031, 0.116, 0.760, 0.853],
-      "weight": 0.60,
+      "bbox": [
+        0.092708333,
+        0.215740741,
+        0.4828125,
+        0.712037037
+      ],
+      "weight": 0.6,
       "expected_hash": "fffffcf8df000000",
       "expected_hashes": [
         "fffffcf8df060000",
         "fffffc785f000000",
         "fffffc781f000000",
         "ffffff7fdf000000"
-      ],
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.092708333, 0.215740741, 0.4828125, 0.712037037]
-      }
+      ]
     },
     {
       "id": "server_confirm_area",
       "type": "layout_region",
-      "bbox": [0.424, 0.814, 0.507, 0.855],
+      "bbox": [
+        0.303125,
+        0.686111111,
+        0.347395833,
+        0.713888889
+      ],
       "weight": 0.35,
       "expected_hash": "f0000024b4feffff",
       "expected_hashes": [
         "ff000020b4eef6ff",
         "8000a0b4feffff00"
-      ],
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.303125, 0.686111111, 0.347395833, 0.713888889]
-      }
+      ]
     }
   ],
   "elements": [
     {
       "id": "account_servers",
       "type": "text_region",
-      "bbox": [0.035, 0.226, 0.758, 0.278],
+      "bbox": [
+        0.094791667,
+        0.289814815,
+        0.481770833,
+        0.325
+      ],
       "ocr_required": true,
       "semantic_role": "account_servers"
     },
     {
       "id": "selected_server",
       "type": "text_region",
-      "bbox": [0.310, 0.810, 0.417, 0.858],
+      "bbox": [
+        0.2421875,
+        0.683333333,
+        0.299479167,
+        0.715740741
+      ],
       "ocr_required": true,
       "semantic_role": "selected_server"
     },
     {
       "id": "server_confirm",
       "type": "button",
-      "bbox": [0.424, 0.814, 0.507, 0.855],
+      "bbox": [
+        0.303125,
+        0.686111111,
+        0.347395833,
+        0.713888889
+      ],
       "ocr_required": false,
       "semantic_role": "confirm_server"
+    },
+    {
+      "id": "common_login_character_1",
+      "type": "button",
+      "bbox": [
+        0.494270833,
+        0.266666667,
+        0.596875,
+        0.333333333
+      ],
+      "ocr_required": true,
+      "semantic_role": "common_login_characters"
     }
   ],
   "static_outputs": [
@@ -64,57 +95,102 @@
       "type": "button_slot",
       "semantic_role": "account_server_slot",
       "value": "",
-      "bbox": [0.040, 0.230, 0.149, 0.274]
+      "bbox": [
+        0.097395833,
+        0.292592593,
+        0.155729167,
+        0.322222222
+      ]
     },
     {
       "id": "account_server_slot_2",
       "type": "button_slot",
       "semantic_role": "account_server_slot",
       "value": "",
-      "bbox": [0.160, 0.230, 0.270, 0.274]
+      "bbox": [
+        0.161458333,
+        0.292592593,
+        0.220833333,
+        0.322222222
+      ]
     },
     {
       "id": "account_server_slot_3",
       "type": "button_slot",
       "semantic_role": "account_server_slot",
       "value": "",
-      "bbox": [0.280, 0.230, 0.390, 0.274]
+      "bbox": [
+        0.226041667,
+        0.292592593,
+        0.284895833,
+        0.322222222
+      ]
     },
     {
       "id": "account_server_slot_4",
       "type": "button_slot",
       "semantic_role": "account_server_slot",
       "value": "",
-      "bbox": [0.400, 0.230, 0.511, 0.274]
+      "bbox": [
+        0.290104167,
+        0.292592593,
+        0.349479167,
+        0.322222222
+      ]
     },
     {
       "id": "account_server_slot_5",
       "type": "button_slot",
       "semantic_role": "account_server_slot",
       "value": "",
-      "bbox": [0.520, 0.230, 0.630, 0.274]
+      "bbox": [
+        0.3546875,
+        0.292592593,
+        0.413541667,
+        0.322222222
+      ]
     },
     {
       "id": "account_server_slot_6",
       "type": "button_slot",
       "semantic_role": "account_server_slot",
       "value": "",
-      "bbox": [0.640, 0.230, 0.751, 0.274]
+      "bbox": [
+        0.41875,
+        0.292592593,
+        0.478125,
+        0.322222222
+      ]
     },
     {
       "id": "selected_server_slot",
       "type": "button_slot",
       "semantic_role": "selected_server_slot",
       "value": "",
-      "bbox": [0.310, 0.810, 0.417, 0.858]
+      "bbox": [
+        0.2421875,
+        0.683333333,
+        0.299479167,
+        0.715740741
+      ]
     },
     {
       "id": "server_confirm_button",
       "type": "button",
       "semantic_role": "confirm_server",
       "text": "进入游戏",
-      "bbox": [0.424, 0.814, 0.507, 0.855]
+      "bbox": [
+        0.303125,
+        0.686111111,
+        0.347395833,
+        0.713888889
+      ]
     }
   ],
-  "available_intents": ["read_server_list", "confirm_server", "go_back"]
+  "available_intents": [
+    "read_server_list",
+    "confirm_server",
+    "go_back"
+  ],
+  "calibration_status": "confirmed_1920"
 }

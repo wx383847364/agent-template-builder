@@ -7,8 +7,14 @@ from typing import Optional
 from PIL import Image
 
 from agent_template_builder.matcher.hash import hamming_distance, region_hash_image
-from agent_template_builder.matcher.roi import GameView, denormalize_bbox_in_view, detect_game_view_image
 from agent_template_builder.schema.templates import TemplateSpec, denormalize_bbox
+
+
+BBox = tuple[int, int, int, int]
+
+
+class UnsupportedResolutionError(ValueError):
+    pass
 
 
 @dataclass(frozen=True)
@@ -21,10 +27,12 @@ class AnchorMatch:
 
 
 @dataclass(frozen=True)
-class AspectRatioProfile:
-    label: str
-    ratio: float
-    tolerance: float = 0.04
+class CalibrationResult:
+    status: str
+    reason: Optional[str]
+    offset: tuple[int, int]
+    reference_center: tuple[float, float]
+    actual_center: tuple[float, float]
 
 
 @dataclass(frozen=True)
@@ -33,141 +41,179 @@ class MatchResult:
     confidence: float
     width: int
     height: int
-    game_view: GameView
     anchor_matches: list[AnchorMatch]
-    aspect_ratio_label: Optional[str] = None
-    viewport_profile_label: Optional[str] = None
+    calibration: CalibrationResult
     fallback_reason: Optional[str] = None
     measurable_template_count: int = 0
 
 
 class TemplateMatcher:
-    """快速首轮匹配器。
-
-    已有实测锚点哈希的模板优先胜出。在真实截图锚点尚未补齐时，
-    匹配器会回退到主世界模板，而不是高优先级弹窗模板。坐标使用
-    归一化比例，因此模板可以适配宽高比兼容的多种分辨率。
-    """
+    """1920×1080 整图模板匹配器，并以 anchor 搜索窗口的统一平移量。"""
 
     def __init__(
         self,
         templates: list[TemplateSpec],
-        supported_sizes: dict[tuple[int, int], str] | set[tuple[int, int]],
-        aspect_profiles: list[AspectRatioProfile],
-        viewport_profiles: dict[tuple[int, int], str] | None = None,
-        game_view_profiles: list[dict[str, object]] | None = None,
+        *,
+        resolution: tuple[int, int],
+        reference_window_bbox: BBox,
+        min_confidence: float = 0.65,
     ) -> None:
         if not templates:
             raise ValueError("至少需要一个模板")
         self._templates = templates
-        self._supported_sizes = _normalize_supported_sizes(supported_sizes)
-        self._aspect_profiles = aspect_profiles
-        self._viewport_profiles = viewport_profiles or {}
-        self._game_view_profiles = game_view_profiles or []
+        self._resolution = resolution
+        self._reference_window_bbox = reference_window_bbox
+        self._min_confidence = min_confidence
+        left, top, right, bottom = reference_window_bbox
+        self._reference_center = ((left + right) / 2, (top + bottom) / 2)
 
     def match(self, screenshot_path: Path) -> MatchResult:
         with Image.open(screenshot_path) as image:
             return self.match_image(image)
 
     def match_image(self, image: Image.Image) -> MatchResult:
-        """Match one immutable image snapshot without reopening its source path."""
-        width, height = image.size
-        game_view = detect_game_view_image(image, self._game_view_profiles)
-        if game_view.profile_label:
-            aspect_label, profile_label, size_score = ("fixed_window", game_view.profile_label, 1.0)
-        else:
-            aspect_label, profile_label, size_score = self._score_viewport(game_view.width, game_view.height)
+        if image.size != self._resolution:
+            width, height = image.size
+            expected_width, expected_height = self._resolution
+            raise UnsupportedResolutionError(
+                f"unsupported_resolution: expected {expected_width}x{expected_height}, got {width}x{height}"
+            )
+
         measurable_template_count = sum(1 for template in self._templates if template.measurable_anchor_count)
-
-        scored = [
-            (self._score_template(image, template, game_view, profile_label, size_score), template)
-            for template in self._templates
-        ]
-        best, template = max(scored, key=lambda item: (item[0][0], item[1].priority))
-        confidence, anchor_matches = best
+        scored = [self._score_template(image, template) for template in self._templates]
+        score, template, offset, anchor_matches = max(
+            scored,
+            key=lambda item: (item[0], item[1].priority),
+        )
         fallback_reason = None
-        fallback_confidence = 0.35 * size_score
+        status = "calibrated"
+        reason = None
 
-        if measurable_template_count == 0:
-            template = self._default_template()
-            confidence = 0.70 * size_score
-            anchor_matches = []
-            fallback_reason = "no_measurable_anchor_hash"
-        elif anchor_matches and not any(match.score > 0 for match in anchor_matches):
-            template = self._default_template()
-            confidence = fallback_confidence
-            fallback_reason = "no_anchor_hash_match"
-        elif template.screen_type != "main_world" and confidence < fallback_confidence:
-            template = self._default_template()
-            confidence = fallback_confidence
-            fallback_reason = "low_anchor_score_match"
+        if not anchor_matches or not any(match.score > 0 for match in anchor_matches):
+            status, reason = "failed", "no_anchor_hash_match"
+            fallback_reason = reason
+        elif score < self._min_confidence:
+            status, reason = "failed", "low_anchor_score_match"
+            fallback_reason = reason
+        elif template.calibration_status != "confirmed_1920":
+            status, reason = "pending", "template_not_1920_calibrated"
 
+        dx, dy = offset
+        ref_x, ref_y = self._reference_center
+        calibration = CalibrationResult(
+            status=status,
+            reason=reason,
+            offset=offset,
+            reference_center=self._reference_center,
+            actual_center=(ref_x + dx, ref_y + dy),
+        )
         return MatchResult(
             template=template,
-            confidence=round(confidence, 3),
-            width=width,
-            height=height,
-            game_view=game_view,
+            confidence=round(score, 3),
+            width=image.width,
+            height=image.height,
             anchor_matches=anchor_matches,
-            aspect_ratio_label=aspect_label,
-            viewport_profile_label=profile_label,
+            calibration=calibration,
             fallback_reason=fallback_reason,
             measurable_template_count=measurable_template_count,
         )
-
-    def _score_viewport(self, width: int, height: int) -> tuple[Optional[str], Optional[str], float]:
-        if (width, height) in self._supported_sizes:
-            return ("fixed_window", self._supported_sizes[(width, height)], 1.0)
-
-        viewport_profile = self._viewport_profiles.get((width, height))
-
-        if not self._aspect_profiles:
-            return (
-                None,
-                viewport_profile,
-                1.0 if not self._supported_sizes else 0.55,
-            )
-
-        actual_ratio = width / height
-        best = min(self._aspect_profiles, key=lambda profile: abs(actual_ratio - profile.ratio))
-        delta = abs(actual_ratio - best.ratio)
-        if delta <= best.tolerance:
-            score = max(0.75, 1.0 - (delta / best.tolerance) * 0.25)
-            return (best.label, viewport_profile or best.label, score)
-        return (None, viewport_profile, 0.45)
 
     def _score_template(
         self,
         image: Image.Image,
         template: TemplateSpec,
-        game_view: GameView,
-        profile_label: Optional[str],
-        size_score: float,
-    ) -> tuple[float, list[AnchorMatch]]:
-        measurable = [anchor for anchor in template.anchors if anchor.measurable_hashes]
-        if not measurable:
-            return (0.0, [])
+    ) -> tuple[float, TemplateSpec, tuple[int, int], list[AnchorMatch]]:
+        anchors = [anchor for anchor in template.anchors if anchor.measurable_hashes]
+        if not anchors:
+            return (0.0, template, (0, 0), [])
 
+        base_bboxes = [(anchor, denormalize_bbox(anchor.bbox, image.width, image.height)) for anchor in anchors]
+        offset = self._find_best_offset(image, base_bboxes)
+        anchor_score, matches = self._score_offset(image, base_bboxes, offset)
+        return (anchor_score * 0.9 + min(template.priority, 100) / 1000, template, offset, matches)
+
+    def _find_best_offset(
+        self,
+        image: Image.Image,
+        anchors: list[tuple[object, BBox]],
+    ) -> tuple[int, int]:
+        bounds = self._offset_bounds(image, anchors)
+        best = self._best_of(image, anchors, self._grid(bounds, 32, include=(0, 0)))[0]
+        for step in (8, 1):
+            radius = 32 if step == 8 else 8
+            candidates = [
+                (dx, dy)
+                for dx in range(best[0] - radius, best[0] + radius + 1, step)
+                for dy in range(best[1] - radius, best[1] + radius + 1, step)
+                if self._in_bounds((dx, dy), bounds)
+            ]
+            best = self._best_of(image, anchors, candidates)[0]
+        return best
+
+    def _offset_bounds(self, image: Image.Image, anchors: list[tuple[object, BBox]]) -> tuple[int, int, int, int]:
+        window_left, window_top, window_right, window_bottom = self._reference_window_bbox
+        min_dx, max_dx = -window_left, image.width - window_right
+        min_dy, max_dy = -window_top, image.height - window_bottom
+        for _, (left, top, right, bottom) in anchors:
+            min_dx, max_dx = max(min_dx, -left), min(max_dx, image.width - right)
+            min_dy, max_dy = max(min_dy, -top), min(max_dy, image.height - bottom)
+        return (min_dx, max_dx, min_dy, max_dy)
+
+    def _grid(
+        self,
+        bounds: tuple[int, int, int, int],
+        step: int,
+        *,
+        include: tuple[int, int],
+    ) -> list[tuple[int, int]]:
+        min_dx, max_dx, min_dy, max_dy = bounds
+        candidates = [
+            (dx, dy)
+            for dx in range(min_dx, max_dx + 1, step)
+            for dy in range(min_dy, max_dy + 1, step)
+        ]
+        if self._in_bounds(include, bounds):
+            candidates.append(include)
+        return candidates
+
+    @staticmethod
+    def _in_bounds(offset: tuple[int, int], bounds: tuple[int, int, int, int]) -> bool:
+        dx, dy = offset
+        min_dx, max_dx, min_dy, max_dy = bounds
+        return min_dx <= dx <= max_dx and min_dy <= dy <= max_dy
+
+    def _best_of(
+        self,
+        image: Image.Image,
+        anchors: list[tuple[object, BBox]],
+        candidates: list[tuple[int, int]],
+    ) -> tuple[tuple[int, int], float]:
+        best = (0, 0)
+        best_score = -1.0
+        for offset in candidates:
+            score, _ = self._score_offset(image, anchors, offset)
+            if score > best_score or (score == best_score and offset == (0, 0)):
+                best, best_score = offset, score
+        return best, best_score
+
+    def _score_offset(
+        self,
+        image: Image.Image,
+        anchors: list[tuple[object, BBox]],
+        offset: tuple[int, int],
+    ) -> tuple[float, list[AnchorMatch]]:
+        dx, dy = offset
         weighted_score = 0.0
         total_weight = 0.0
         matches: list[AnchorMatch] = []
-
-        for anchor in measurable:
-            screen_bbox = anchor.screen_bbox_for_profile(profile_label)
-            bbox = (
-                denormalize_bbox(screen_bbox, image.width, image.height)
-                if screen_bbox
-                else denormalize_bbox_in_view(anchor.bbox_for_profile(profile_label), game_view)
-            )
+        for anchor, (left, top, right, bottom) in anchors:
+            bbox = (left + dx, top + dy, right + dx, bottom + dy)
             actual_hash = region_hash_image(image, bbox)
             expected_hash, distance = min(
-                (
-                    (expected_hash, hamming_distance(actual_hash, expected_hash))
-                    for expected_hash in anchor.measurable_hashes
-                ),
+                ((value, hamming_distance(actual_hash, value)) for value in anchor.measurable_hashes),
                 key=lambda item: item[1],
             )
-            score = max(0.0, 1.0 - (distance / max(anchor.max_hamming_distance, 1)))
+            score = max(0.0, 1.0 - distance / max(anchor.max_hamming_distance, 1))
             weighted_score += score * anchor.weight
             total_weight += anchor.weight
             matches.append(
@@ -179,21 +225,4 @@ class TemplateMatcher:
                     hamming_distance=distance,
                 )
             )
-
-        anchor_score = weighted_score / total_weight if total_weight else 0.0
-        priority_score = min(template.priority, 100) / 1000
-        return (anchor_score * 0.9 * size_score + priority_score, matches)
-
-    def _default_template(self) -> TemplateSpec:
-        for template in self._templates:
-            if template.screen_type == "main_world":
-                return template
-        return self._templates[-1]
-
-
-def _normalize_supported_sizes(
-    supported_sizes: dict[tuple[int, int], str] | set[tuple[int, int]],
-) -> dict[tuple[int, int], str]:
-    if isinstance(supported_sizes, dict):
-        return supported_sizes
-    return {size: "fixed_window" for size in supported_sizes}
+        return (weighted_score / total_weight if total_weight else 0.0, matches)

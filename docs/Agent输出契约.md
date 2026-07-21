@@ -74,9 +74,15 @@ v1 只表达当前识别到的前景模板，不表达完整 UI 栈，也不发�
 
 - 模板识别后，`templates/*.json` 中的 `static_outputs` 会注入 `AgentData.elements[]`。
 - 这类元素的 `evidence.source` 固定为 `template_static`，用于区分 OCR 文本和模板自带的固定 UI 文案、固定按钮、固定槽位。
-- 如果 `static_outputs[].bbox` 存在，运行时按截图坐标系换算为像素 bbox；可点击目标字段直接发布该 bbox。
+- 如果 `static_outputs[].bbox` 存在，运行时按完整 1920×1080 截图换算并叠加 anchor 校准出的统一 `dx/dy`；可点击目标字段直接发布该 bbox。
 - 外部 Agent Rows 仍保持扁平 index/value JSON；不会新增结构化 `action_targets`。
 
 服务器选择使用模板静态槽位补全点击区域：当 `selected_server` 或 `account_servers` 已有服务器名但没有 bbox 时，导出层会按 `selected_server_slot` / `account_server_slot` 输出 `服务器名@[left, top, right, bottom]`。已经包含 bbox 的值原样保留；遗留的 `@x,y` 输入会按当前槽位重新绑定为 bbox。
 
-固定按钮、点击槽位和定位图像区域可以通过模板 `static_outputs` 发布为坐标目标。Agent Rows 导出器会将 `type="button"`、`type="button_slot"` 或 `type="image_region"` 的非空文字格式化为 `文字@[left, top, right, bottom]`。所有界面的目标均使用当前截图坐标系中的整数像素 bbox；不再输出点击中心点。登录瀑布模板通过 `303 start_game_button` 输出开始游戏按钮；二维码登录模板通过 `304 login_qr_code` 使用 `screen_bbox_by_profile` 按完整截图坐标输出二维码外扩区域，不经 `game_view` 换算。
+固定按钮、点击槽位和定位图像区域可以通过模板 `static_outputs` 发布为坐标目标。Agent Rows 导出器会将 `type="button"`、`type="button_slot"` 或 `type="image_region"` 的非空文字格式化为 `文字@[left, top, right, bottom]`。所有界面的目标均使用经统一偏移校准后的完整 1920×1080 整数像素 bbox；不再输出点击中心点。登录瀑布模板通过 `303 start_game_button` 输出开始游戏按钮；二维码登录模板通过 `304 login_qr_code` 输出二维码外扩区域。
+
+服务器选择模板通过 `402 common_login_characters` 输出右侧“常用角色”卡片。每张已识别角色卡片都是独立的局部 OCR 元素，值包含该卡片的可读角色信息与完整截图像素 bbox；多张卡片使用英文分号分隔。
+
+当匹配确认窗口中心偏移任一轴超过 5 px 时，Rows 额外发布 `9000 window_center_offset`，格式为 `window_center_offset@[dx, dy]`。它是诊断字段，稳定业务消费方不得依赖。
+
+角色选择模板通过 `502 character_selection_list` 输出每张可选择角色卡片的局部 OCR 信息与整图像素 bbox；`500 selected_character` 跟随第一张已选中卡片，`503 enter_game_button` 输出“进入游戏”按钮及整图 bbox。运行时只接受 1920×1080 截图，模板 bbox 直接以整张截图比例换算，并叠加统一窗口校准偏移，不存在 `game_view` 坐标换算。

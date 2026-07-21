@@ -15,8 +15,6 @@ class AnchorSpec:
     id: str
     type: str
     bbox: NormalizedBBox
-    bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
-    screen_bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
     weight: float = 1.0
     expected_hash: Optional[str] = None
     expected_hashes: tuple[str, ...] = ()
@@ -30,15 +28,6 @@ class AnchorSpec:
         hashes.extend(item for item in self.expected_hashes if item)
         return tuple(dict.fromkeys(hashes))
 
-    def bbox_for_profile(self, profile_label: Optional[str]) -> NormalizedBBox:
-        if profile_label and profile_label in self.bbox_by_profile:
-            return self.bbox_by_profile[profile_label]
-        return self.bbox
-
-    def screen_bbox_for_profile(self, profile_label: Optional[str]) -> Optional[NormalizedBBox]:
-        if profile_label and profile_label in self.screen_bbox_by_profile:
-            return self.screen_bbox_by_profile[profile_label]
-        return None
 
 
 @dataclass(frozen=True)
@@ -48,18 +37,6 @@ class ElementSpec:
     bbox: NormalizedBBox
     ocr_required: bool
     semantic_role: Optional[str] = None
-    bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
-    screen_bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
-
-    def bbox_for_profile(self, profile_label: Optional[str]) -> NormalizedBBox:
-        if profile_label and profile_label in self.bbox_by_profile:
-            return self.bbox_by_profile[profile_label]
-        return self.bbox
-
-    def screen_bbox_for_profile(self, profile_label: Optional[str]) -> Optional[NormalizedBBox]:
-        if profile_label and profile_label in self.screen_bbox_by_profile:
-            return self.screen_bbox_by_profile[profile_label]
-        return None
 
 
 @dataclass(frozen=True)
@@ -70,18 +47,6 @@ class StaticOutputSpec:
     text: Optional[str] = None
     value: Optional[str] = None
     bbox: Optional[NormalizedBBox] = None
-    bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
-    screen_bbox_by_profile: dict[str, NormalizedBBox] = field(default_factory=dict)
-
-    def bbox_for_profile(self, profile_label: Optional[str]) -> Optional[NormalizedBBox]:
-        if profile_label and profile_label in self.bbox_by_profile:
-            return self.bbox_by_profile[profile_label]
-        return self.bbox
-
-    def screen_bbox_for_profile(self, profile_label: Optional[str]) -> Optional[NormalizedBBox]:
-        if profile_label and profile_label in self.screen_bbox_by_profile:
-            return self.screen_bbox_by_profile[profile_label]
-        return None
 
 
 @dataclass(frozen=True)
@@ -95,6 +60,7 @@ class TemplateSpec:
     available_intents: list[str] = field(default_factory=list)
     blocking_modal: bool = False
     description: str = ""
+    calibration_status: str = "pending_1920_calibration"
 
     @property
     def measurable_anchor_count(self) -> int:
@@ -131,8 +97,6 @@ def _load_template(path: Path) -> TemplateSpec:
             id=item["id"],
             type=item["type"],
             bbox=_load_normalized_bbox(item, "bbox"),
-            bbox_by_profile=_load_bbox_by_profile(item),
-            screen_bbox_by_profile=_load_bbox_by_profile(item, "screen_bbox_by_profile"),
             weight=float(item.get("weight", 1.0)),
             expected_hash=item.get("expected_hash"),
             expected_hashes=_load_expected_hashes(item),
@@ -147,8 +111,6 @@ def _load_template(path: Path) -> TemplateSpec:
             bbox=_load_normalized_bbox(item, "bbox"),
             ocr_required=bool(item.get("ocr_required", False)),
             semantic_role=item.get("semantic_role"),
-            bbox_by_profile=_load_bbox_by_profile(item),
-            screen_bbox_by_profile=_load_bbox_by_profile(item, "screen_bbox_by_profile"),
         )
         for item in data.get("elements", [])
     ]
@@ -163,6 +125,7 @@ def _load_template(path: Path) -> TemplateSpec:
         available_intents=list(data.get("available_intents", [])),
         blocking_modal=bool(data.get("blocking_modal", False)),
         description=data.get("description", ""),
+        calibration_status=str(data.get("calibration_status", "pending_1920_calibration")),
     )
 
 
@@ -192,27 +155,7 @@ def _load_static_output(item: dict[str, Any]) -> StaticOutputSpec:
         text=item.get("text"),
         value=item.get("value"),
         bbox=bbox,
-        bbox_by_profile=_load_bbox_by_profile(item),
-        screen_bbox_by_profile=_load_bbox_by_profile(item, "screen_bbox_by_profile"),
     )
-
-
-def _load_bbox_by_profile(item: dict[str, Any], field_name: str = "bbox_by_profile") -> dict[str, NormalizedBBox]:
-    raw = item.get(field_name, {})
-    if raw is None:
-        return {}
-    if not isinstance(raw, dict):
-        raise ValueError(f"{item.get('id', '<unknown>')}: {field_name} must be an object")
-
-    result = {}
-    for profile_label, bbox in raw.items():
-        if not isinstance(profile_label, str):
-            raise ValueError(f"{item.get('id', '<unknown>')}: bbox_by_profile keys must be strings")
-        result[profile_label] = _load_normalized_bbox(
-            {"id": item.get("id", "<unknown>"), "bbox": bbox},
-            f"{field_name}[{profile_label}]",
-        )
-    return result
 
 
 def _load_normalized_bbox(item: dict[str, Any], field_name: str) -> NormalizedBBox:

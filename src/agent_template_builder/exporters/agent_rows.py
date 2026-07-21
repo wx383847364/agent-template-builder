@@ -34,6 +34,7 @@ class AgentRowsExporter:
             values_by_role[element.semantic_role].append(value)
 
         self._bind_server_select_values(data.elements, values_by_role)
+        self._bind_character_select_values(values_by_role)
 
         rows = []
         for field in sorted(self.config.fields, key=lambda item: item.index):
@@ -44,7 +45,7 @@ class AgentRowsExporter:
                     index=field.index,
                     key=field.key,
                     type=field.type,
-                    value="\n".join(values) if values else "",
+                    value=_join_role_values(semantic_role, values),
                     semantic_role=semantic_role,
                 )
             )
@@ -68,6 +69,15 @@ class AgentRowsExporter:
         values_by_role["screen_confidence"].append(f"{data.screen.confidence:.3f}")
         values_by_role["blocking_modal"].append("1" if data.state.blocking_modal else "0")
 
+        calibration = data.raw.get("calibration", {})
+        offset = calibration.get("offset")
+        if isinstance(offset, list) and len(offset) == 2:
+            dx, dy = offset
+            if isinstance(dx, int) and isinstance(dy, int) and (abs(dx) > 5 or abs(dy) > 5):
+                values_by_role["window_center_offset"].append(
+                    f"window_center_offset@[{dx}, {dy}]"
+                )
+
         available_intents = _format_available_intents(data.state.available_intents)
         if available_intents:
             values_by_role["available_intents"].append(available_intents)
@@ -87,6 +97,11 @@ class AgentRowsExporter:
             account_slots = _elements_by_role(elements, "account_server_slot")
             account_values[0] = _bind_server_list(account_values[0], account_slots, _elements_by_role(elements, "account_servers"))
 
+    def _bind_character_select_values(self, values_by_role: dict[str, list[str]]) -> None:
+        characters = values_by_role.get("character_selection_list", [])
+        if characters and not values_by_role.get("selected_character"):
+            values_by_role["selected_character"].append(characters[0])
+
 
 def _elements_by_role(elements: list[Element], semantic_role: str) -> list[Element]:
     return [element for element in elements if element.semantic_role == semantic_role]
@@ -97,6 +112,13 @@ def _format_available_intents(intents: list[str]) -> str:
         if not re.fullmatch(r"[a-z0-9_]+", intent):
             raise ValueError(f"available_intent must match [a-z0-9_]+: {intent}")
     return ";".join(intents)
+
+
+def _join_role_values(semantic_role: str | None, values: list[str]) -> str:
+    if not values:
+        return ""
+    separator = ";" if semantic_role in {"common_login_characters", "character_selection_list"} else "\n"
+    return separator.join(values)
 
 
 def _bind_single_server(value: str, slots: list[Element], fallback_regions: list[Element]) -> str:

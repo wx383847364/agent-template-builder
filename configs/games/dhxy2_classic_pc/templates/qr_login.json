@@ -7,54 +7,64 @@
     {
       "id": "qr_code_area",
       "type": "layout_region",
-      "bbox": [0.34, 0.40, 0.53, 0.67],
+      "bbox": [
+        0.258333333,
+        0.407407407,
+        0.359895833,
+        0.588888889
+      ],
       "weight": 0.65,
-      "expected_hash": "ff8383818004c54f",
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.258333333, 0.407407407, 0.359895833, 0.588888889]
-      }
+      "expected_hash": "ff8383818004c54f"
     },
     {
       "id": "qr_login_header",
       "type": "layout_region",
-      "bbox": [0.35, 0.22, 0.68, 0.38],
+      "bbox": [
+        0.263541667,
+        0.286111111,
+        0.440104167,
+        0.393518519
+      ],
       "weight": 0.25,
-      "expected_hash": "ffffd18181e7e7ff",
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.263541667, 0.286111111, 0.440104167, 0.393518519]
-      }
+      "expected_hash": "ffffd18181e7e7ff"
     }
   ],
   "elements": [
     {
       "id": "qr_code",
       "type": "image_region",
-      "bbox": [0.34, 0.40, 0.53, 0.67],
+      "bbox": [
+        0.258333333,
+        0.407407407,
+        0.359895833,
+        0.588888889
+      ],
       "ocr_required": false,
-      "semantic_role": "login_qr_code",
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.258333333, 0.407407407, 0.359895833, 0.588888889]
-      }
+      "semantic_role": "login_qr_code"
     },
     {
       "id": "qr_login_notice",
       "type": "text_region",
-      "bbox": [0.52, 0.40, 0.72, 0.60],
+      "bbox": [
+        0.3546875,
+        0.407407407,
+        0.461458333,
+        0.541666667
+      ],
       "ocr_required": true,
-      "semantic_role": "qr_login_notice",
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.3546875, 0.407407407, 0.461458333, 0.541666667]
-      }
+      "semantic_role": "qr_login_notice"
     },
     {
       "id": "qr_refresh_action",
       "type": "button",
-      "bbox": [0.52, 0.48, 0.72, 0.60],
+      "bbox": [
+        0.3546875,
+        0.407407407,
+        0.461458333,
+        0.541666667
+      ],
       "ocr_required": false,
-      "semantic_role": "refresh_qr_login",
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.3546875, 0.407407407, 0.461458333, 0.541666667]
-      }
+      "semantic_role": "refresh_qr_login"
     }
   ],
   "static_outputs": [
@@ -63,11 +73,18 @@
       "type": "image_region",
       "semantic_role": "login_qr_code",
       "text": "二维码",
-      "bbox": [0.298638132, 0.342503439, 0.563229572, 0.715268226],
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.2359375, 0.368518519, 0.377604167, 0.619444444]
-      }
+      "bbox": [
+        0.2359375,
+        0.368518519,
+        0.377604167,
+        0.619444444
+      ]
     }
   ],
-  "available_intents": ["read_qr_login_notice", "refresh_qr_code", "switch_login_style"]
+  "available_intents": [
+    "read_qr_login_notice",
+    "refresh_qr_code",
+    "switch_login_style"
+  ],
+  "calibration_status": "confirmed_1920"
 }

@@ -106,12 +106,16 @@ Agent Rows 面向外部 agent 的兼容 JSON 是扁平 index/value 对象：
 | `304` | `login_qr_code` | `login_qr_code` | `published runtime` | 二维码登录界面的二维码目标区域，默认四周外扩 50 像素，值格式为 `二维码@[left, top, right, bottom]`。 |
 | `400` | `selected_server` | `selected_server` | `published runtime` | 当前选中的服务器，值格式为 `服务器名@[left, top, right, bottom]`。 |
 | `401` | `account_servers` | `account_servers` | `published runtime` | 当前账号已建立角色的服务器列表，值格式为 `服务器名@[left, top, right, bottom];服务器名@[left, top, right, bottom]`。 |
+| `402` | `common_login_characters` | `common_login_characters` | `published runtime` | 服务器选择界面右侧常用登录角色卡片；每项包含角色可读信息和整张截图坐标 bbox，多项用英文分号分隔。 |
 | `4000` | `blocking_modal` | `blocking_modal` | `published runtime` | 阻塞状态；`1` 表示阻塞，`0` 表示已知无阻塞且必须保留输出。 |
-| `500` | `selected_character_name` | - | `planned` | 当前选中角色名称；进入运行时前不得假定会输出。 |
+| `500` | `selected_character` | `selected_character` | `published runtime` | 当前选中角色信息及角色卡片整图 bbox；默认取角色选择列表中的第一张已选中卡片。 |
 | `501` | `selected_character_level` | - | `planned` | 当前选中角色等级；进入运行时前不得假定会输出。 |
+| `502` | `character_selection_list` | `character_selection_list` | `published runtime` | 可选择角色卡片列表，每张卡片包含可读角色信息和整图 bbox，多项用英文分号分隔。 |
+| `503` | `enter_game_button` | `enter_game_button` | `published runtime` | 角色选择界面的进入游戏按钮，值格式为 `进入游戏@[left, top, right, bottom]`。 |
 | `5000` | `reward_text` | `reward_text` | `published runtime` | 奖励弹窗标题或提示文本。 |
 | `5001` | `reward_items` | `reward_items` | `published runtime` | 奖励弹窗中的物品文本。 |
 | `8000` | `available_intents` | `available_intents` | `published runtime` | 当前前景模板声明的可执行意图，按模板顺序用英文分号分隔；为空时外部稀疏 JSON 省略。 |
+| `9000` | `window_center_offset` | `window_center_offset` | `published runtime` | 1920×1080 基准窗口中心偏移诊断；仅任一轴绝对值大于 5 px 时输出，格式为 `window_center_offset@[dx, dy]`。 |
 
 ## 前景界面上下文字段 v1
 
@@ -143,6 +147,9 @@ v1 只表示当前识别到的前景模板，不表示完整 UI 栈或“同时�
 - bbox 是截图坐标系中的整数 `[left, top, right, bottom]`，不是归一化模板 bbox，也不是点击中心点。
 - 字段值只输出已识别到的目标；无法确认名称或 bbox 时，不输出该项。
 - `3` 是兼容字段，语义跟随 `400`，新消费方应优先读取 `400` 和 `401`。
+- `402 common_login_characters` 每张角色卡片独立输出一个 bbox；推荐值格式为 `角色名|转生等级|种族|服务器@[left, top, right, bottom]`，实际文字以局部 OCR 可确认内容为准。
+- `500 selected_character` 与 `502 character_selection_list` 的推荐角色信息格式为 `角色名|转生等级|种族@[left, top, right, bottom]`；`502` 中每张卡片独立绑定 bbox，`500` 跟随当前选中的第一张卡片。
+- `503 enter_game_button` 使用完整截图坐标系中的按钮 bbox，不输出点击中心点。
 - `303 start_game_button` 的文字来自登录瀑布模板静态证据，bbox 来自按钮区域在当前截图坐标系中的像素换算结果。
 ## Template Static 来源
 

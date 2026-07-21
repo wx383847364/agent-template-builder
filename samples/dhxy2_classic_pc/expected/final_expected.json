@@ -71,6 +71,36 @@
       "no": 303,
       "key": "start_game_button",
       "meaning": "登录瀑布界面开始游戏按钮，格式为文字@像素bbox"
+    },
+    {
+      "no": 400,
+      "key": "selected_server",
+      "meaning": "当前选择服务器，格式为服务器名@像素bbox"
+    },
+    {
+      "no": 401,
+      "key": "account_servers",
+      "meaning": "当前账号已有角色的服务器列表，格式为服务器名@像素bbox"
+    },
+    {
+      "no": 402,
+      "key": "common_login_characters",
+      "meaning": "服务器选择界面的常用登录角色卡片，格式为角色信息@像素bbox"
+    },
+    {
+      "no": 500,
+      "key": "selected_character",
+      "meaning": "角色选择界面当前选中角色，格式为角色信息@像素bbox"
+    },
+    {
+      "no": 502,
+      "key": "character_selection_list",
+      "meaning": "角色选择界面的可选择角色卡片列表，格式为角色信息@像素bbox"
+    },
+    {
+      "no": 503,
+      "key": "enter_game_button",
+      "meaning": "角色选择界面的进入游戏按钮，格式为文字@像素bbox"
     }
   ],
   "cases": [
@@ -712,9 +742,14 @@
         "game": {"id": "dhxy2", "client": "classic_pc"},
         "screen": {"type": "server_select", "template_id": "dhxy2_classic_server_select_v1"},
         "state": {"blocking_modal": false, "available_intents": ["read_server_list", "confirm_server", "go_back"]},
-        "required_elements": ["account_servers", "selected_server", "server_confirm"],
-        "ocr_field_numbers": [3],
-        "field_values": [{"field_no": 3, "value": "水晶宫"}]
+        "required_elements": ["account_servers", "selected_server", "server_confirm", "common_login_character_1"],
+        "ocr_field_numbers": [3, 400, 401, 402],
+        "field_values": [
+          {"field_no": 3, "value": "水晶宫@[465, 738, 575, 773]"},
+          {"field_no": 400, "value": "水晶宫@[465, 738, 575, 773]"},
+          {"field_no": 401, "value": "水晶宫@[187, 316, 299, 348];爱你万年@[310, 316, 424, 348];游戏试玩@[434, 316, 547, 348];雾隐云居@[557, 316, 671, 348];陕西专区@[681, 316, 794, 348];水云仙府@[804, 316, 918, 348]"},
+          {"field_no": 402, "value": "绝情魔女|0转68级|女魔|水晶宫@[949, 288, 1146, 360]"}
+        ]
       }
     },
     {
@@ -727,9 +762,13 @@
         "game": {"id": "dhxy2", "client": "classic_pc"},
         "screen": {"type": "character_select", "template_id": "dhxy2_classic_character_select_v1"},
         "state": {"blocking_modal": false, "available_intents": ["read_selected_character", "enter_game", "create_character"]},
-        "required_elements": ["character_grid", "selected_character_summary", "enter_game"],
-        "ocr_field_numbers": [],
-        "field_values": []
+        "required_elements": ["character_grid", "character_slot_1", "character_slot_2", "enter_game_button"],
+        "ocr_field_numbers": [500, 502],
+        "field_values": [
+          {"field_no": 500, "value": "绝情魔女|0转68级|女魔@[951, 324, 1174, 391]"},
+          {"field_no": 502, "value": "绝情魔女|0转68级|女魔@[951, 324, 1174, 391];灵剑寻花|0转10级|女魔@[988, 399, 1174, 464]"},
+          {"field_no": 503, "value": "进入游戏@[606, 723, 745, 758]"}
+        ]
       }
     }
   ]

@@ -7,6 +7,7 @@ import argparse
 import json
 
 from agent_template_builder.paths import default_game_dir, find_project_root
+from agent_template_builder.matcher.template_matcher import UnsupportedResolutionError
 from agent_template_builder.pipeline.analyze import analyze_screenshot
 from agent_template_builder.pipeline.analyze_screenshots import IMAGE_SUFFIXES, list_screenshots
 
@@ -172,7 +173,23 @@ def _analyze_screenshot_path(
     game_dir: Path,
     case: ExpectedCase | None,
 ) -> RecognitionQualityItem:
-    data = analyze_screenshot(screenshot_path, game_dir).to_dict()
+    try:
+        data = analyze_screenshot(screenshot_path, game_dir).to_dict()
+    except UnsupportedResolutionError as error:
+        return RecognitionQualityItem(
+            screenshot=str(screenshot_path.resolve()),
+            case_id=case.case_id if case else None,
+            sample_status=case.sample_status if case else None,
+            expected_screen_type=case.expected_screen_type if case else None,
+            expected_template_id=case.expected_template_id if case else None,
+            actual_screen_type=None,
+            actual_template_id=None,
+            confidence=None,
+            fallback_reason=None,
+            anchor_matches=[],
+            passed_expected=False if case else None,
+            issue=str(error),
+        )
     screen = data["screen"]
     match = data["raw"]["match"]
     expected_screen_type = case.expected_screen_type if case else None

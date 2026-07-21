@@ -7,14 +7,24 @@
     {
       "id": "character_attributes_panel_area",
       "type": "layout_region",
-      "bbox": [0.58, 0.18, 0.975, 0.88],
+      "bbox": [
+        0.38658333333333333,
+        0.25912962962962965,
+        0.5980729166666666,
+        0.7303333333333333
+      ],
       "weight": 0.45,
       "expected_hash": "d0d8f88484c7ffff"
     },
     {
       "id": "right_world_visible_area",
       "type": "layout_region",
-      "bbox": [0.70, 0.20, 0.98, 0.78],
+      "bbox": [
+        0.4508333333333333,
+        0.27259259259259255,
+        0.60075,
+        0.6630185185185186
+      ],
       "weight": 0.15
     }
   ],
@@ -22,17 +32,32 @@
     {
       "id": "panel_title",
       "type": "text_region",
-      "bbox": [0.16, 0.13, 0.58, 0.21],
+      "bbox": [
+        0.16170833333333334,
+        0.2254722222222222,
+        0.38658333333333333,
+        0.27932407407407406
+      ],
       "ocr_required": true,
       "semantic_role": "panel_title"
     },
     {
       "id": "panel_content",
       "type": "panel",
-      "bbox": [0.12, 0.18, 0.72, 0.86],
+      "bbox": [
+        0.14029166666666668,
+        0.25912962962962965,
+        0.46154166666666663,
+        0.7168703703703704
+      ],
       "ocr_required": false,
       "semantic_role": "panel_content"
     }
   ],
-  "available_intents": ["read_panel_title", "inspect_panel", "close_panel"]
+  "available_intents": [
+    "read_panel_title",
+    "inspect_panel",
+    "close_panel"
+  ],
+  "calibration_status": "pending_1920_calibration"
 }

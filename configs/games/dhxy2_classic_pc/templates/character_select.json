@@ -7,54 +7,72 @@
     {
       "id": "character_grid_panel",
       "type": "layout_region",
-      "bbox": [0.784, 0.244, 0.999, 0.513],
+      "bbox": [
+        0.495833333,
+        0.301851852,
+        0.6109375,
+        0.483333333
+      ],
       "weight": 0.45,
       "expected_hash": "0c4040c0e8f8f8f8",
       "expected_hashes": [
         "884040c0e8f8f8fe",
         "ffff000101031fbf"
-      ],
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.495833333, 0.301851852, 0.6109375, 0.483333333]
-      }
+      ]
     },
     {
       "id": "enter_game_button_area",
       "type": "layout_region",
-      "bbox": [0.448, 0.793, 0.582, 0.835],
-      "weight": 0.40,
+      "bbox": [
+        0.316145833,
+        0.672222222,
+        0.3875,
+        0.7
+      ],
+      "weight": 0.4,
       "expected_hash": "e100006cfcffefff",
       "expected_hashes": [
         "00006cfcffefff00",
         "3333333038393b33"
-      ],
-      "screen_bbox_by_profile": {
-        "desktop_1920x1080_windowed": [0.316145833, 0.672222222, 0.3875, 0.7]
-      }
+      ]
     }
   ],
   "elements": [
     {
       "id": "character_grid",
       "type": "grid",
-      "bbox": [0.784, 0.244, 0.999, 0.513],
+      "bbox": [0.4953125, 0.3, 0.611458333, 0.42962963],
       "ocr_required": false,
       "semantic_role": "character_slots"
     },
     {
-      "id": "selected_character_summary",
-      "type": "text_region",
-      "bbox": [0.784, 0.245, 0.999, 0.335],
+      "id": "character_slot_1",
+      "type": "button",
+      "bbox": [0.4953125, 0.3, 0.611458333, 0.362037037],
       "ocr_required": true,
-      "semantic_role": "selected_character"
+      "semantic_role": "character_selection_list"
     },
     {
-      "id": "enter_game",
+      "id": "character_slot_2",
       "type": "button",
-      "bbox": [0.448, 0.793, 0.582, 0.835],
-      "ocr_required": false,
-      "semantic_role": "enter_game"
+      "bbox": [0.514583333, 0.369444444, 0.611458333, 0.42962963],
+      "ocr_required": true,
+      "semantic_role": "character_selection_list"
     }
   ],
-  "available_intents": ["read_selected_character", "enter_game", "create_character"]
+  "static_outputs": [
+    {
+      "id": "enter_game_button",
+      "type": "button",
+      "semantic_role": "enter_game_button",
+      "text": "进入游戏",
+      "bbox": [0.315625, 0.669444444, 0.388020833, 0.701851852]
+    }
+  ],
+  "available_intents": [
+    "read_selected_character",
+    "enter_game",
+    "create_character"
+  ],
+  "calibration_status": "confirmed_1920"
 }

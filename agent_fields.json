@@ -80,6 +80,30 @@
       "description": "Servers with an existing character for the current account. Value format: server_name@[left, top, right, bottom];server_name@[left, top, right, bottom]."
     },
     {
+      "index": 402,
+      "key": "common_login_characters",
+      "type": "text",
+      "description": "Common login character cards on the server selection screen. Value format: character_info@[left, top, right, bottom];character_info@[left, top, right, bottom]."
+    },
+    {
+      "index": 500,
+      "key": "selected_character",
+      "type": "text",
+      "description": "Currently selected character on the character selection screen. Value format: character_info@[left, top, right, bottom]."
+    },
+    {
+      "index": 502,
+      "key": "character_selection_list",
+      "type": "text",
+      "description": "Selectable character cards. Value format: character_info@[left, top, right, bottom];character_info@[left, top, right, bottom]."
+    },
+    {
+      "index": 503,
+      "key": "enter_game_button",
+      "type": "text",
+      "description": "Enter game button on the character selection screen. Value format: 进入游戏@[left, top, right, bottom]."
+    },
+    {
       "index": 4000,
       "key": "blocking_modal",
       "type": "boolean",
@@ -102,6 +126,12 @@
       "key": "available_intents",
       "type": "text",
       "description": "Executable intents declared by the current foreground template, joined with semicolons in template order."
+    },
+    {
+      "index": 9000,
+      "key": "window_center_offset",
+      "type": "text",
+      "description": "Diagnostic window-center offset from the 1920x1080 reference position. Published only when either axis exceeds 5 pixels. Value format: window_center_offset@[dx, dy]."
     }
   ],
   "mappings": {
@@ -118,10 +148,15 @@
     "304": "login_qr_code",
     "400": "selected_server",
     "401": "account_servers",
+    "402": "common_login_characters",
+    "500": "selected_character",
+    "502": "character_selection_list",
+    "503": "enter_game_button",
     "4000": "blocking_modal",
     "5000": "reward_text",
     "5001": "reward_items",
-    "8000": "available_intents"
+    "8000": "available_intents",
+    "9000": "window_center_offset"
   },
   "reserved_ranges": [
     {

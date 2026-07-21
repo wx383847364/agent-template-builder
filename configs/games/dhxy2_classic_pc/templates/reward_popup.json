@@ -8,42 +8,75 @@
     {
       "id": "reward_notice_area",
       "type": "layout_region",
-      "bbox": [0.345, 0.43, 0.655, 0.57],
+      "bbox": [
+        0.26076041666666666,
+        0.42741666666666667,
+        0.42673958333333334,
+        0.5216574074074074
+      ],
       "weight": 0.55,
       "expected_hash": "f7fefec1fdc0e000",
-      "expected_hashes": ["fffe008000000000"]
+      "expected_hashes": [
+        "fffe008000000000"
+      ]
     },
     {
       "id": "reward_dialog_panel_area",
       "type": "layout_region",
-      "bbox": [0.24, 0.40, 0.76, 0.60],
-      "weight": 0.30,
+      "bbox": [
+        0.20454166666666668,
+        0.4072222222222222,
+        0.4829583333333333,
+        0.5418518518518519
+      ],
+      "weight": 0.3,
       "expected_hash": "fffffcf0c0e08080",
-      "expected_hashes": ["fefefce0c0c0c080"]
+      "expected_hashes": [
+        "fefefce0c0c0c080"
+      ]
     }
   ],
   "elements": [
     {
       "id": "reward_notice",
       "type": "text_region",
-      "bbox": [0.35, 0.43, 0.65, 0.49],
+      "bbox": [
+        0.2634375,
+        0.42741666666666667,
+        0.4240625,
+        0.4678055555555556
+      ],
       "ocr_required": true,
       "semantic_role": "reward_text"
     },
     {
       "id": "reward_items",
       "type": "text_region",
-      "bbox": [0.35, 0.50, 0.65, 0.57],
+      "bbox": [
+        0.2634375,
+        0.47453703703703703,
+        0.4240625,
+        0.5216574074074074
+      ],
       "ocr_required": true,
       "semantic_role": "reward_items"
     },
     {
       "id": "reward_dialog_panel",
       "type": "panel",
-      "bbox": [0.24, 0.40, 0.76, 0.60],
+      "bbox": [
+        0.20454166666666668,
+        0.4072222222222222,
+        0.4829583333333333,
+        0.5418518518518519
+      ],
       "ocr_required": false,
       "semantic_role": "reward_dialog"
     }
   ],
-  "available_intents": ["read_reward", "continue_dialog"]
+  "available_intents": [
+    "read_reward",
+    "continue_dialog"
+  ],
+  "calibration_status": "pending_1920_calibration"
 }

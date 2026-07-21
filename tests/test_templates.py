@@ -14,7 +14,8 @@ def test_load_game_config() -> None:
     assert config["game_id"] == "dhxy2"
     assert config["client"] == "classic_pc"
     assert config["coordinate_space"]["bbox_unit"] == "screen_ratio"
-    assert {item["label"] for item in config["supported_aspect_ratios"]} >= {"wide_16_9"}
+    assert config["runtime_screenshot"] == {"width": 1920, "height": 1080}
+    assert config["window_calibration"]["reference_window_bbox"] == [143, 95, 1177, 878]
     assert config["ocr_policy"]["only_when_required"] is True
 
 
@@ -50,62 +51,17 @@ def test_template_loads_static_outputs() -> None:
     assert any(
         item.semantic_role == "start_game_button"
         and item.text == "开始游戏"
-        and item.bbox == (0.810, 0.700, 0.906, 0.864)
+        and item.bbox == (0.703125, 0.592592593, 0.765625, 0.703703704)
         for item in login_waterfall.static_outputs
     )
 
 
-def test_template_loads_bbox_by_profile(tmp_path: Path) -> None:
-    template_path = tmp_path / "template.json"
-    template_path.write_text(
-        """
-        {
-          "template_id": "test_template",
-          "screen_type": "test",
-          "anchors": [
-            {
-              "id": "anchor",
-              "type": "layout_region",
-              "bbox": [0, 0, 1, 1],
-              "bbox_by_profile": {
-                "fixed_window_1280x720": [0.1, 0.2, 0.3, 0.4]
-              }
-            }
-          ],
-          "elements": [
-            {
-              "id": "element",
-              "type": "text_region",
-              "bbox": [0, 0, 1, 1],
-              "ocr_required": false,
-              "bbox_by_profile": {
-                "wide_16_9": [0.2, 0.3, 0.4, 0.5]
-              }
-            }
-          ],
-          "static_outputs": [
-            {
-              "id": "slot",
-              "type": "button_slot",
-              "semantic_role": "slot",
-              "value": "",
-              "bbox": [0, 0, 1, 1],
-              "bbox_by_profile": {
-                "fixed_window_1280x720": [0.3, 0.4, 0.5, 0.6]
-              }
-            }
-          ]
-        }
-        """,
-        encoding="utf-8",
-    )
+def test_template_loads_full_screenshot_bboxes_and_calibration_status() -> None:
+    templates = load_templates(GAME_DIR)
+    confirmed = {template.screen_type for template in templates if template.calibration_status == "confirmed_1920"}
 
-    template = _load_template(template_path)
-
-    assert template.anchors[0].bbox_for_profile("fixed_window_1280x720") == (0.1, 0.2, 0.3, 0.4)
-    assert template.anchors[0].bbox_for_profile("wide_16_9") == (0, 0, 1, 1)
-    assert template.elements[0].bbox_for_profile("wide_16_9") == (0.2, 0.3, 0.4, 0.5)
-    assert template.static_outputs[0].bbox_for_profile("fixed_window_1280x720") == (0.3, 0.4, 0.5, 0.6)
+    assert confirmed == {"login_waterfall", "qr_login", "server_select", "character_select"}
+    assert all(template.calibration_status in {"confirmed_1920", "pending_1920_calibration"} for template in templates)
 
 
 def test_rejects_invalid_expected_hashes_shape(tmp_path: Path) -> None:
@@ -154,85 +110,4 @@ def test_rejects_static_output_without_text_or_value(tmp_path: Path) -> None:
     )
 
     with pytest.raises(ValueError, match="text or value is required"):
-        _load_template(template_path)
-
-
-def test_rejects_invalid_bbox_by_profile_shape(tmp_path: Path) -> None:
-    template_path = tmp_path / "template.json"
-    template_path.write_text(
-        """
-        {
-          "template_id": "test_template",
-          "screen_type": "test",
-          "anchors": [
-            {
-              "id": "bad_anchor",
-              "type": "layout_region",
-              "bbox": [0, 0, 1, 1],
-              "bbox_by_profile": {
-                "wide_16_9": [0, 1]
-              }
-            }
-          ],
-          "elements": []
-        }
-        """,
-        encoding="utf-8",
-    )
-
-    with pytest.raises(ValueError, match=r"bbox_by_profile\[wide_16_9\] must be a bbox array"):
-        _load_template(template_path)
-
-
-def test_rejects_non_numeric_bbox_by_profile_values(tmp_path: Path) -> None:
-    template_path = tmp_path / "template.json"
-    template_path.write_text(
-        """
-        {
-          "template_id": "test_template",
-          "screen_type": "test",
-          "anchors": [
-            {
-              "id": "bad_anchor",
-              "type": "layout_region",
-              "bbox": [0, 0, 1, 1],
-              "bbox_by_profile": {
-                "wide_16_9": ["x", 0, 1, 1]
-              }
-            }
-          ],
-          "elements": []
-        }
-        """,
-        encoding="utf-8",
-    )
-
-    with pytest.raises(ValueError, match=r"bbox_by_profile\[wide_16_9\] values must be numbers"):
-        _load_template(template_path)
-
-
-def test_rejects_invalid_bbox_by_profile_order(tmp_path: Path) -> None:
-    template_path = tmp_path / "template.json"
-    template_path.write_text(
-        """
-        {
-          "template_id": "test_template",
-          "screen_type": "test",
-          "anchors": [
-            {
-              "id": "bad_anchor",
-              "type": "layout_region",
-              "bbox": [0, 0, 1, 1],
-              "bbox_by_profile": {
-                "wide_16_9": [0.8, 0.2, 0.1, 0.4]
-              }
-            }
-          ],
-          "elements": []
-        }
-        """,
-        encoding="utf-8",
-    )
-
-    with pytest.raises(ValueError, match=r"bbox_by_profile\[wide_16_9\] must satisfy"):
         _load_template(template_path)

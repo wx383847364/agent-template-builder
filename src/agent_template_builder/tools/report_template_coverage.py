@@ -26,6 +26,8 @@ class TemplateCoverage:
     anchor_count: int
     measurable_anchor_count: int
     ocr_region_count: int
+    calibration_status: str
+    runtime_exportable: bool
     missing: list[str]
 
 
@@ -35,6 +37,7 @@ class CoverageReport:
     samples_dir: str
     template_count: int
     complete_count: int
+    runtime_exportable_count: int
     templates: list[TemplateCoverage]
 
     @property
@@ -72,6 +75,7 @@ def build_coverage_report(game_dir: Path, samples_dir: Path | None = None) -> Co
         samples_dir=str(samples_dir),
         template_count=len(coverage),
         complete_count=complete_count,
+        runtime_exportable_count=sum(1 for item in coverage if item.runtime_exportable),
         templates=coverage,
     )
 
@@ -109,6 +113,8 @@ def _template_coverage(
         anchor_count=len(template.anchors),
         measurable_anchor_count=template.measurable_anchor_count,
         ocr_region_count=ocr_region_count,
+        calibration_status=template.calibration_status,
+        runtime_exportable=template.calibration_status == "confirmed_1920",
         missing=[name for name, ok in checks.items() if not ok],
     )
 
@@ -222,6 +228,7 @@ def format_text_report(report: CoverageReport) -> str:
         f"game_dir: {report.game_dir}",
         f"samples_dir: {report.samples_dir}",
         f"complete: {report.complete_count}/{report.template_count} ({report.complete_ratio:.2%})",
+        f"runtime_exportable_1920: {report.runtime_exportable_count}/{report.template_count}",
         "",
     ]
 
@@ -232,7 +239,8 @@ def format_text_report(report: CoverageReport) -> str:
             "  "
             f"samples={item.sample_count}, expected={item.expected_count}, "
             f"anchors={item.measurable_anchor_count}/{item.anchor_count}, "
-            f"ocr_regions={item.ocr_region_count}"
+            f"ocr_regions={item.ocr_region_count}, "
+            f"calibration={item.calibration_status}"
         )
 
     return "\n".join(lines)
