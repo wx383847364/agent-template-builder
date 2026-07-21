@@ -6,7 +6,7 @@ import pytest
 
 from agent_template_builder.exporters.agent_rows import AgentRowsExporter
 from agent_template_builder.matcher.template_matcher import UnsupportedResolutionError
-from agent_template_builder.pipeline.export_agent_rows import export_agent_rows, to_index_value_data
+from agent_template_builder.pipeline.export_agent_rows import CalibrationError, export_agent_rows, to_index_value_data
 from agent_template_builder.schema.agent_data import AgentData, Element, Resolution, RuntimeState, Screen
 from agent_template_builder.schema.agent_rows import load_agent_rows_config
 
@@ -373,6 +373,16 @@ def test_exporter_publishes_window_offset_only_when_it_exceeds_five_pixels() -> 
     rows = to_index_value_data(AgentRowsExporter(config).export(data))
 
     assert rows["9000"] == "window_center_offset@[6, -7]"
+
+
+@pytest.mark.parametrize("status", ["pending", "failed"])
+def test_export_refuses_pending_or_failed_calibration(monkeypatch, status: str) -> None:
+    data = _data()
+    object.__setattr__(data, "raw", {"calibration": {"status": status, "reason": "test_reason"}})
+    monkeypatch.setattr("agent_template_builder.pipeline.export_agent_rows.analyze_screenshot", lambda *_args: data)
+
+    with pytest.raises(CalibrationError, match="calibration_failed: test_reason"):
+        export_agent_rows(Path("capture.png"), GAME_DIR, FIELDS_CONFIG)
 
 
 def test_server_select_rows_export_each_common_login_character_bbox() -> None:

@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from base64 import b64decode
 from tempfile import TemporaryDirectory
 from threading import RLock
 from typing import Iterator, Optional
@@ -76,6 +77,11 @@ def analyze_screenshot(
         templates=templates,
         resolution=(int(runtime["width"]), int(runtime["height"])),
         reference_window_bbox=tuple(int(value) for value in calibration["reference_window_bbox"]),
+        window_probe_bbox=tuple(int(value) for value in calibration.get("probe_bbox", [])) or None,
+        window_probe_hashes=tuple(str(value) for value in calibration.get("probe_hashes", [])),
+        window_probe_pixels=tuple(
+            b64decode(str(value)) for value in calibration.get("probe_pixels_base64", [])
+        ),
         min_confidence=float(game_config.get("template_defaults", {}).get("min_confidence", 0.65)),
     )
     ocr = ocr_engine or NullOCREngine()

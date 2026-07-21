@@ -61,6 +61,7 @@ class TemplateSpec:
     blocking_modal: bool = False
     description: str = ""
     calibration_status: str = "pending_1920_calibration"
+    calibration_mode: str = "template_anchor"
 
     @property
     def measurable_anchor_count(self) -> int:
@@ -115,6 +116,10 @@ def _load_template(path: Path) -> TemplateSpec:
         for item in data.get("elements", [])
     ]
     static_outputs = [_load_static_output(item) for item in data.get("static_outputs", [])]
+    calibration_mode = str(data.get("calibration_mode", "template_anchor"))
+    if calibration_mode not in {"template_anchor", "window_center", "fixed_screen"}:
+        raise ValueError(f"{path.name}: unsupported calibration_mode {calibration_mode!r}")
+
     return TemplateSpec(
         template_id=data["template_id"],
         screen_type=data["screen_type"],
@@ -126,6 +131,7 @@ def _load_template(path: Path) -> TemplateSpec:
         blocking_modal=bool(data.get("blocking_modal", False)),
         description=data.get("description", ""),
         calibration_status=str(data.get("calibration_status", "pending_1920_calibration")),
+        calibration_mode=calibration_mode,
     )
 
 

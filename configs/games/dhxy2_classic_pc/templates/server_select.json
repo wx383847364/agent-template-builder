@@ -192,5 +192,6 @@
     "confirm_server",
     "go_back"
   ],
-  "calibration_status": "confirmed_1920"
+  "calibration_status": "confirmed_1920",
+  "calibration_mode": "window_center"
 }

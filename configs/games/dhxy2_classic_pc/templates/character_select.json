@@ -74,5 +74,6 @@
     "enter_game",
     "create_character"
   ],
-  "calibration_status": "confirmed_1920"
+  "calibration_status": "confirmed_1920",
+  "calibration_mode": "window_center"
 }

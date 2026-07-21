@@ -73,5 +73,6 @@
     "open_server_select",
     "switch_login_style"
   ],
-  "calibration_status": "confirmed_1920"
+  "calibration_status": "confirmed_1920",
+  "calibration_mode": "fixed_screen"
 }

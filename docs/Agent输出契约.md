@@ -74,7 +74,7 @@ v1 只表达当前识别到的前景模板，不表达完整 UI 栈，也不发�
 
 - 模板识别后，`templates/*.json` 中的 `static_outputs` 会注入 `AgentData.elements[]`。
 - 这类元素的 `evidence.source` 固定为 `template_static`，用于区分 OCR 文本和模板自带的固定 UI 文案、固定按钮、固定槽位。
-- 如果 `static_outputs[].bbox` 存在，运行时按完整 1920×1080 截图换算并叠加 anchor 校准出的统一 `dx/dy`；可点击目标字段直接发布该 bbox。
+- 如果 `static_outputs[].bbox` 存在，运行时按完整 1920×1080 截图换算并叠加窗口标题栏共享 probe 校准出的统一 `dx/dy`；可点击目标字段直接发布该 bbox。
 - 外部 Agent Rows 仍保持扁平 index/value JSON；不会新增结构化 `action_targets`。
 
 服务器选择使用模板静态槽位补全点击区域：当 `selected_server` 或 `account_servers` 已有服务器名但没有 bbox 时，导出层会按 `selected_server_slot` / `account_server_slot` 输出 `服务器名@[left, top, right, bottom]`。已经包含 bbox 的值原样保留；遗留的 `@x,y` 输入会按当前槽位重新绑定为 bbox。

@@ -1,5 +1,6 @@
 {
-  "description": "PaddleOCR end-to-end examples from curated repository screenshots.",
+  "description": "Historical PaddleOCR end-to-end examples from legacy curated screenshots; not valid for the current 1920x1080-only runtime.",
+  "runtime_compatibility": "historical_legacy_only",
   "ocr_backend": "paddle",
   "ocr_device": "auto",
   "cases": [
