@@ -31,3 +31,6 @@ samples/**/screenshots/*
 
 # macOS Finder metadata must stay ignored after the sample allow-rules above.
 .DS_Store
+
+# Local screenshots and Codex-client discovery artifacts may contain private data.
+runtime/

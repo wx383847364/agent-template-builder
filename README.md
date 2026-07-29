@@ -37,6 +37,26 @@ python -m pytest
 
 Codex 新会话与长期项目记忆入口见 [docs/项目总览.md](docs/项目总览.md)。
 
+## Codex 客户端单图 UI Discovery
+
+对于尚未制作稳定模板的新界面，可以让当前 Codex 客户端对一张完整
+`1920×1080` 截图做高召回候选识别。该流程输出独立的 `DiscoveryData`，
+不会进入 Agent Rows、正式模板或点击链路：
+
+```bash
+pip install -e ".[discovery]"
+agent-template-builder-prepare-discovery /absolute/path/to/screenshot.png
+agent-template-builder-finalize-discovery RUN_DIR \
+  --draft --input model_output.initial.json
+agent-template-builder-finalize-discovery RUN_DIR \
+  --input model_output.final.json
+agent-template-builder-apply-discovery-review RUN_DIR/review.json
+```
+
+Codex 负责在 prepare 与 finalize 之间查看原图、填写模型输出并启动视觉审核
+子代理。完整文件契约和人工审核方式见
+[docs/AI界面发现规则.md](docs/AI界面发现规则.md)。
+
 实时截图目录可以用下面命令分析。截图文件名只用于追踪和排序，不参与模板识别：
 
 ```bash
@@ -51,7 +71,8 @@ Codex 新会话与长期项目记忆入口见 [docs/项目总览.md](docs/项目
 - 已定义 `AgentData`、屏幕、元素、证据、运行状态等导出 schema。
 - 已提供《大话西游2》经典版 PC 的首个模板包，覆盖登录、服务器选择、角色选择、主世界、NPC 对话、系统面板、战斗占位和阻塞弹窗。
 - 运行时只接受 1920×1080 整图截图；模板通过整图 anchor 搜索统一窗口偏移并校准全部导出 bbox。
-- 已实现归一化 bbox 到像素坐标的转换，以及基于区域平均哈希的锚点匹配能力。
+- 稳定模板 bbox 使用完整 1920×1080 截图比例，并支持基于区域平均哈希的
+  锚点匹配和窗口整体偏移校准。
 - 已接入 OCR 引擎接口和空实现，占位等待后续接入 PaddleOCR、Tesseract 或其他本地 OCR。
 - 已提供模板包审计命令和单元测试，覆盖配置加载、模板排序、bbox 换算和基础截图分析流程。
 
@@ -62,7 +83,7 @@ Codex 新会话与长期项目记忆入口见 [docs/项目总览.md](docs/项目
 3. 在 `samples/dhxy2_classic_pc/expected/final_expected.json` 中补齐对应截图的预期字段值。
 4. 将 OCR 限制在标记为 `ocr_required: true` 的区域内。
 
-模板 bbox 使用屏幕比例而不是固定像素，因此同一个模板可以适配多种共享受支持宽高比的分辨率。
+当前运行时唯一标准分辨率为 1920×1080；历史多分辨率样本只保留为参考资产。
 
 ## 本地游戏路径配置
 

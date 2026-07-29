@@ -22,6 +22,11 @@ class AgentRowsExporter:
         return cls(load_agent_rows_config(path))
 
     def export(self, data: AgentData) -> AgentRowsOutput:
+        if not isinstance(data, AgentData):
+            raise TypeError(
+                "AgentRowsExporter accepts AgentData only; "
+                "DiscoveryData candidates cannot enter the stable Rows pipeline"
+            )
         values_by_role: dict[str, list[str]] = defaultdict(list)
         self._add_metadata_values(data, values_by_role)
 

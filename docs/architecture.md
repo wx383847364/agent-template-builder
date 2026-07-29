@@ -13,6 +13,23 @@ screenshot (1920×1080 only)
   -> AgentData JSON
 ```
 
+未知界面的离线生产旁路与稳定运行时完全分开：
+
+```text
+1920×1080 screenshot
+  -> prepare discovery request/schema/prompt
+  -> Codex 客户端高召回视觉识别
+  -> 本地 bbox/schema 校验和标注图
+  -> 视觉审核子代理
+  -> immutable DiscoveryData + review.json
+  -> 人工 keep/discard/修正
+  -> ReviewedDiscoveryData
+```
+
+Discovery 不调用 `AgentRowsExporter`，不产生 `available_intents` 或确认点击，
+也不写入 `configs/games/*/templates`。未来 API provider 只替换模型输入边界，
+下游 schema、校验、标注和 review 保持不变。
+
 ## 匹配策略
 
 匹配器按成本从低到高分层执行：
@@ -51,3 +68,7 @@ screenshot (1920×1080 only)
 ```
 
 运行时只接受 `1920×1080`，并先按该尺寸换算 bbox。窗口化模板从整图客户端标题栏 probe 搜索同一个 `dx/dy`，页面 anchor 只作模板校验；再把该偏移整体应用至 OCR ROI、元素和 Agent Rows 点击区域。全屏模板使用固定整图坐标；没有 `game_view` 或多分辨率 profile 换算。
+
+Discovery 的 bbox 不使用模板归一化坐标，也不应用窗口偏移：它始终描述输入
+截图当前可见位置，格式为完整 1920×1080 原图整数像素
+`[left,top,right,bottom)`。

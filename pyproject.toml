@@ -20,10 +20,17 @@ agent-template-builder-audit-templates = "agent_template_builder.tools.audit_tem
 agent-template-builder-template-coverage = "agent_template_builder.tools.report_template_coverage:main"
 agent-template-builder-recognition-quality = "agent_template_builder.tools.report_recognition_quality:main"
 agent-template-builder-ocr-smoke-test = "agent_template_builder.tools.ocr_smoke_test:main"
+agent-template-builder-prepare-discovery = "agent_template_builder.pipeline.prepare_discovery:main"
+agent-template-builder-finalize-discovery = "agent_template_builder.pipeline.finalize_discovery:main"
+agent-template-builder-apply-discovery-review = "agent_template_builder.pipeline.apply_discovery_review:main"
 
 [project.optional-dependencies]
 dev = [
   "pytest>=8.0",
+  "pydantic>=2.0,<3",
+]
+discovery = [
+  "pydantic>=2.0,<3",
 ]
 
 [tool.setuptools.packages.find]

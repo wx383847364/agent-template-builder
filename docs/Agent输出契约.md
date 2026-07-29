@@ -2,6 +2,20 @@
 
 这份文档记录 `AgentData` 输出的长期兼容口径。代码定义以 `src/agent_template_builder/schema/agent_data.py` 为准。
 
+## DiscoveryData 不属于运行时输出
+
+`agent_ui_discovery/v1` 是未知界面的离线高召回候选契约，不是
+`AgentData` 的扩展。它允许未确认的面板、文字和
+`interaction_bbox_guess`，且所有交互区域固定标记
+`interaction_safety="candidate_only"`。
+
+Discovery 流程不得调用 `AgentRowsExporter`，不得提供稳定字段编号、
+`available_intents` 或确认点击，也不得被正式模板加载器扫描。人工应用
+`review.json` 后得到的 `agent_ui_discovery_reviewed/v1` 仍然只是候选资产；
+如需进入运行时，必须另行完成模板校准、anchor、expected 和回归审核。
+
+具体 schema、目录和命令见 [AI界面发现规则.md](AI界面发现规则.md)。
+
 ## 顶层结构
 
 `AgentData` 当前包含：
